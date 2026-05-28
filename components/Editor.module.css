@@ -1,0 +1,118 @@
+/* components/Editor.module.css */
+/* Folha A4 com margens ABNT NBR 14724:2011 */
+
+.a4Page {
+  width: 21cm;
+  min-height: 29.7cm;
+  padding-top: 3cm;
+  padding-left: 3cm;
+  padding-right: 2cm;
+  padding-bottom: 2cm;
+  background: white;
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.55);
+  flex-shrink: 0;
+}
+
+/* ─── ESTILOS DE CONTEÚDO ABNT ─────────────────────────────────────────────── */
+.editorContent {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 1.5;
+  color: #111;
+  outline: none;
+  min-height: 22cm;
+}
+
+/* Placeholder */
+.editorContent p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #9ca3af;
+  pointer-events: none;
+  font-style: italic;
+  height: 0;
+}
+
+/* Texto corrente */
+.editorContent p {
+  font-size: 12pt;
+  line-height: 1.5;
+  text-align: justify;
+  text-indent: 1.25cm;
+  margin-bottom: 0;
+}
+
+/* Títulos */
+.editorContent h1 {
+  font-size: 12pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.5;
+  margin: 2em 0 1em;
+  text-indent: 0;
+}
+
+.editorContent h2 {
+  font-size: 12pt;
+  font-weight: 700;
+  text-align: left;
+  line-height: 1.5;
+  margin: 1.5em 0 0.8em;
+  text-indent: 0;
+}
+
+.editorContent h3 {
+  font-size: 12pt;
+  font-weight: 700;
+  font-style: italic;
+  text-align: left;
+  line-height: 1.5;
+  margin: 1.5em 0 0.8em;
+  text-indent: 0;
+}
+
+/* Citação longa (ABNT 10520) */
+.editorContent blockquote {
+  font-size: 10pt;
+  line-height: 1;
+  margin-left: 4cm;
+  margin-right: 0;
+  margin-bottom: 1em;
+  text-align: justify;
+  font-style: normal;
+  border: none;
+  padding: 0;
+  text-indent: 0;
+}
+
+.editorContent blockquote p {
+  font-size: 10pt;
+  text-indent: 0;
+}
+
+/* Listas */
+.editorContent ul,
+.editorContent ol {
+  padding-left: 1.5em;
+  line-height: 1.5;
+  font-size: 12pt;
+}
+
+/* ─── PRINT ────────────────────────────────────────────────────────────────── */
+@media print {
+  .a4Page {
+    box-shadow: none !important;
+    padding: 3cm 2cm 2cm 3cm !important;
+  }
+
+  .editorContent h1,
+  .editorContent h2,
+  .editorContent h3 {
+    page-break-after: avoid;
+  }
+
+  .editorContent blockquote {
+    page-break-inside: avoid;
+  }
+}
