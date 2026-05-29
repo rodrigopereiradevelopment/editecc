@@ -2,27 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Configuração de Cores Globais do App */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0c11; /* Força o fundo escuro do EditeCC */
+  --foreground: #f1f5f9;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   ESTILOS RESTRITOS DO CANVAS ABNT (Não afetam o resto do app)
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.a4-page {
+  box-sizing: border-box !important;
+}
+
+/* Estilos de Texto ABNT dentro da área do editor */
+.editor-area p, .abnt-texto {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 1.5;
+  text-align: justify;
+  text-indent: 1.25cm; /* Recuo regulamentar de parágrafo */
+  margin-bottom: 12pt;
+  color: #111111 !important; /* Garante texto preto na folha branca */
+}
+
+.editor-area h1, .abnt-h1 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 24pt;
+  margin-bottom: 12pt;
+  color: #111111 !important;
+}
+
+.editor-area h2, .abnt-h2 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  font-weight: bold;
+  text-align: left;
+  line-height: 1.5;
+  margin-top: 18pt;
+  margin-bottom: 12pt;
+  color: #111111 !important;
+}
+
+.editor-area h3, .abnt-h3 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  font-weight: bold;
+  font-style: italic;
+  text-align: left;
+  line-height: 1.5;
+  margin-top: 18pt;
+  margin-bottom: 12pt;
+  color: #111111 !important;
+}
+
+.editor-area blockquote, .abnt-citacao {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 10pt;
+  line-height: 1.0; /* Espaço simples */
+  margin-left: 4cm; /* Recuo regulamentar para mais de 3 linhas */
+  text-align: justify;
+  margin-bottom: 12pt;
+  color: #111111 !important;
+}
+
+.abnt-referencia {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  line-height: 1.0;
+  text-align: left;
+  text-indent: 0 !important;
+  margin-bottom: 12pt;
+  color: #111111 !important;
+}
+
+.abnt-nota, .abnt-legenda {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 10pt;
+  line-height: 1.0;
+  text-indent: 0 !important;
+  color: #111111 !important;
+}
+
+.abnt-legenda {
+  text-align: center;
 }

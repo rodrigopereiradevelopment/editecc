@@ -1,4 +1,3 @@
-// next.config.ts
 import type { NextConfig } from "next";
 
 const isTauriBuild = process.env.TAURI_ENV_PLATFORM !== undefined;
@@ -14,8 +13,13 @@ const nextConfig: NextConfig = {
     },
   }),
   
-  // Você pode adicionar configurações globais (que valem para Web e Tauri) aqui fora:
+  // Configurações globais (que valem para Web e Tauri):
   reactStrictMode: true,
+
+  // Força o uso do Webpack estável para rodar sem erros no Termux do Android
+  experimental: {
+    turbo: false,
+  },
 };
 
 export default nextConfig;
