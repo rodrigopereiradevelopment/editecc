@@ -1,101 +1,295 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 
-/* Configuração de Cores Globais do App */
-:root {
-  --background: #0a0c11; /* Força o fundo escuro do EditeCC */
-  --foreground: #f1f5f9;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0a0c11;
+  color: #e2e8f0;
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────────
-   ESTILOS RESTRITOS DO CANVAS ABNT (Não afetam o resto do app)
-   ────────────────────────────────────────────────────────────────────────────── */
+/* ─── FONTE PADRÃO ABNT: ARIAL ─────────────────────────────────────────────── */
+
+:root {
+  --font-body: 'Arial', 'Calibri', sans-serif;
+  --font-size-body: 12pt;
+  --line-height-body: 1.5;
+  --line-height-ref: 1;
+  --margin-top: 3cm;
+  --margin-left: 3cm;
+  --margin-bottom: 2cm;
+  --margin-right: 2cm;
+}
+
+/* ─── A4 PAGE STYLES ────────────────────────────────────────────────────────── */
 
 .a4-page {
-  box-sizing: border-box !important;
+  width: 21cm;
+  min-height: 29.7cm;
+  padding: 3cm 2cm 2cm 3cm;
+  background: white;
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: #111;
+  flex-shrink: 0;
 }
 
-/* Estilos de Texto ABNT dentro da área do editor */
-.editor-area p, .abnt-texto {
-  font-family: 'Times New Roman', Times, serif;
+/* ─── CONTENTEDITABLE STYLES ───────────────────────────────────────────────── */
+
+[contenteditable]:empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+  font-style: italic;
   font-size: 12pt;
-  line-height: 1.5;
-  text-align: justify;
-  text-indent: 1.25cm; /* Recuo regulamentar de parágrafo */
-  margin-bottom: 12pt;
-  color: #111111 !important; /* Garante texto preto na folha branca */
 }
 
-.editor-area h1, .abnt-h1 {
-  font-family: 'Times New Roman', Times, serif;
+/* Títulos (H1, H2, H3) – Numeração progressiva */
+h1 {
   font-size: 12pt;
-  font-weight: bold;
+  font-weight: 700;
   text-transform: uppercase;
   text-align: center;
   line-height: 1.5;
-  margin-top: 24pt;
-  margin-bottom: 12pt;
-  color: #111111 !important;
+  margin: 2em 0 1em;
+  text-indent: 0;
+  font-family: var(--font-body);
 }
 
-.editor-area h2, .abnt-h2 {
-  font-family: 'Times New Roman', Times, serif;
+h2 {
   font-size: 12pt;
-  font-weight: bold;
+  font-weight: 700;
   text-align: left;
   line-height: 1.5;
-  margin-top: 18pt;
-  margin-bottom: 12pt;
-  color: #111111 !important;
+  margin: 1.5em 0 0.8em;
+  text-indent: 0;
+  font-family: var(--font-body);
 }
 
-.editor-area h3, .abnt-h3 {
-  font-family: 'Times New Roman', Times, serif;
+h3 {
   font-size: 12pt;
-  font-weight: bold;
+  font-weight: 700;
   font-style: italic;
   text-align: left;
   line-height: 1.5;
-  margin-top: 18pt;
-  margin-bottom: 12pt;
-  color: #111111 !important;
+  margin: 1.5em 0 0.8em;
+  text-indent: 0;
+  font-family: var(--font-body);
 }
 
-.editor-area blockquote, .abnt-citacao {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 10pt;
-  line-height: 1.0; /* Espaço simples */
-  margin-left: 4cm; /* Recuo regulamentar para mais de 3 linhas */
-  text-align: justify;
-  margin-bottom: 12pt;
-  color: #111111 !important;
-}
-
-.abnt-referencia {
-  font-family: 'Times New Roman', Times, serif;
+/* Texto Corrente – Justificado, espaço 1.5, recuo 1.25cm */
+p {
   font-size: 12pt;
-  line-height: 1.0;
-  text-align: left;
-  text-indent: 0 !important;
-  margin-bottom: 12pt;
-  color: #111111 !important;
+  line-height: 1.5;
+  text-align: justify;
+  text-indent: 1.25cm;
+  margin-bottom: 0;
+  font-family: var(--font-body);
 }
 
-.abnt-nota, .abnt-legenda {
-  font-family: 'Times New Roman', Times, serif;
+p + p {
+  text-indent: 1.25cm;
+}
+
+/* Citação Longa (>3 linhas) – Recuo 4cm, fonte 10, espaço simples */
+blockquote {
   font-size: 10pt;
-  line-height: 1.0;
-  text-indent: 0 !important;
-  color: #111111 !important;
+  line-height: 1;
+  margin-left: 4cm;
+  margin-right: 0;
+  margin-bottom: 1em;
+  text-align: justify;
+  font-style: normal;
+  border: none;
+  padding: 0;
+  text-indent: 0;
+  font-family: var(--font-body);
 }
 
-.abnt-legenda {
+blockquote p {
+  font-size: 10pt;
+  line-height: 1;
+  text-indent: 0;
+  margin-bottom: 0;
+}
+
+/* Listas */
+ul,
+ol {
+  padding-left: 1.5cm;
+  line-height: 1.5;
+  font-size: 12pt;
+  margin-bottom: 1em;
+}
+
+li {
+  margin-bottom: 0.5em;
+  font-family: var(--font-body);
+}
+
+/* ─── REFERÊNCIAS – Espaço simples + linha branca entre elas ──────────────── */
+
+.references-section {
+  margin-top: 2em;
+}
+
+.references-section h1,
+.references-section h2 {
   text-align: center;
+  font-size: 12pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 2em 0 1.5em;
+  text-indent: 0;
+}
+
+.reference-item {
+  font-size: 12pt;
+  line-height: 1;
+  text-align: left;
+  margin-bottom: 1.5em;
+  text-indent: -1.25cm;
+  margin-left: 1.25cm;
+  font-family: var(--font-body);
+}
+
+/* ─── RESUMO – Parágrafo único, fonte 12, espaço simples ──────────────────── */
+
+.abstract-section {
+  margin: 2em 0;
+}
+
+.abstract-content {
+  font-size: 12pt;
+  line-height: 1;
+  text-align: justify;
+  margin-bottom: 1em;
+  font-family: var(--font-body);
+}
+
+.keywords {
+  font-size: 12pt;
+  line-height: 1;
+  text-align: justify;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  font-family: var(--font-body);
+}
+
+.keywords-text {
+  font-size: 12pt;
+  line-height: 1;
+  text-align: justify;
+  font-weight: normal;
+  font-family: var(--font-body);
+}
+
+/* ─── TABELAS – Padrão IBGE ────────────────────────────────────────────────── */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+table thead {
+  border-top: 2px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+table tbody {
+  border-bottom: 2px solid #000;
+}
+
+table th,
+table td {
+  padding: 0.5em;
+  text-align: left;
+  font-size: 12pt;
+  line-height: 1.5;
+  border: none;
+  font-family: var(--font-body);
+}
+
+table caption {
+  font-weight: bold;
+  text-align: left;
+  font-size: 12pt;
+  margin-bottom: 0.5em;
+  caption-side: top;
+}
+
+/* ─── FIGURAS E GRÁFICOS ────────────────────────────────────────────────────── */
+
+.figure-caption {
+  font-size: 10pt;
+  line-height: 1;
+  text-align: center;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+
+.figure-source {
+  font-size: 10pt;
+  line-height: 1;
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 1em;
+}
+
+/* ─── PRINT ────────────────────────────────────────────────────────────────── */
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .a4-page {
+    box-shadow: none;
+    page-break-after: always;
+  }
+
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  blockquote,
+  table {
+    page-break-inside: avoid;
+  }
+}
+
+/* ─── SCROLLBAR ────────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e2330;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }

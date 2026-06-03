@@ -1,5 +1,5 @@
-// lib/abnt/styles.ts
-// Definições de estilos ABNT NBR 14724:2011
+// lib/abnt/styles.ts v0.1.1
+// Definições ABNT v0.1.1 — Manual de TCC ETEC 2022
 
 export const ABNT_PAGE = {
   width: "21cm",
@@ -11,7 +11,7 @@ export const ABNT_PAGE = {
 } as const;
 
 export const ABNT_FONT = {
-  family: "'Times New Roman', Times, serif",
+  family: "'Arial', 'Calibri', sans-serif",
   size: "12pt",
   lineHeight: "1.5",
 } as const;
@@ -23,6 +23,7 @@ export type StyleId =
   | "titulo-3"
   | "citacao-longa"
   | "referencia"
+  | "resumo"
   | "nota-rodape"
   | "legenda";
 
@@ -65,7 +66,7 @@ export const ABNT_STYLES: AbntStyle[] = [
   },
   {
     id: "citacao-longa",
-    label: "Citação Longa",
+    label: "Citação Longa (>3 linhas)",
     tag: "blockquote",
     description: "Fonte 10, espaço simples, recuo 4cm à esquerda",
     cssClass: "abnt-citacao",
@@ -74,98 +75,138 @@ export const ABNT_STYLES: AbntStyle[] = [
     id: "referencia",
     label: "Referência Bibliográfica",
     tag: "p",
-    description: "Fonte 12, espaço simples, sem recuo",
+    description: "Fonte 12, espaço simples, sem recuo, com linha branca entre",
     cssClass: "abnt-referencia",
   },
   {
-    id: "nota-rodape",
-    label: "Nota de Rodapé",
+    id: "resumo",
+    label: "Resumo / Abstract",
     tag: "p",
-    description: "Fonte 10, espaço simples",
-    cssClass: "abnt-nota",
-  },
-  {
-    id: "legenda",
-    label: "Legenda de Figura/Tabela",
-    tag: "p",
-    description: "Fonte 10, centralizado",
-    cssClass: "abnt-legenda",
+    description: "Fonte 12, espaço simples, parágrafo único + palavras-chave",
+    cssClass: "abnt-resumo",
   },
 ];
 
-// ─── VALIDAÇÕES ────────────────────────────────────────────────────────────────
+// ─── TIPOS ────────────────────────────────────────────────────────────────────
 
-export interface ValidationResult {
-  ok: boolean;
-  severity: "error" | "warning" | "info";
+export interface CoverData {
+  instituicao: string;
+  unidade: string;
+  curso: string;
+  autor: string;
+  titulo: string;
+  subtitulo: string;
+  cidade: string;
+  ano: string;
+}
+
+export interface BackCoverData {
+  autor: string;
+  titulo: string;
+  subtitulo: string;
+  notaExplicativa: string;
+  orientador: string;
+  cidade: string;
+  ano: string;
+}
+
+export interface ResumoData {
+  conteudo: string;
+  palavrasChave: string[];
+  idioma: "português" | "inglês" | "espanhol";
+}
+
+export interface ValidationIssue {
+  type: "error" | "warning" | "info";
   message: string;
 }
 
-export function validateDocument(editorEl: HTMLElement): ValidationResult[] {
-  const results: ValidationResult[] = [];
-  const text = editorEl.innerText || "";
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+export interface TocEntry {
+  id: string;
+  level: 1 | 2 | 3;
+  text: string;
+}
 
-  // Contagem de palavras
-  results.push({
-    ok: words > 0,
-    severity: words > 0 ? "info" : "error",
-    message: `Documento com ${words} palavra(s)`,
-  });
+// ─── VALIDAÇÕES ────────────────────────────────────────────────────────────────
 
-  // Resumo entre 150-500 palavras (se existir seção de resumo)
-  const h1s = editorEl.querySelectorAll("h1");
-  const resumoH = Array.from(h1s).find(h =>
-    h.innerText.toLowerCase().includes("resumo")
+export function validateDocument(html: string): ValidationIssue[] {
+  const results: ValidationIssue[] = [];
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  const text = tempDiv.innerText || "";
+
+  // 1. Verificar seções obrigatórias
+  const h1Elements = tempDiv.querySelectorAll("h1");
+  const h1Texts = Array.from(h1Elements).map(h => h.textContent?.toLowerCase() || "");
+
+  if (!h1Texts.some(t => t.includes("introdu"))) {
+    results.push({
+      type: "warning",
+      message: "Seção '1 INTRODUÇÃO' não encontrada (obrigatória)",
+    });
+  }
+
+  if (!h1Texts.some(t => t.includes("conclus") || t.includes("consideraç"))) {
+    results.push({
+      type: "warning",
+      message: "Seção 'CONCLUSÃO' ou 'CONSIDERAÇÕES FINAIS' não encontrada (obrigatória)",
+    });
+  }
+
+  if (!text.toUpperCase().includes("REFERÊNCIAS")) {
+    results.push({
+      type: "error",
+      message: "Seção 'REFERÊNCIAS' não encontrada (obrigatória)",
+    });
+  }
+
+  // 2. Validar resumo (se houver)
+  const resumoH = Array.from(h1Elements).find(h =>
+    h.textContent?.toLowerCase().includes("resumo")
   );
   if (resumoH) {
-    const nextSibling = resumoH.nextElementSibling;
-    if (nextSibling) {
-      const resumoWords = (nextSibling.textContent || "")
-        .trim()
-        .split(/\s+/).length;
-      if (resumoWords < 150) {
-        results.push({
-          ok: false,
-          severity: "warning",
-          message: `Resumo com ${resumoWords} palavras — ABNT recomenda 150 a 500`,
-        });
-      } else if (resumoWords > 500) {
-        results.push({
-          ok: false,
-          severity: "warning",
-          message: `Resumo com ${resumoWords} palavras — ABNT limita a 500`,
-        });
-      } else {
-        results.push({
-          ok: true,
-          severity: "info",
-          message: `Resumo com ${resumoWords} palavras ✓`,
-        });
-      }
-    }
-  }
+    const resumoSection = resumoH.nextElementSibling;
+    const resumoText = resumoSection?.textContent || "";
+    const resumoWords = countWords(resumoText);
 
-  // Verifica blockquotes com < 3 linhas (provável citação curta mal formatada)
-  const blockquotes = editorEl.querySelectorAll("blockquote");
-  blockquotes.forEach((bq) => {
-    const lines = (bq.textContent || "").split("\n").filter(l => l.trim()).length;
-    if (lines < 3) {
+    if (resumoWords > 0 && resumoWords < 150) {
       results.push({
-        ok: false,
-        severity: "warning",
-        message: `Citação com menos de 3 linhas — usar aspas no texto corrente (ABNT 10520)`,
+        type: "warning",
+        message: `Resumo com ${resumoWords} palavras — ABNT recomenda 150 a 500`,
+      });
+    } else if (resumoWords > 500) {
+      results.push({
+        type: "warning",
+        message: `Resumo com ${resumoWords} palavras — ABNT limita a 500`,
+      });
+    } else if (resumoWords >= 150 && resumoWords <= 500) {
+      results.push({
+        type: "info",
+        message: `Resumo com ${resumoWords} palavras ✓ (conforme ABNT)`,
       });
     }
-  });
-
-  // Verifica se tem pelo menos Introdução e Conclusão
-  const headingTexts = Array.from(h1s).map(h => h.innerText.toLowerCase());
-  if (!headingTexts.some(t => t.includes("introdu"))) {
-    results.push({ ok: false, severity: "warning", message: "Seção Introdução não encontrada" });
   }
-  if (!headingTexts.some(t => t.includes("conclus") || t.includes("consider"))) {
-    results.push({ ok: false, severity: "warning", message: "Seção Conclusão/Considerações não encontrada" });
+
+  // 3. Verificar citações longas (blockquote)
+  const blockquotes = tempDiv.querySelectorAll("blockquote");
+  let badQuotes = 0;
+  blockquotes.forEach(bq => {
+    const lines = (bq.textContent || "").split("\n").filter(l => l.trim()).length;
+    if (lines < 3) badQuotes++;
+  });
+  if (badQuotes > 0) {
+    results.push({
+      type: "warning",
+      message: `${badQuotes} citação(ões) com menos de 3 linhas — use aspas no texto corrente`,
+    });
+  }
+
+  // 4. Status geral
+  if (results.length === 0) {
+    results.push({
+      type: "info",
+      message: "Documento validado com sucesso ✓",
+    });
   }
 
   return results;
@@ -173,22 +214,110 @@ export function validateDocument(editorEl: HTMLElement): ValidationResult[] {
 
 // ─── GERADOR DE SUMÁRIO ────────────────────────────────────────────────────────
 
-export interface TocEntry {
-  level: 1 | 2 | 3;
-  text: string;
-  id: string;
-}
+export function generateTOC(html: string): TocEntry[] {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  const headings = tempDiv.querySelectorAll("h1, h2, h3");
 
-export function generateTOC(editorEl: HTMLElement): TocEntry[] {
-  return Array.from(editorEl.querySelectorAll("h1,h2,h3"))
-    .map((el, i) => {
-      const id = `heading-${i}`;
-      el.id = id;
+  return Array.from(headings)
+    .map((heading, index) => {
+      const tagName = heading.tagName.toLowerCase();
+      const level = parseInt(tagName[1]) as 1 | 2 | 3;
+      const text = heading.textContent?.trim() || "";
+      const id = heading.id || `heading-${index}`;
+
       return {
-        level: parseInt(el.tagName[1]) as 1 | 2 | 3,
-        text: (el as HTMLElement).innerText.trim(),
         id,
+        level,
+        text,
       };
     })
-    .filter(e => e.text.length > 0);
+    .filter(entry => entry.text.length > 0);
+}
+
+// ─── CONTAGEM DE PALAVRAS ──────────────────────────────────────────────────────
+
+export function countWords(text: string): number {
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter(word => word.length > 0).length;
+}
+
+// ─── FORMATAÇÃO DE REFERÊNCIAS (ABNT NBR 6023) ──────────────────────────────
+
+export interface Reference {
+  type:
+    | "book"
+    | "article"
+    | "chapter"
+    | "thesis"
+    | "law"
+    | "event"
+    | "website"
+    | "ebook";
+  authors: string[];
+  title: string;
+  subtitle?: string;
+  year: number;
+  publisher?: string;
+  city?: string;
+  edition?: string;
+  volume?: string;
+  number?: string;
+  pages?: string;
+  journal?: string;
+  url?: string;
+  doi?: string;
+  accessDate?: string;
+}
+
+export function formatReference(ref: Reference): string {
+  const authorsList = ref.authors.join("; ");
+
+  switch (ref.type) {
+    case "book":
+      return `${authorsList}. ${ref.title.toUpperCase()}${
+        ref.edition ? ". " + ref.edition + " ed." : ""
+      }. ${ref.city}: ${ref.publisher}, ${ref.year}.`;
+
+    case "article":
+      return `${authorsList}. ${ref.title}. ${ref.journal}, v.${ref.volume}${
+        ref.number ? ", n." + ref.number : ""
+      }, p.${ref.pages}, ${ref.year}.`;
+
+    case "chapter":
+      return `${authorsList}. ${ref.title}. In: ${ref.publisher} (org.). ${
+        ref.subtitle
+      }. ${ref.city}: ${ref.publisher}, ${ref.year}. cap. ${ref.number}, p.${
+        ref.pages
+      }.`;
+
+    case "law":
+      return `${ref.title}. ${ref.publisher}, ${ref.city}, ${ref.year}.`;
+
+    case "ebook":
+      return `${authorsList}. ${ref.title.toUpperCase()}. ${ref.city}: ${
+        ref.publisher
+      }, ${ref.year}. E-book.`;
+
+    case "event":
+      return `${authorsList}. ${ref.title}. In: ${ref.publisher}, ${ref.year}. Anais... p.${ref.pages}.`;
+
+    case "website":
+      return `${authorsList}. ${ref.title}. Disponível em: ${ref.url}. Acesso em: ${ref.accessDate}.`;
+
+    default:
+      return `${authorsList}. ${ref.title}. ${ref.year}.`;
+  }
+}
+
+// ─── UTILITÁRIOS ───────────────────────────────────────────────────────────────
+
+export function getStyleById(id: StyleId): AbntStyle | undefined {
+  return ABNT_STYLES.find(s => s.id === id);
+}
+
+export function getAllStyles(): AbntStyle[] {
+  return ABNT_STYLES;
 }
