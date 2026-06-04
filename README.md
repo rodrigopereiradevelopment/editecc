@@ -8,25 +8,32 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.1 — MVP)
+## ✨ Funcionalidades (v0.1.1)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
-- 🎨 **Estilos pré-definidos**: Título 1/2/3, Texto Corrente, Citação Longa, Referência
-- 📋 **Capa automática** gerada por formulário (instituição, autor, título, cidade, ano)
+- 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
+- 📋 **Capa automática** — gerada em tempo real conforme você preenche o formulário
+- 📃 **Folha de Rosto** — elemento pré-textual obrigatório com nota explicativa, orientador e curso
+- 📝 **Resumo + Abstract** — campos dedicados com contador de palavras (150–500 conforme NBR 14724)
 - 📑 **Sumário automático** a partir dos headings do documento
-- ✅ **Validador ABNT** (contagem de palavras no resumo, formatação de citações)
-- 💾 **Autosave** com IndexedDB (sem servidor, tudo no navegador)
-- 📤 **Exportar PDF** via impressão nativa (`Ctrl+P` → Salvar como PDF)
+- ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
+- 💾 **Autosave** no localStorage a cada 20 segundos
+- 📤 **Exportar PDF** via impressão nativa do navegador (`Ctrl+P` → Salvar como PDF)
+- 🖥️ **Pronto para Tauri** — estrutura preparada para build desktop nativo (Windows/Linux)
+
+---
 
 ## 🗺️ Roadmap
 
-| Versão | Funcionalidades |
-|--------|----------------|
-| **v0.1** | MVP: editor + capa + sumário + autosave + PDF |
-| **v0.2** | Folha de rosto, gerador de referências (Citation.js), lista de figuras automática |
-| **v0.3** | Validador ABNT completo, contador de palavras no resumo, ordem das referências |
-| **v0.4** | Tradução do resumo (LibreTranslate local ou manual), exportar `.editecc` para reabrir |
-| **v1.0** | UI polida, onboarding, suporte a múltiplos documentos |
+| Versão | Status | Funcionalidades |
+|--------|--------|----------------|
+| **v0.1** | ✅ Concluído | MVP: editor + capa + sumário + autosave + PDF |
+| **v0.1.1** | ✅ Concluído | Folha de Rosto, Resumo, Abstract — conformidade com Manual ETEC 2022 |
+| **v0.2** | 🔄 Próximo | Gerador de referências (Citation.js), Lista de Figuras/Tabelas automática |
+| **v0.3** | 📋 Planejado | Folha de Aprovação (banca examinadora), Dedicatória, Agradecimentos, Epígrafe |
+| **v0.4** | 📋 Planejado | Tradução do resumo (LibreTranslate self-hosted), exportar `.editecc` para reabrir |
+| **v0.5** | 📋 Planejado | Build Tauri — app desktop nativo para Windows e Linux |
+| **v1.0** | 🎯 Meta | UI polida, onboarding, suporte a múltiplos documentos, documentação completa |
 
 ---
 
@@ -35,32 +42,27 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 ### Pré-requisitos
 
 - Node.js 18+
-- npm ou yarn
+- npm
 
 ### Instalação
 
 ```bash
 git clone https://github.com/rodrigopereiradevelopment/editecc.git
 cd editecc
-npm install
+npm install --legacy-peer-deps
 npm run dev
 ```
 
 Acesse `http://localhost:3000` no navegador.
+
+> **Linux/Mac:** `npm run dev` normal.  
+> **Android (Termux):** `npm run dev -- --webpack` (Turbopack não suporta arm64).
 
 ### Build para produção
 
 ```bash
 npm run build
 npm start
-```
-
-### Deploy no GitHub Pages
-
-```bash
-npm run build
-# Configurar output: 'export' no next.config.js
-npx gh-pages -d out
 ```
 
 ---
@@ -70,51 +72,55 @@ npx gh-pages -d out
 ```
 editecc/
 ├── app/
-│   ├── layout.tsx          # Layout raiz + fontes
-│   ├── page.tsx            # Landing page
+│   ├── layout.tsx              # Layout raiz + metadados
+│   ├── globals.css             # Estilos ABNT globais (Arial 12pt, margens, citações)
+│   ├── page.tsx                # Landing page
 │   └── editor/
-│       └── page.tsx        # Página do editor
+│       └── page.tsx            # Página do editor (Tiptap + sidebar + canvas)
 ├── components/
-│   ├── Editor.tsx          # Motor Tiptap (editor rico)
-│   ├── Editor.module.css   # Estilos ABNT da folha A4
-│   ├── Toolbar.tsx         # Barra de ferramentas
-│   ├── Sidebar.tsx         # Painel lateral (capa, sumário, validador)
-│   └── CoverPage.tsx       # Componente da capa ABNT
+│   ├── Capa.tsx                # Folha da Capa ABNT
+│   ├── FolhaRosto.tsx          # Folha de Rosto ABNT
+│   ├── ResumoSection.tsx       # Campo de Resumo com contador de palavras
+│   └── AbstractSection.tsx     # Campo de Abstract com contador de palavras
 ├── lib/
 │   └── abnt/
-│       └── styles.ts       # Definições e validações ABNT
+│       └── styles.ts           # Estilos, validações e gerador de sumário ABNT
 ├── hooks/
-│   └── useAutosave.ts      # Autosave com IndexedDB (idb)
-└── public/
-    └── ...
+│   └── useAutosave.ts          # Autosave (localStorage e IndexedDB)
+└── src-tauri/                  # Backend Rust para build desktop (Tauri)
 ```
 
 ### Stack
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Framework | Next.js 14 (App Router) |
-| Editor | Tiptap v2 + ProseMirror |
-| Estilos | CSS Modules + Tailwind |
-| Persistência | IndexedDB via `idb` |
+| Framework | Next.js 16 (App Router) |
+| Editor | Tiptap v3 + ProseMirror |
+| Persistência | localStorage / IndexedDB via `idb` |
+| Desktop (futuro) | Tauri v2 (Rust) |
 | Referências (v0.2) | Citation.js |
-| Paginação (v0.3) | Paged.js |
 | Tradução (v0.4) | LibreTranslate (self-hosted) |
 
 ---
 
 ## 📐 Padrão ABNT Implementado
 
+Baseado no **Manual de TCC das ETECs (2022)** e na **ABNT NBR 14724:2011**.
+
 | Elemento | Configuração |
 |----------|-------------|
 | Margens | 3cm (sup/esq), 2cm (inf/dir) |
-| Fonte | Times New Roman 12pt |
+| Fonte | Arial 12pt (conforme Manual ETEC 2022) |
 | Espaçamento | 1,5 entre linhas |
-| Recuo | 1,25cm na primeira linha |
-| Título 1 | 12pt, negrito, maiúsculas, centralizado |
-| Título 2 | 12pt, negrito, à esquerda |
-| Título 3 | 12pt, negrito, itálico, à esquerda |
-| Citação longa | 10pt, espaço simples, recuo 4cm |
+| Recuo de parágrafo | 1,25cm na primeira linha |
+| Título 1 (seção primária) | 12pt, negrito, maiúsculas, centralizado |
+| Título 2 (seção secundária) | 12pt, negrito, à esquerda |
+| Título 3 (seção terciária) | 12pt, negrito, itálico, à esquerda |
+| Citação longa (>3 linhas) | 10pt, espaço simples, recuo 4cm |
+| Referências | 12pt, espaço simples, linha em branco entre entradas |
+| Resumo / Abstract | 10pt, espaço simples, parágrafo único sem recuo, 150–500 palavras |
+| Título/Subtítulo na Capa | Arial 14pt, maiúsculas, centralizado |
+| Numeração de página | A partir da Introdução, canto inferior direito *(v0.2)* |
 | Norma base | ABNT NBR 14724:2011 |
 
 ---
@@ -138,12 +144,3 @@ MIT — use, modifique e distribua livremente.
 ---
 
 *Feito com ☕ para os estudantes da ETEC e de todo o Brasil.*
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
