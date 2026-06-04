@@ -84,6 +84,10 @@ export function GeradorReferencias({ refs, setRefs, onInsertRef }: GeradorRefere
         year: d.issued?.["date-parts"]?.[0]?.[0] || new Date().getFullYear(),
         publisher: d.publisher || d["publisher-place"] || "",
         city: d["publisher-place"] || d.publisher || "",
+        volume: d.volume || "",
+        number: d.issue || "",
+        pages: d.page || "",
+        journal: d["container-title"] || d["collection-title"] || "",
         doi: d.DOI || "",
         url: d.URL || "",
       };

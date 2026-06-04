@@ -325,16 +325,18 @@ export function formatReference(ref: Reference): string {
       }. ${ref.city}: ${ref.publisher}, ${ref.year}.`;
 
     case "article":
-      return `${authorsList}. ${ref.title}. ${ref.journal}, v.${ref.volume}${
-        ref.number ? ", n." + ref.number : ""
-      }, p.${ref.pages}, ${ref.year}.`;
+      return `${authorsList}. ${ref.title}. ${ref.journal}${
+        ref.volume ? ", v." + ref.volume : ""
+      }${ref.number ? ", n." + ref.number : ""}${
+        ref.pages ? ", p." + ref.pages : ""
+      }, ${ref.year}.`;
 
     case "chapter":
       return `${authorsList}. ${ref.title}. In: ${ref.publisher} (org.). ${
         ref.subtitle
-      }. ${ref.city}: ${ref.publisher}, ${ref.year}. cap. ${ref.number}, p.${
-        ref.pages
-      }.`;
+      }. ${ref.city}: ${ref.publisher}, ${ref.year}${
+        ref.number ? ". cap. " + ref.number : ""
+      }${ref.pages ? ", p." + ref.pages : ""}.`;
 
     case "law":
       return `${ref.title}. ${ref.publisher}, ${ref.city}, ${ref.year}.`;
@@ -345,7 +347,9 @@ export function formatReference(ref: Reference): string {
       }, ${ref.year}. E-book.`;
 
     case "event":
-      return `${authorsList}. ${ref.title}. In: ${ref.publisher}, ${ref.year}. Anais... p.${ref.pages}.`;
+      return `${authorsList}. ${ref.title}. In: ${ref.publisher}, ${ref.year}. Anais...${
+        ref.pages ? " p." + ref.pages : ""
+      }.`;
 
     case "website":
       return `${authorsList}. ${ref.title}. Disponível em: ${ref.url}. Acesso em: ${ref.accessDate}.`;
