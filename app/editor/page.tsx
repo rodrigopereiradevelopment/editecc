@@ -12,6 +12,7 @@ import CharacterCount from "@tiptap/extension-character-count";
 import { FolhaRosto } from "@/components/FolhaRosto";
 import { ResumoSection } from "@/components/ResumoSection";
 import { AbstractSection } from "@/components/AbstractSection";
+import { Capa } from "@/components/Capa";
 
 // Importar hooks e libs
 import { useAutosave } from "@/hooks/useAutosave";
@@ -515,8 +516,9 @@ export default function EditorPage() {
             display: "flex", flexDirection: "column", alignItems: "center",
             padding: "28px 20px", gap: "20px",
           }}>
+            <Capa {...coverData} />
             {showFolhaRosto && <FolhaRosto {...coverData} />}
-            <EditorContent editor={editor} />
+  <EditorContent editor={editor} />
           </div>
 
           {/* Status bar */}

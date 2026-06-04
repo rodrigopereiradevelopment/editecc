@@ -2,14 +2,14 @@
 import { useEffect, useCallback, useRef } from "react";
 import { openDB } from "idb";
 
-const DB_NAME = "editecc";
+const DB_NAME    = "editecc";
 const DB_VERSION = 1;
-const STORE = "documents";
+const STORE      = "documents";
 
 export interface DocumentData {
-  id: string;
-  html: string;
-  cover: Record<string, string>;
+  id:        string;
+  html:      string;
+  cover:     Record<string, string>;
   updatedAt: string;
 }
 
@@ -44,59 +44,82 @@ export async function deleteDocument(id: string) {
 }
 
 // ─── HOOK ─────────────────────────────────────────────────────────────────────
+// Suporta dois formatos de chamada:
+// 1. Formato legado:  { documentId, getHtml, getCover, intervalMs?, onSave? }
+// 2. Formato novo:    { key, data, enabled?, interval?, onSave? }
 
-interface UseAutosaveOptions {
+interface UseAutosaveLegacy {
   documentId: string;
-  getHtml: () => string;
-  getCover: () => Record<string, string>;
+  getHtml:    () => string;
+  getCover:   () => Record<string, string>;
   intervalMs?: number;
-  onSave?: () => void;
+  onSave?:    () => void;
 }
 
-export function useAutosave({
-  documentId,
-  getHtml,
-  getCover,
-  intervalMs = 15000,
-  onSave,
-}: UseAutosaveOptions) {
+interface UseAutosaveNew {
+  key:      string;
+  data:     Record<string, unknown>;
+  enabled?: boolean;
+  interval?: number;
+  onSave?:  () => void;
+  // campos legado opcionais (ignorados nesse modo)
+  documentId?: never;
+  getHtml?:    never;
+  getCover?:   never;
+}
+
+type UseAutosaveOptions = UseAutosaveLegacy | UseAutosaveNew;
+
+function isNewFormat(opts: UseAutosaveOptions): opts is UseAutosaveNew {
+  return "key" in opts && opts.key !== undefined;
+}
+
+export function useAutosave(opts: UseAutosaveOptions) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const intervalMs = isNewFormat(opts)
+    ? (opts.interval ?? 20000)
+    : (opts.intervalMs ?? 15000);
+
+  const enabled = isNewFormat(opts) ? (opts.enabled ?? true) : true;
+
   const save = useCallback(async () => {
+    if (!enabled) return;
     try {
-      await saveDocument({
-        id: documentId,
-        html: getHtml(),
-        cover: getCover(),
-        updatedAt: new Date().toISOString(),
-      });
-      onSave?.();
+      if (isNewFormat(opts)) {
+        // Modo novo: salva no localStorage (compatível com o que o page.tsx carrega)
+        localStorage.setItem(opts.key, JSON.stringify(opts.data));
+      } else {
+        // Modo legado: salva no IndexedDB
+        await saveDocument({
+          id:        opts.documentId,
+          html:      opts.getHtml(),
+          cover:     opts.getCover(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+      opts.onSave?.();
     } catch (err) {
       console.error("[EditeCC] Autosave falhou:", err);
     }
-  }, [documentId, getHtml, getCover, onSave]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, intervalMs]);
 
-  // Autosave por intervalo
   useEffect(() => {
+    if (!enabled) return;
     timerRef.current = setInterval(save, intervalMs);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [save, intervalMs]);
+  }, [save, intervalMs, enabled]);
 
   // Salva ao fechar a aba
   useEffect(() => {
-    const handler = () => {
-      saveDocument({
-        id: documentId,
-        html: getHtml(),
-        cover: getCover(),
-        updatedAt: new Date().toISOString(),
-      });
-    };
+    if (!enabled) return;
+    const handler = () => { save(); };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [documentId, getHtml, getCover]);
+  }, [save, enabled]);
 
   return { save };
 }
