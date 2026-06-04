@@ -8,7 +8,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.1.1)
+## ✨ Funcionalidades (v0.2)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
@@ -16,6 +16,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📃 **Folha de Rosto** — elemento pré-textual obrigatório com nota explicativa, orientador e curso
 - 📝 **Resumo + Abstract** — campos dedicados com contador de palavras (150–500 conforme NBR 14724)
 - 📑 **Sumário automático** a partir dos headings do documento
+- 📚 **Gerador de referências com Citation.js** — importe por DOI, ISBN ou BibTeX; formatação ABNT NBR 6023
+- 🖼️ **Lista de Figuras e Tabelas automática** — extrai do editor e gera as listas no canvas
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 💾 **Autosave** no localStorage a cada 20 segundos
 - 📤 **Exportar PDF** via impressão nativa do navegador (`Ctrl+P` → Salvar como PDF)
@@ -29,7 +31,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 |--------|--------|----------------|
 | **v0.1** | ✅ Concluído | MVP: editor + capa + sumário + autosave + PDF |
 | **v0.1.1** | ✅ Concluído | Folha de Rosto, Resumo, Abstract — conformidade com Manual ETEC 2022 |
-| **v0.2** | 🔄 Próximo | Gerador de referências (Citation.js), Lista de Figuras/Tabelas automática |
+| **v0.2** | ✅ Concluído | Gerador de referências (Citation.js), Lista de Figuras/Tabelas automática |
 | **v0.3** | 📋 Planejado | Folha de Aprovação (banca examinadora), Dedicatória, Agradecimentos, Epígrafe |
 | **v0.4** | 📋 Planejado | Tradução do resumo (LibreTranslate self-hosted), exportar `.editecc` para reabrir |
 | **v0.5** | 📋 Planejado | Build Tauri — app desktop nativo para Windows e Linux |
@@ -81,7 +83,9 @@ editecc/
 │   ├── Capa.tsx                # Folha da Capa ABNT
 │   ├── FolhaRosto.tsx          # Folha de Rosto ABNT
 │   ├── ResumoSection.tsx       # Campo de Resumo com contador de palavras
-│   └── AbstractSection.tsx     # Campo de Abstract com contador de palavras
+│   ├── AbstractSection.tsx     # Campo de Abstract com contador de palavras
+│   ├── GeradorReferencias.tsx  # Gerador de referências com Citation.js (v0.2)
+│   └── ListaFigurasTabelas.tsx # Lista automática de figuras e tabelas (v0.2)
 ├── lib/
 │   └── abnt/
 │       └── styles.ts           # Estilos, validações e gerador de sumário ABNT
@@ -98,7 +102,7 @@ editecc/
 | Editor | Tiptap v3 + ProseMirror |
 | Persistência | localStorage / IndexedDB via `idb` |
 | Desktop (futuro) | Tauri v2 (Rust) |
-| Referências (v0.2) | Citation.js |
+| Referências | Citation.js (DOI, ISBN, BibTeX → ABNT NBR 6023) |
 | Tradução (v0.4) | LibreTranslate (self-hosted) |
 
 ---

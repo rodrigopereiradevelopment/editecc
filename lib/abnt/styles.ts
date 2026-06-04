@@ -244,6 +244,49 @@ export function countWords(text: string): number {
     .filter(word => word.length > 0).length;
 }
 
+// ─── EXTRAÇÃO DE FIGURAS E TABELAS (v0.2) ──────────────────────────────────────
+
+export interface FigureEntry {
+  id: string;
+  caption: string;
+  index: number;
+}
+
+export interface TableEntry {
+  id: string;
+  caption: string;
+  index: number;
+}
+
+export function extractFigures(html: string): FigureEntry[] {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  const figures = tempDiv.querySelectorAll("figure, img");
+  return Array.from(figures)
+    .map((el, i) => {
+      const figcaption = el.querySelector("figcaption");
+      const alt = (el as HTMLImageElement).alt || "";
+      const title = el.getAttribute("title") || "";
+      const caption = figcaption?.textContent || alt || title || `Figura ${i + 1}`;
+      const id = el.id || `figure-${i}`;
+      return { id, caption, index: i + 1 };
+    })
+    .filter((f, i, arr) => arr.findIndex(x => x.id === f.id) === i);
+}
+
+export function extractTables(html: string): TableEntry[] {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  const tables = tempDiv.querySelectorAll("table");
+  return Array.from(tables)
+    .map((el, i) => {
+      const caption = el.getAttribute("title") || `Tabela ${i + 1}`;
+      const id = el.id || `table-${i}`;
+      return { id, caption, index: i + 1 };
+    })
+    .filter((t, i, arr) => arr.findIndex(x => x.id === t.id) === i);
+}
+
 // ─── FORMATAÇÃO DE REFERÊNCIAS (ABNT NBR 6023) ──────────────────────────────
 
 export interface Reference {

@@ -13,10 +13,13 @@ import { FolhaRosto } from "@/components/FolhaRosto";
 import { ResumoSection } from "@/components/ResumoSection";
 import { AbstractSection } from "@/components/AbstractSection";
 import { Capa } from "@/components/Capa";
+import { GeradorReferencias } from "@/components/GeradorReferencias";
+import { ListaFigurasTabelas } from "@/components/ListaFigurasTabelas";
+import { extractFigures, extractTables } from "@/lib/abnt/styles";
 
 // Importar hooks e libs
 import { useAutosave } from "@/hooks/useAutosave";
-import { validateDocument, generateTOC, countWords } from "@/lib/abnt/styles";
+import { validateDocument, generateTOC, countWords, formatReference, Reference } from "@/lib/abnt/styles";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -72,6 +75,8 @@ export default function EditorPage() {
   const [charCount, setCharCount] = useState(0);
   const [savedMsg, setSavedMsg] = useState(false);
   const [showFolhaRosto, setShowFolhaRosto] = useState(false);
+  const [refs, setRefs] = useState<Reference[]>([]);
+  const [showFigList, setShowFigList] = useState(false);
 
   // Editor (Tiptap)
   const editor = useEditor({
@@ -124,7 +129,7 @@ export default function EditorPage() {
 
   // Autosave
   useAutosave({
-    key: "editecc-v0.1.1",
+    key: "editecc-v0.2",
     data: {
       cover: coverData,
       resumo,
@@ -132,6 +137,7 @@ export default function EditorPage() {
       abstract,
       keywords,
       content: editor?.getHTML() || "",
+      refs,
     },
     enabled: true,
     interval: 20000,
@@ -143,7 +149,7 @@ export default function EditorPage() {
 
   // Carregar dados salvos
   useEffect(() => {
-    const saved = localStorage.getItem("editecc-v0.1.1");
+    const saved = localStorage.getItem("editecc-v0.2") || localStorage.getItem("editecc-v0.1.1");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -159,6 +165,11 @@ export default function EditorPage() {
         console.error("Erro ao carregar dados salvos", e);
       }
     }
+    // Carregar referências
+    const savedRefs = localStorage.getItem("editecc-refs");
+    if (savedRefs) {
+      try { setRefs(JSON.parse(savedRefs)); } catch {}
+    }
   }, [editor]);
 
   // Navegação no sumário
@@ -167,6 +178,12 @@ export default function EditorPage() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  // Inserir referência no editor
+  const handleInsertRef = (abnt: string) => {
+    if (!editor) return;
+    editor.chain().focus().insertContent(`<p class="abnt-referencia">${abnt}</p><p></p>`).run();
   };
 
   // Exportar PDF
@@ -220,6 +237,7 @@ export default function EditorPage() {
         .editor-area h3 { font-size: 12pt; font-weight: 700; font-style: italic; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
         .editor-area p { font-size: 12pt; line-height: 1.5; text-align: justify; text-indent: 1.25cm; margin-bottom: 0; }
         .editor-area blockquote { font-size: 10pt; line-height: 1.0; margin-left: 4cm; text-align: justify; margin-bottom: 1em; border: none; padding: 0; }
+        .abnt-referencia { font-size: 12pt; line-height: 1.0; text-align: justify; margin-bottom: 6pt; }
         .editor-area ul, .editor-area ol { padding-left: 1.5cm; line-height: 1.5; }
         
         .no-print { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -238,17 +256,19 @@ export default function EditorPage() {
             <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#f1f5f9", letterSpacing: "-0.3px" }}>
               Edite<span style={{ color: "#3b82f6" }}>CC</span>
             </h2>
-            <p style={{ fontSize: "9px", color: "#1e2d3d", marginTop: "2px" }}>ABNT NBR 14724 · v0.1.1</p>
+            <p style={{ fontSize: "9px", color: "#1e2d3d", marginTop: "2px" }}>ABNT NBR 14724 · v0.2</p>
           </div>
 
           {/* Tabs */}
           <div style={{ display: "flex", borderBottom: "1px solid #1e2330", gap: "1px" }}>
-            {[
-              ["capa", "📄 Capa"],
-              ["editor", "✍️ Editor"],
-              ["toc", "📑 Sumário"],
-              ["validate", "✓ Validar"],
-            ].map(([id, label]) => (
+              {[
+                ["capa", "📄 Capa"],
+                ["editor", "✍️ Editor"],
+                ["refs", "📚 Ref."],
+                ["figuras", "🖼️ Fig."],
+                ["toc", "📑 Sumário"],
+                ["validate", "✓ Validar"],
+              ].map(([id, label]) => (
               <button
                 key={id}
                 onClick={() => setActiveTab(id as any)}
@@ -379,6 +399,16 @@ export default function EditorPage() {
                 >
                   {showFolhaRosto ? "Esconder Folha de Rosto" : "Mostrar Folha de Rosto"}
                 </button>
+                <button
+                  onClick={() => setShowFigList(!showFigList)}
+                  style={{
+                    marginTop: "6px", padding: "8px 12px",
+                    background: "#2563eb", color: "white", border: "none",
+                    borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "500",
+                  }}
+                >
+                  {showFigList ? "Esconder Lista de Fig./Tab." : "Mostrar Lista de Fig./Tab."}
+                </button>
               </div>
             )}
 
@@ -428,6 +458,14 @@ export default function EditorPage() {
                   </ul>
                 )}
               </div>
+            )}
+
+            {activeTab === "refs" && (
+              <GeradorReferencias refs={refs} setRefs={setRefs} onInsertRef={handleInsertRef} />
+            )}
+
+            {activeTab === "figuras" && (
+              <ListaFigurasTabelas editorHtml={editor?.getHTML() || ""} />
             )}
 
             {activeTab === "validate" && (
@@ -519,6 +557,54 @@ export default function EditorPage() {
             <Capa {...coverData} />
             {showFolhaRosto && <FolhaRosto {...coverData} />}
   <EditorContent editor={editor} />
+            {/* Lista de Figuras e Tabelas automática (v0.2) */}
+            {showFigList && (() => {
+              const html = editor?.getHTML() || "";
+              const figs = extractFigures(html);
+              const tbls = extractTables(html);
+              if (!figs.length && !tbls.length) return null;
+              return (
+                <div className="a4-page" style={{ padding: "3cm 2cm 2cm 3cm", marginTop: "20px" }}>
+                  {figs.length > 0 && (
+                    <>
+                      <h1 style={{ fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", textAlign: "center", marginBottom: "1.5em" }}>
+                        LISTA DE FIGURAS
+                      </h1>
+                      {figs.map((f, i) => (
+                        <p key={f.id} style={{ fontSize: "12pt", lineHeight: "1.5", marginBottom: "4pt" }}>
+                          FIGURA {f.index} – {f.caption}
+                        </p>
+                      ))}
+                    </>
+                  )}
+                  {tbls.length > 0 && (
+                    <>
+                      <h1 style={{ fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", textAlign: "center", margin: "2em 0 1em" }}>
+                        LISTA DE TABELAS
+                      </h1>
+                      {tbls.map((t, i) => (
+                        <p key={t.id} style={{ fontSize: "12pt", lineHeight: "1.5", marginBottom: "4pt" }}>
+                          TABELA {t.index} – {t.caption}
+                        </p>
+                      ))}
+                    </>
+                  )}
+                </div>
+              );
+            })()}
+            {/* Referências (v0.2) */}
+            {refs.length > 0 && (
+              <div className="a4-page" style={{ padding: "3cm 2cm 2cm 3cm", marginTop: "20px" }}>
+                <h1 style={{ fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", textAlign: "center", marginBottom: "1.5em" }}>
+                  REFERÊNCIAS
+                </h1>
+                {refs.map((r, i) => (
+                  <p key={i} style={{ fontSize: "12pt", lineHeight: "1.0", marginBottom: "6pt", textAlign: "justify" }}>
+                    {formatReference(r)}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Status bar */}
@@ -528,7 +614,7 @@ export default function EditorPage() {
           }}>
             <span style={{ color: "#1e2d3d" }}>Palavras: <span style={{ color: "#334155" }}>{wordCount}</span></span>
             <span style={{ color: "#1e2d3d" }}>Caracteres: <span style={{ color: "#334155" }}>{charCount}</span></span>
-            <span style={{ color: "#1e2d3d", marginLeft: "auto" }}>🖥️ ABNT NBR 14724:2011 · v0.1.1</span>
+            <span style={{ color: "#1e2d3d", marginLeft: "auto" }}>🖥️ ABNT NBR 14724:2011 · v0.2</span>
           </div>
         </div>
       </div>
