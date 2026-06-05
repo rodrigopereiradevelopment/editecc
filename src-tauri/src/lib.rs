@@ -48,7 +48,10 @@ async fn save_document_as(
     match path {
         Some(p) => {
             let json = serde_json::to_string_pretty(&data).unwrap_or_default();
-            let path_buf: std::path::PathBuf = p.into();
+            let path_buf = match p {
+                tauri_plugin_dialog::FilePath::Path(pb) => pb,
+                tauri_plugin_dialog::FilePath::Url(url) => std::path::PathBuf::from(url.path()),
+            };
             match fs::write(&path_buf, json) {
                 Ok(_) => SaveResult {
                     success: true,
@@ -102,7 +105,10 @@ async fn open_document(app: tauri::AppHandle) -> Option<DocumentData> {
 
     match path {
         Some(p) => {
-            let path_buf: std::path::PathBuf = p.into();
+            let path_buf = match p {
+                tauri_plugin_dialog::FilePath::Path(pb) => pb,
+                tauri_plugin_dialog::FilePath::Url(url) => std::path::PathBuf::from(url.path()),
+            };
             match fs::read_to_string(&path_buf) {
                 Ok(content) => {
                     serde_json::from_str(&content).ok()
@@ -139,7 +145,10 @@ async fn export_html(
 
     match path {
         Some(p) => {
-            let path_buf: std::path::PathBuf = p.into();
+            let path_buf = match p {
+                tauri_plugin_dialog::FilePath::Path(pb) => pb,
+                tauri_plugin_dialog::FilePath::Url(url) => std::path::PathBuf::from(url.path()),
+            };
             match fs::write(&path_buf, full_html) {
                 Ok(_) => SaveResult {
                     success: true,
