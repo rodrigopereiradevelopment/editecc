@@ -13,6 +13,6 @@
     "fs:allow-write-text-file",
     "fs:allow-exists",
     "fs:allow-read-dir",
-    "fs:scope-app-data"
+    "fs:scope-appdata"
   ]
 }
