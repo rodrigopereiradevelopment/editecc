@@ -425,6 +425,7 @@ export default function EditorPage() {
                   onChange={setAbstract}
                   keywords={keywords}
                   onKeywordsChange={setKeywords}
+                  resumo={resumo}
                 />
               </>
             )}
