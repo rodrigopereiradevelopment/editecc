@@ -13,12 +13,19 @@ import { FolhaRosto } from "@/components/FolhaRosto";
 import { ResumoSection } from "@/components/ResumoSection";
 import { AbstractSection } from "@/components/AbstractSection";
 import { Capa } from "@/components/Capa";
+import { FolhaAprovacao } from "@/components/FolhaAprovacao";
+import { Dedicatoria } from "@/components/Dedicatoria";
+import { Agradecimentos } from "@/components/Agradecimentos";
+import { Epigrafe } from "@/components/Epigrafe";
+import { ResumoPage } from "@/components/ResumoPage";
+import { AbstractPage } from "@/components/AbstractPage";
 import { GeradorReferencias } from "@/components/GeradorReferencias";
 import { ListaFigurasTabelas } from "@/components/ListaFigurasTabelas";
 import { extractFigures, extractTables } from "@/lib/abnt/styles";
 
 // Importar hooks e libs
 import { useAutosave } from "@/hooks/useAutosave";
+import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, formatReference, Reference } from "@/lib/abnt/styles";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
@@ -53,7 +60,7 @@ const CheckIcon    = () => <svg width="11" height="11" viewBox="0 0 24 24" fill=
 
 export default function EditorPage() {
   // Estado geral
-  const [activeTab, setActiveTab] = useState<"capa" | "editor" | "toc" | "validate">("capa");
+  const [activeTab, setActiveTab] = useState<"capa" | "editor" | "toc" | "validate" | "refs" | "figuras">("capa");
   const [coverData, setCoverData] = useState<CoverData>({
     autor: "",
     titulo: "",
@@ -69,14 +76,26 @@ export default function EditorPage() {
   const [palavrasChave, setPalavrasChave] = useState<string[]>([]);
   const [abstract, setAbstract] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
+  const [abstractLang, setAbstractLang] = useState<TargetLang>("en");
   const [validationIssues, setValidationIssues] = useState<ValidationIssue[]>([]);
   const [toc, setToc] = useState<{ id: string; level: number; text: string }[]>([]);
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [savedMsg, setSavedMsg] = useState(false);
   const [showFolhaRosto, setShowFolhaRosto] = useState(false);
+  const [showAprovacao, setShowAprovacao] = useState(false);
+  const [showDedicatoria, setShowDedicatoria] = useState(false);
+  const [showAgradecimentos, setShowAgradecimentos] = useState(false);
+  const [showEpigrafe, setShowEpigrafe] = useState(false);
+  const [showResumoPage, setShowResumoPage] = useState(false);
+  const [showAbstractPage, setShowAbstractPage] = useState(false);
   const [refs, setRefs] = useState<Reference[]>([]);
   const [showFigList, setShowFigList] = useState(false);
+  const [dedicatoriaTexto, setDedicatoriaTexto] = useState("");
+  const [agradecimentosTexto, setAgradecimentosTexto] = useState("");
+  const [epigrafeTexto, setEpigrafeTexto] = useState("");
+  const [epigrafeAutor, setEpigrafeAutor] = useState("");
+  const [aprovacaoData, setAprovacaoData] = useState("");
 
   // Editor (Tiptap)
   const editor = useEditor({
@@ -138,6 +157,12 @@ export default function EditorPage() {
       keywords,
       content: editor?.getHTML() || "",
       refs,
+      abstractLang,
+      dedicatoriaTexto,
+      agradecimentosTexto,
+      epigrafeTexto,
+      epigrafeAutor,
+      aprovacaoData,
     },
     enabled: true,
     interval: 20000,
@@ -158,6 +183,12 @@ export default function EditorPage() {
         if (parsed.palavrasChave) setPalavrasChave(parsed.palavrasChave);
         if (parsed.abstract) setAbstract(parsed.abstract);
         if (parsed.keywords) setKeywords(parsed.keywords);
+        if (parsed.abstractLang) setAbstractLang(parsed.abstractLang);
+        if (parsed.dedicatoriaTexto) setDedicatoriaTexto(parsed.dedicatoriaTexto);
+        if (parsed.agradecimentosTexto) setAgradecimentosTexto(parsed.agradecimentosTexto);
+        if (parsed.epigrafeTexto) setEpigrafeTexto(parsed.epigrafeTexto);
+        if (parsed.epigrafeAutor) setEpigrafeAutor(parsed.epigrafeAutor);
+        if (parsed.aprovacaoData) setAprovacaoData(parsed.aprovacaoData);
         if (parsed.content && editor) {
           editor.commands.setContent(parsed.content);
         }
@@ -192,9 +223,14 @@ export default function EditorPage() {
   };
 
   // Comandos de formatação
-  const applyFormat = (command: string) => {
+  const applyFormat = (command: string, attrs?: Record<string, unknown>) => {
     if (!editor) return;
-    editor.chain().focus()[command]?.().run();
+    const chain = editor.chain().focus() as any;
+    if (attrs) {
+      chain[command](attrs)?.run();
+    } else {
+      chain[command]()?.run();
+    }
   };
 
   if (!editor) {
@@ -229,19 +265,36 @@ export default function EditorPage() {
           line-height: 1.5;
           color: #111;
           flex-shrink: 0;
+          position: relative;
+        }
+        .a4-page::after {
+          content: counter(page);
+          counter-increment: page;
+          position: absolute;
+          bottom: 1.5cm;
+          right: 2cm;
+          font-family: 'Arial', 'Calibri', sans-serif;
+          font-size: 12pt;
+          color: #111;
         }
         
         .editor-area { outline: none; }
         .editor-area h1 { font-size: 12pt; font-weight: 700; text-transform: uppercase; text-align: center; line-height: 1.5; margin: 2em 0 1em; }
         .editor-area h2 { font-size: 12pt; font-weight: 700; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
         .editor-area h3 { font-size: 12pt; font-weight: 700; font-style: italic; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
-        .editor-area p { font-size: 12pt; line-height: 1.5; text-align: justify; text-indent: 1.25cm; margin-bottom: 0; }
+        .editor-area p { font-size: 12pt; line-height: 1.5; text-align: justify; text-indent: 2.5cm; margin-bottom: 0; }
         .editor-area blockquote { font-size: 10pt; line-height: 1.0; margin-left: 4cm; text-align: justify; margin-bottom: 1em; border: none; padding: 0; }
         .abnt-referencia { font-size: 12pt; line-height: 1.0; text-align: justify; margin-bottom: 6pt; }
         .editor-area ul, .editor-area ol { padding-left: 1.5cm; line-height: 1.5; }
         
         .no-print { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-        @media print { .no-print { display: none !important; } .a4-page { box-shadow: none !important; } }
+        @media print {
+          .no-print { display: none !important; }
+          .a4-page { box-shadow: none !important; page-break-after: always; }
+          .a4-page::after { content: "" !important; }
+          @page { margin: 0; }
+          @page :first { margin: 0; }
+        }
       `}</style>
 
       <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
@@ -389,26 +442,32 @@ export default function EditorPage() {
                     }}
                   />
                 </label>
-                <button
-                  onClick={() => setShowFolhaRosto(!showFolhaRosto)}
-                  style={{
-                    marginTop: "10px", padding: "8px 12px",
-                    background: "#2563eb", color: "white", border: "none",
-                    borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "500",
-                  }}
-                >
-                  {showFolhaRosto ? "Esconder Folha de Rosto" : "Mostrar Folha de Rosto"}
-                </button>
-                <button
-                  onClick={() => setShowFigList(!showFigList)}
-                  style={{
-                    marginTop: "6px", padding: "8px 12px",
-                    background: "#2563eb", color: "white", border: "none",
-                    borderRadius: "6px", cursor: "pointer", fontSize: "12px", fontWeight: "500",
-                  }}
-                >
-                  {showFigList ? "Esconder Lista de Fig./Tab." : "Mostrar Lista de Fig./Tab."}
-                </button>
+                <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                  <button onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showFolhaRosto ? "✓ Folha de Rosto" : "Folha de Rosto"}
+                  </button>
+                  <button onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showAprovacao ? "✓ Folha de Aprovação" : "Folha de Aprovação"}
+                  </button>
+                  <button onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showDedicatoria ? "✓ Dedicatória" : "Dedicatória"}
+                  </button>
+                  <button onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showAgradecimentos ? "✓ Agradecimentos" : "Agradecimentos"}
+                  </button>
+                  <button onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showEpigrafe ? "✓ Epígrafe" : "Epígrafe"}
+                  </button>
+                  <button onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showResumoPage ? "✓ Página Resumo" : "Página Resumo"}
+                  </button>
+                  <button onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showAbstractPage ? "✓ Página Abstract" : "Página Abstract"}
+                  </button>
+                  <button onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showFigList ? "✓ Lista Fig./Tab." : "Lista Fig./Tab."}
+                  </button>
+                </div>
               </div>
             )}
 
@@ -425,8 +484,91 @@ export default function EditorPage() {
                   onChange={setAbstract}
                   keywords={keywords}
                   onKeywordsChange={setKeywords}
+                  language={abstractLang}
+                  onLanguageChange={setAbstractLang}
                   resumo={resumo}
                 />
+                <div style={{ borderTop: "1px solid #1e2330", margin: "20px 0", paddingTop: "16px" }}>
+                  <p style={{ color: "#334155", fontSize: "10px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px" }}>
+                    Elementos Opcionais
+                  </p>
+
+                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                    Dedicatória
+                    <textarea
+                      value={dedicatoriaTexto}
+                      onChange={e => setDedicatoriaTexto(e.target.value)}
+                      rows={3}
+                      placeholder="Dedico este trabalho a..."
+                      style={{
+                        width: "100%", marginTop: "3px", padding: "6px 10px",
+                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                        resize: "vertical", fontFamily: "'DM Sans', sans-serif",
+                      }}
+                    />
+                  </label>
+
+                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                    Agradecimentos
+                    <textarea
+                      value={agradecimentosTexto}
+                      onChange={e => setAgradecimentosTexto(e.target.value)}
+                      rows={4}
+                      placeholder="Agradeço a..."
+                      style={{
+                        width: "100%", marginTop: "3px", padding: "6px 10px",
+                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                        resize: "vertical", fontFamily: "'DM Sans', sans-serif",
+                      }}
+                    />
+                  </label>
+
+                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                    Epígrafe — Texto
+                    <textarea
+                      value={epigrafeTexto}
+                      onChange={e => setEpigrafeTexto(e.target.value)}
+                      rows={2}
+                      placeholder='"A imaginação é mais importante que o conhecimento."'
+                      style={{
+                        width: "100%", marginTop: "3px", padding: "6px 10px",
+                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                        resize: "vertical", fontFamily: "'DM Sans', sans-serif",
+                      }}
+                    />
+                  </label>
+
+                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                    Epígrafe — Autor
+                    <input
+                      value={epigrafeAutor}
+                      onChange={e => setEpigrafeAutor(e.target.value)}
+                      placeholder="Albert Einstein"
+                      style={{
+                        width: "100%", marginTop: "3px", padding: "6px 10px",
+                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                      }}
+                    />
+                  </label>
+
+                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                    Data da Aprovação
+                    <input
+                      type="date"
+                      value={aprovacaoData}
+                      onChange={e => setAprovacaoData(e.target.value)}
+                      style={{
+                        width: "100%", marginTop: "3px", padding: "6px 10px",
+                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                      }}
+                    />
+                  </label>
+                </div>
               </>
             )}
 
@@ -554,10 +696,26 @@ export default function EditorPage() {
             flex: 1, overflow: "auto", background: "#0f1117",
             display: "flex", flexDirection: "column", alignItems: "center",
             padding: "28px 20px", gap: "20px",
+            counterReset: "page",
           }}>
             <Capa {...coverData} />
             {showFolhaRosto && <FolhaRosto {...coverData} />}
-  <EditorContent editor={editor} />
+            {showAprovacao && (
+              <FolhaAprovacao
+                autor={coverData.autor}
+                titulo={coverData.titulo}
+                subtitulo={coverData.subtitulo}
+                curso={coverData.curso}
+                orientador={coverData.orientador}
+                data={aprovacaoData}
+              />
+            )}
+            {showDedicatoria && <Dedicatoria value={dedicatoriaTexto} />}
+            {showAgradecimentos && <Agradecimentos value={agradecimentosTexto} />}
+            {showEpigrafe && <Epigrafe texto={epigrafeTexto} autor={epigrafeAutor} />}
+            {showResumoPage && <ResumoPage value={resumo} palavrasChave={palavrasChave} />}
+            {showAbstractPage && <AbstractPage value={abstract} keywords={keywords} language={abstractLang} />}
+            <EditorContent editor={editor} />
             {/* Lista de Figuras e Tabelas automática (v0.2) */}
             {showFigList && (() => {
               const html = editor?.getHTML() || "";

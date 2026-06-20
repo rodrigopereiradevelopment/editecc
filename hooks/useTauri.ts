@@ -111,14 +111,7 @@ export function useTauri() {
 
   // ─── EXPORTAR PDF (via impressão nativa) ────────────────────────────────────
   const exportPdf = useCallback(async () => {
-    if (isTauri()) {
-      const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
-      const win = WebviewWindow.getCurrent();
-      // Chama window.print() dentro da webview
-      await win.eval("window.print()");
-    } else {
-      window.print();
-    }
+    window.print();
   }, []);
 
   return {

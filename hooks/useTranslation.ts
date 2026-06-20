@@ -2,7 +2,17 @@
 
 import { useState, useCallback, useRef } from "react";
 
-type TranslateFn = (text: string) => Promise<string>;
+export const NLLB_LANGUAGES = {
+  en: { label: "English", code: "eng_Latn" },
+  es: { label: "Español", code: "spa_Latn" },
+  fr: { label: "Français", code: "fra_Latn" },
+  de: { label: "Deutsch", code: "deu_Latn" },
+  it: { label: "Italiano", code: "ita_Latn" },
+} as const;
+
+export type TargetLang = "en" | "es" | "fr" | "de" | "it";
+
+type TranslateFn = (text: string, targetLang?: TargetLang) => Promise<string>;
 
 export function useTranslation() {
   const pipeRef = useRef<TranslateFn | null>(null);
@@ -33,12 +43,13 @@ export function useTranslation() {
           }
         },
       });
-      pipeRef.current = async (text: string) => {
+      pipeRef.current = async (text: string, targetLang: TargetLang = "en") => {
+        const tgt = NLLB_LANGUAGES[targetLang].code;
         const result = await p(text, {
           src_lang: "por_Latn",
-          tgt_lang: "eng_Latn",
-        });
-        return result[0]?.translation_text || "";
+          tgt_lang: tgt,
+        } as any);
+        return (result as any)[0]?.translation_text || "";
       };
       setModelStatus("ready");
     } catch (err: any) {
@@ -50,12 +61,12 @@ export function useTranslation() {
   }, []);
 
   const translate = useCallback(
-    async (text: string): Promise<string> => {
+    async (text: string, targetLang?: TargetLang): Promise<string> => {
       if (!pipeRef.current) {
         await loadModel();
       }
       if (!pipeRef.current) throw new Error("Modelo não carregado");
-      return pipeRef.current(text);
+      return pipeRef.current(text, targetLang);
     },
     [loadModel]
   );

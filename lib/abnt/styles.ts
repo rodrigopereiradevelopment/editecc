@@ -40,7 +40,7 @@ export const ABNT_STYLES: AbntStyle[] = [
     id: "texto-corrente",
     label: "Texto Corrente",
     tag: "p",
-    description: "Fonte 12, justificado, espaço 1.5, recuo 1.25cm",
+    description: "Fonte 12, justificado, espaço 1.5, recuo 2.5cm",
     cssClass: "abnt-texto",
   },
   {

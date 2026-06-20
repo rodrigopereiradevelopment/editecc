@@ -5,7 +5,7 @@ import { formatReference, Reference } from "@/lib/abnt/styles";
 
 interface GeradorReferenciasProps {
   refs: Reference[];
-  setRefs: (refs: Reference[]) => void;
+  setRefs: React.Dispatch<React.SetStateAction<Reference[]>>;
   onInsertRef: (abnt: string) => void;
 }
 

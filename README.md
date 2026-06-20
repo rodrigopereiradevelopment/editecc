@@ -8,20 +8,24 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.2)
+## ✨ Funcionalidades (v0.3)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
 - 📋 **Capa automática** — gerada em tempo real conforme você preenche o formulário
 - 📃 **Folha de Rosto** — elemento pré-textual obrigatório com nota explicativa, orientador e curso
-- 📝 **Resumo + Abstract** — campos dedicados com contador de palavras (150–500 conforme NBR 14724)
+- 📃 **Folha de Aprovação** — banca examinadora, 3 examinadores, campo de nota
+- 📖 **Dedicatória, Agradecimentos, Epígrafe** — elementos pré-textuais opcionais
+- 📝 **Resumo + Abstract** — campos dedicados com contador de palavras (150–500 conforme NBR 14724), renderizados como páginas A4
+- 🌐 **Tradução automática Transformers.js** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200, ~600MB, baixado uma vez)
 - 📑 **Sumário automático** a partir dos headings do documento
 - 📚 **Gerador de referências com Citation.js** — importe por DOI, ISBN ou BibTeX; formatação ABNT NBR 6023
 - 🖼️ **Lista de Figuras e Tabelas automática** — extrai do editor e gera as listas no canvas
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
+- 📄 **Numeração de página** automática no canto inferior direito
 - 💾 **Autosave** no localStorage a cada 20 segundos
 - 📤 **Exportar PDF** via impressão nativa do navegador (`Ctrl+P` → Salvar como PDF)
-- 🖥️ **Pronto para Tauri** — estrutura preparada para build desktop nativo (Windows/Linux)
+- 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
 
 ---
 
@@ -32,10 +36,11 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.1** | ✅ Concluído | MVP: editor + capa + sumário + autosave + PDF |
 | **v0.1.1** | ✅ Concluído | Folha de Rosto, Resumo, Abstract — conformidade com Manual ETEC 2022 |
 | **v0.2** | ✅ Concluído | Gerador de referências (Citation.js), Lista de Figuras/Tabelas automática |
-| **v0.3** | 📋 Planejado | Folha de Aprovação (banca examinadora), Dedicatória, Agradecimentos, Epígrafe |
-| **v0.4** | 📋 Planejado | Tradução do resumo (LibreTranslate self-hosted), exportar `.editecc` para reabrir |
-| **v0.5** | 📋 Planejado | Build Tauri — app desktop nativo para Windows e Linux |
-| **v1.0** | 🎯 Meta | UI polida, onboarding, suporte a múltiplos documentos, documentação completa |
+| **v0.3** | ✅ Concluído | Folha de Aprovação, Dedicatória, Agradecimentos, Epígrafe, Tradução Transformers.js (5 idiomas), numeração de página, recuo 2,5cm |
+| **v0.4** | 📋 Planejado | Export `.editecc`, suporte a múltiplos documentos |
+| **v0.5** | ✅ Concluído | Build Tauri — app desktop nativo Linux/Windows |
+| **v0.6** | 📋 Planejado | Anexos, Apêndices, Glossário, Notas de rodapé |
+| **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 
 ---
 
@@ -82,15 +87,23 @@ editecc/
 ├── components/
 │   ├── Capa.tsx                # Folha da Capa ABNT
 │   ├── FolhaRosto.tsx          # Folha de Rosto ABNT
+│   ├── FolhaAprovacao.tsx      # Folha de Aprovação (banca examinadora)
+│   ├── Dedicatoria.tsx         # Dedicatória (opcional)
+│   ├── Agradecimentos.tsx      # Agradecimentos (opcional)
+│   ├── Epigrafe.tsx            # Epígrafe (opcional)
+│   ├── ResumoPage.tsx          # Resumo renderizado como página A4
+│   ├── AbstractPage.tsx        # Abstract renderizado como página A4
 │   ├── ResumoSection.tsx       # Campo de Resumo com contador de palavras
-│   ├── AbstractSection.tsx     # Campo de Abstract com contador de palavras
-│   ├── GeradorReferencias.tsx  # Gerador de referências com Citation.js (v0.2)
-│   └── ListaFigurasTabelas.tsx # Lista automática de figuras e tabelas (v0.2)
+│   ├── AbstractSection.tsx     # Campo de Abstract com tradução automática
+│   ├── GeradorReferencias.tsx  # Gerador de referências com Citation.js
+│   └── ListaFigurasTabelas.tsx # Lista automática de figuras e tabelas
 ├── lib/
 │   └── abnt/
 │       └── styles.ts           # Estilos, validações e gerador de sumário ABNT
 ├── hooks/
-│   └── useAutosave.ts          # Autosave (localStorage e IndexedDB)
+│   ├── useAutosave.ts          # Autosave (localStorage e IndexedDB)
+│   ├── useTranslation.ts       # Tradução Transformers.js (NLLB-200, 5 idiomas)
+│   └── useTauri.ts             # Abstração para backend Rust do Tauri
 └── src-tauri/                  # Backend Rust para build desktop (Tauri)
 ```
 
@@ -100,10 +113,10 @@ editecc/
 |--------|-----------|
 | Framework | Next.js 16 (App Router) |
 | Editor | Tiptap v3 + ProseMirror |
-| Persistência | localStorage / IndexedDB via `idb` |
-| Desktop (futuro) | Tauri v2 (Rust) |
+| Persistência | localStorage / IndexedDB |
+| Desktop | Tauri v2 (Rust) — build Linux/Windows funcional |
 | Referências | Citation.js (DOI, ISBN, BibTeX → ABNT NBR 6023) |
-| Tradução (v0.4) | LibreTranslate (self-hosted) |
+| Tradução | Transformers.js (NLLB-200, 100% local, 5 idiomas) |
 
 ---
 
@@ -116,7 +129,7 @@ Baseado no **Manual de TCC das ETECs (2022)** e na **ABNT NBR 14724:2011**.
 | Margens | 3cm (sup/esq), 2cm (inf/dir) |
 | Fonte | Arial 12pt (conforme Manual ETEC 2022) |
 | Espaçamento | 1,5 entre linhas |
-| Recuo de parágrafo | 1,25cm na primeira linha |
+| Recuo de parágrafo | 2,5cm na primeira linha |
 | Título 1 (seção primária) | 12pt, negrito, maiúsculas, centralizado |
 | Título 2 (seção secundária) | 12pt, negrito, à esquerda |
 | Título 3 (seção terciária) | 12pt, negrito, itálico, à esquerda |
@@ -124,7 +137,7 @@ Baseado no **Manual de TCC das ETECs (2022)** e na **ABNT NBR 14724:2011**.
 | Referências | 12pt, espaço simples, linha em branco entre entradas |
 | Resumo / Abstract | 10pt, espaço simples, parágrafo único sem recuo, 150–500 palavras |
 | Título/Subtítulo na Capa | Arial 14pt, maiúsculas, centralizado |
-| Numeração de página | A partir da Introdução, canto inferior direito *(v0.2)* |
+| Numeração de página | Canto inferior direito (todas as páginas) |
 | Norma base | ABNT NBR 14724:2011 |
 
 ---
