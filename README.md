@@ -23,6 +23,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
 - 📽️ **Gerador de Slides** — extrai seções do TCC e gera apresentação `.pptx` (parser H1/H2 + PptxGenJS)
+  - *v2 (planejada): sumarização via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo*
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
