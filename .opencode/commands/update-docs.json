@@ -1,0 +1,6 @@
+{
+  "name": "update-docs",
+  "function": "Sincroniza AGENTS.md e README.md com o estado atual do projeto",
+  "command": "",
+  "model": "opencode/big-pickle"
+}

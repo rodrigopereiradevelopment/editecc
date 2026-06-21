@@ -1,0 +1,6 @@
+{
+  "name": "ux-agent",
+  "type": "subagent",
+  "function": "UX/UI audit, accessibility (WCAG/W3C), mobile-first patterns",
+  "model": "opencode/big-pickle"
+}

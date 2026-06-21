@@ -1,0 +1,6 @@
+{
+  "name": "lint-check",
+  "function": "Executa npm run lint e reporta problemas",
+  "command": "npm run lint",
+  "model": "opencode/big-pickle"
+}

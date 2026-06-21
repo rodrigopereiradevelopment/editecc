@@ -1,0 +1,6 @@
+{
+  "name": "run-tests",
+  "function": "Executa npm test e reporta resultados",
+  "command": "npm test",
+  "model": "opencode/big-pickle"
+}

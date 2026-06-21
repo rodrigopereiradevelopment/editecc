@@ -1,0 +1,6 @@
+{
+  "name": "build-check",
+  "function": "Executa npm run build e reporta erros de compilação",
+  "command": "npm run build",
+  "model": "opencode/big-pickle"
+}

@@ -38,7 +38,8 @@ import { extractFigures, extractTables } from "@/lib/abnt/styles";
 import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, formatReference, Reference } from "@/lib/abnt/styles";
-import { parseSections, gerarPPTX } from "@/lib/slideGenerator";
+import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerator";
+import { useSummarization } from "@/hooks/useSummarization";
 import type { EditeccDocument } from "@/lib/document";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
@@ -118,6 +119,15 @@ export default function EditorPage() {
   const [showApendices, setShowApendices] = useState(false);
   const [showGlossario, setShowGlossario] = useState(false);
   const [showNotasRodape, setShowNotasRodape] = useState(false);
+  const [slidesLoading, setSlidesLoading] = useState(false);
+  const [slidesProgress, setSlidesProgress] = useState(0);
+  const [slidesStatus, setSlidesStatus] = useState("");
+
+  // ─── SUMARIZAÇÃO (v0.8) ──────────────────────────────────────────────────
+  const {
+    summarize, loadModel: loadSumModel,
+    loading: sumLoading, progress: sumProgress, modelStatus: sumModelStatus, error: sumError,
+  } = useSummarization();
 
   // ─── MULTI-DOCUMENT (v0.4) ─────────────────────────────────────────────
   const {
@@ -283,17 +293,57 @@ export default function EditorPage() {
     window.print();
   };
 
-  // Gerar apresentação de slides (v0.7)
-  const handleGerarSlides = () => {
+  // Gerar apresentação de slides (v0.8 — sumarização)
+  const handleGerarSlides = async () => {
     if (!editor) return;
-    const html = editor.getHTML();
-    const sections = parseSections(html);
-    gerarPPTX(sections, {
-      titulo: coverData.titulo,
-      autor: coverData.autor,
-      curso: coverData.curso,
-      orientador: coverData.orientador,
-    });
+    setSlidesLoading(true);
+    setSlidesStatus("Extraindo seções…");
+    setSlidesProgress(0);
+    try {
+      const html = editor.getHTML();
+      const sections = parseSectionsFull(html);
+
+      if (sections.length === 0) {
+        setSlidesStatus("Nenhuma seção encontrada no documento.");
+        setTimeout(() => setSlidesLoading(false), 2000);
+        return;
+      }
+
+      if (sumModelStatus !== "ready") {
+        setSlidesStatus("Carregando modelo de sumarização… (~300MB, único download)");
+        await loadSumModel();
+      }
+      if (sumError) {
+        setSlidesStatus(`Erro: ${sumError}`);
+        setTimeout(() => setSlidesLoading(false), 3000);
+        return;
+      }
+
+      const summarized = [];
+      for (let i = 0; i < sections.length; i++) {
+        const sec = sections[i];
+        setSlidesStatus(`Resumindo ${sec.titulo}… (${i + 1}/${sections.length})`);
+        setSlidesProgress(Math.round(((i + 1) / sections.length) * 100));
+        const resumo = await summarize(sec.textoCompleto);
+        summarized.push({
+          titulo: sec.titulo,
+          conteudo: formatBullets(resumo),
+        });
+      }
+
+      setSlidesStatus("Gerando arquivo PPTX…");
+      setSlidesProgress(100);
+      gerarPPTX(summarized, {
+        titulo: coverData.titulo,
+        autor: coverData.autor,
+        curso: coverData.curso,
+        orientador: coverData.orientador,
+      });
+      setSlidesLoading(false);
+    } catch (err: any) {
+      setSlidesStatus(`Erro ao gerar slides: ${err?.message || "desconhecido"}`);
+      setTimeout(() => setSlidesLoading(false), 4000);
+    }
   };
 
   // Comandos de formatação
@@ -807,13 +857,18 @@ export default function EditorPage() {
 
             <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>
               {savedMsg && <span style={{ color: "#10b981", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
-              <button onClick={handleGerarSlides} style={{
-                background: "#10b981", border: "none", color: "white",
-                padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
-                fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
+              <button onClick={handleGerarSlides} disabled={slidesLoading} style={{
+                background: slidesLoading ? "#6b7280" : "#10b981", border: "none", color: "white",
+                padding: "5px 12px", borderRadius: "6px", cursor: slidesLoading ? "wait" : "pointer",
+                fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px", position: "relative",
               }}>
-                <SlidesIcon /> Slides
+                <SlidesIcon /> {slidesLoading ? slidesProgress + "%" : "Slides"}
               </button>
+              {slidesLoading && slidesStatus && (
+                <span style={{ color: "#94a3b8", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {slidesStatus}
+                </span>
+              )}
               <button onClick={handleExportPdf} style={{
                 background: "#2563eb", border: "none", color: "white",
                 padding: "5px 12px", borderRadius: "6px", cursor: "pointer",

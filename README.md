@@ -22,8 +22,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
-- 📽️ **Gerador de Slides** — extrai seções do TCC e gera apresentação `.pptx` (parser H1/H2 + PptxGenJS)
-  - *v2 (planejada): sumarização via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo*
+- 📽️ **Gerador de Slides v2** — sumarização automática das seções via Transformers.js (`distilbart-cnn`), formatação em bullets, geração `.pptx` (parser H1/H2 + PptxGenJS)
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
@@ -45,7 +44,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.5** | ✅ Concluído | Build Tauri — app desktop nativo Linux/Windows |
 | **v0.6** | ✅ Concluído | Anexos, Apêndices, Glossário, Notas de rodapé |
 | **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS + placeholder 1º parágrafo) |
-| **v0.8** | 📋 Planejado | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo |
+| **v0.8** | ✅ Concluído | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo — bullets formatados, loading com progresso na toolbar |
+| **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 | **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 
 ---

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { parseSections, gerarPPTX } from "../slideGenerator";
+import { parseSections, parseSectionsFull, gerarPPTX, formatBullets } from "../slideGenerator";
 
 describe("parseSections", () => {
   it("retorna array vazio para HTML vazio", () => {
@@ -139,6 +139,42 @@ describe("parseSections", () => {
       "<h1>INTRODUÇÃO</h1><br/><strong>Nota:</strong><p>Texto real.</p>";
     const result = parseSections(html);
     expect(result[0].conteudo).toContain("Texto real.");
+  });
+});
+
+describe("parseSectionsFull", () => {
+  it("retorna textoCompleto sem truncamento (conteudo truncado em 500)", () => {
+    const long = Array.from({ length: 200 }, (_, i) => `palavra${i}`).join(" ");
+    const html = `<h1>INTRODUÇÃO</h1><p>${long}</p>`;
+    const result = parseSectionsFull(html);
+    expect(result).toHaveLength(1);
+    expect(result[0].textoCompleto).toBe(long);
+    expect(result[0].conteudo.length).toBeLessThan(result[0].textoCompleto.length);
+  });
+
+  it("retorna array vazio para HTML sem headings", () => {
+    expect(parseSectionsFull("<p>Só texto.</p>")).toEqual([]);
+  });
+});
+
+describe("formatBullets", () => {
+  it("formata texto em bullets separados por quebra de linha", () => {
+    const result = formatBullets("Primeiro ponto. Segundo ponto. Terceiro ponto.");
+    expect(result).toBe("• Primeiro ponto\n• Segundo ponto\n• Terceiro ponto");
+  });
+
+  it("limita a no máximo 5 bullets", () => {
+    const result = formatBullets("A. B. C. D. E. F. G.");
+    expect(result.split("\n")).toHaveLength(5);
+  });
+
+  it("remove marcadores existentes do texto original", () => {
+    const result = formatBullets("• Item um. - Item dois.");
+    expect(result).toBe("• Item um\n• Item dois");
+  });
+
+  it("retorna string vazia para texto vazio", () => {
+    expect(formatBullets("")).toBe("");
   });
 });
 

@@ -1,0 +1,6 @@
+{
+  "name": "qa-agent",
+  "type": "subagent",
+  "function": "Generates and analyzes unit tests for Vitest, validates test coverage",
+  "model": "opencode/big-pickle"
+}

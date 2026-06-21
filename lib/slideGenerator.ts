@@ -7,6 +7,10 @@ export interface SlideSection {
   conteudo: string;
 }
 
+export interface SlideSectionFull extends SlideSection {
+  textoCompleto: string;
+}
+
 const SECOES_CONHECIDAS: Record<string, string> = {
   introdução: "Introdução",
   objetivos: "Objetivos",
@@ -69,6 +73,53 @@ export function parseSections(html: string): SlideSection[] {
   }
 
   return sections;
+}
+
+export function parseSectionsFull(html: string): SlideSectionFull[] {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+
+  const sections: SlideSectionFull[] = [];
+  const headings = div.querySelectorAll("h1, h2");
+
+  for (const h of headings) {
+    const text = h.textContent?.trim();
+    if (!text) continue;
+
+    let next = h.nextElementSibling;
+    let conteudo = "";
+    while (next && !/^h[12]$/i.test(next.tagName)) {
+      const t = next.textContent?.trim();
+      if (t) {
+        conteudo += (conteudo ? " " : "") + t;
+      }
+      next = next.nextElementSibling;
+    }
+
+    if (conteudo) {
+      sections.push({
+        titulo: normalizarTitulo(text),
+        conteudo: truncate(conteudo, 500),
+        textoCompleto: conteudo,
+      });
+    }
+  }
+
+  return sections;
+}
+
+export function formatBullets(text: string): string {
+  const sentences = text
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+  return sentences
+    .slice(0, 5)
+    .map((s) => {
+      const clean = s.replace(/^[•\-–—*]\s*/, "").trim();
+      return `• ${clean.replace(/[.!?]$/, "")}`;
+    })
+    .join("\n");
 }
 
 export function gerarPPTX(

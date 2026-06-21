@@ -4,6 +4,91 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+## Project Overview
+- **Name**: EditeCC
+- **Purpose**: Editor de textos acadêmicos com formatação ABNT automática (TCCs, monografias).
+- **Stack**: Next.js 16.x (App Router), Tiptap v3, Tauri v2 (Rust), Transformers.js, PptxGenJS, Citation.js, Vitest.
+- **Main Workflows**: Escrever e formatar TCC → elementos pré/pós-textuais → traduzir resumo → exportar PDF → gerar slides.
+
+## Dev Commands
+
+```bash
+npm install --legacy-peer-deps   # install deps
+npm run dev                      # dev server (Turbopack, port 3000)
+npm run build                    # production build (npx next build)
+npm run start                    # serve production build
+npm run lint                     # ESLint
+npm test                         # Vitest (unit tests)
+npm run test:watch               # Vitest watch mode
+
+# Tauri (app desktop nativo)
+npm run tauri:dev                # dev com janela Tauri
+npm run tauri:build:linux        # build Linux
+npm run tauri:build:windows      # build Windows
+```
+
+## Architecture
+
+- **`app/`**: Next.js App Router — landing page (`app/page.tsx`) e editor (`app/editor/page.tsx`)
+- **`components/`**: 22 componentes React — Capa, FolhaRosto, FolhaAprovacao, ResumoPage, AbstractPage, AnexoPage, ApendicePage, GlossarioPage, NotasRodapePage, Editor, DocumentManager, PosTextuaisManager, etc.
+- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação, sumário), `lib/document.ts` (tipos, storage, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
+- **`hooks/`**: React hooks — `useAutosave`, `useDocuments`, `useTranslation` (Transformers.js NLLB-200), `useSummarization` (Transformers.js distilbart-cnn), `useTauri`
+- **`app/editor/page.tsx`**: Entry point do editor (~900 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar
+- **Persistência**: 100% localStorage (`editecc-docs`), autosave a cada 20s
+- **Desktop**: Tauri v2 — Rust backend opcional para app nativo (Linux/Windows)
+
+## Available Subagents
+
+Custom subagents configured in `.opencode/agents/`:
+
+| Agent Type | Function | Model |
+|------------|----------|-------|
+| `qa-agent` | Generates and analyzes unit tests for Vitest, validates test coverage | opencode/big-pickle |
+| `ux-agent` | UX/UI audit, accessibility (WCAG/W3C), mobile-first patterns | opencode/big-pickle |
+
+Built-in agent types also available:
+
+| Agent Type | Function | Model |
+|------------|----------|-------|
+| `explore` | Fast codebase exploration, file search, code patterns | opencode/big-pickle |
+| `general` | General-purpose research and multi-step tasks | opencode/big-pickle |
+
+Custom slash commands configured in `.opencode/commands/`:
+
+| Command | Function | Model |
+|---------|----------|-------|
+| `run-tests` | Executa `npm test` e reporta resultados | opencode/big-pickle |
+| `build-check` | Executa `npm run build` e reporta erros de compilação | opencode/big-pickle |
+| `lint-check` | Executa `npm run lint` e reporta problemas | opencode/big-pickle |
+| `update-docs` | Sincroniza AGENTS.md e README.md com o estado atual do projeto | opencode/big-pickle |
+
+## Important Quirks
+
+- **Package manager**: Usa `npm` (yarn não está disponível)
+- **Turbopack**: Dev server usa Turbopack (não webpack) — se tiver erro de compatibilidade, use `npx next dev --webpack`
+- **Peer deps**: Sempre use `--legacy-peer-deps` no `npm install`
+- **Build**: `npm run build` usa `npx next build` (verificado: compila sem erros)
+- **Tradução**: Transformers.js NLLB-200-distilled-600M — 1 modelo (~600MB) cobre 5 idiomas (en/es/fr/de/it), cache IndexedDB, download único
+- **Sumarização**: Transformers.js distilbart-cnn-6-6 (~300MB) — carregado sob demanda quando gera slides
+- **Modelos de IA**: Ambos 100% offline, sem API externa, sem cadastro
+- **Rust/Cargo não disponível** neste ambiente — build Tauri não pode ser executado aqui
+- **Icons**: Os SVGs dos ícones na toolbar são definidos inline em `app/editor/page.tsx`
+- **Estrutura do TCC no canvas**: Capa → FolhaRosto → FolhaAprovacao → Dedicatória → Agradecimentos → Epígrafe → Resumo → Abstract → Editor → ListaFigTab → Anexos → Apêndices → Glossário → NotasRodape
+- **PDF**: Export via `window.print()` — funciona bem com margens ABNT via CSS `@page`
+
+## Test Status
+
+```bash
+# 1 suite, 21 tests passing
+npm test
+```
+
+## Prerequisites
+
+- Node.js >= 18.x
+- npm >= 9.x
+- Rust + Cargo (apenas para build Tauri)
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
