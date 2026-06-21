@@ -44,7 +44,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.4** | ✅ Concluído | Export `.editecc`, suporte a múltiplos documentos |
 | **v0.5** | ✅ Concluído | Build Tauri — app desktop nativo Linux/Windows |
 | **v0.6** | ✅ Concluído | Anexos, Apêndices, Glossário, Notas de rodapé |
-| **v0.7** | 📋 Planejado | Aguardando instruções |
+| **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS + placeholder 1º parágrafo) |
+| **v0.8** | 📋 Planejado | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo |
 | **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 
 ---
