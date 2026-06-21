@@ -38,6 +38,7 @@ import { extractFigures, extractTables } from "@/lib/abnt/styles";
 import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, formatReference, Reference } from "@/lib/abnt/styles";
+import { parseSections, gerarPPTX } from "@/lib/slideGenerator";
 import type { EditeccDocument } from "@/lib/document";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
@@ -66,6 +67,7 @@ const UnderlineIcon= () => <svg width="14" height="14" viewBox="0 0 24 24" fill=
 const JustifyIcon  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
 const SaveIcon     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
 const PrintIcon    = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>;
+const SlidesIcon   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>;
 const CheckIcon    = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>;
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
@@ -279,6 +281,19 @@ export default function EditorPage() {
   // Exportar PDF
   const handleExportPdf = () => {
     window.print();
+  };
+
+  // Gerar apresentação de slides (v0.7)
+  const handleGerarSlides = () => {
+    if (!editor) return;
+    const html = editor.getHTML();
+    const sections = parseSections(html);
+    gerarPPTX(sections, {
+      titulo: coverData.titulo,
+      autor: coverData.autor,
+      curso: coverData.curso,
+      orientador: coverData.orientador,
+    });
   };
 
   // Comandos de formatação
@@ -792,6 +807,13 @@ export default function EditorPage() {
 
             <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>
               {savedMsg && <span style={{ color: "#10b981", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
+              <button onClick={handleGerarSlides} style={{
+                background: "#10b981", border: "none", color: "white",
+                padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
+                fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
+              }}>
+                <SlidesIcon /> Slides
+              </button>
               <button onClick={handleExportPdf} style={{
                 background: "#2563eb", border: "none", color: "white",
                 padding: "5px 12px", borderRadius: "6px", cursor: "pointer",

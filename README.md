@@ -8,7 +8,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.6)
+## ✨ Funcionalidades (v0.7)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
@@ -22,6 +22,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
+- 📽️ **Gerador de Slides** — extrai seções do TCC e gera apresentação `.pptx` (parser H1/H2 + PptxGenJS)
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
