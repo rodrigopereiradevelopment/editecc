@@ -8,23 +8,25 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.3)
+## ✨ Funcionalidades (v0.6)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
 - 📋 **Capa automática** — gerada em tempo real conforme você preenche o formulário
-- 📃 **Folha de Rosto** — elemento pré-textual obrigatório com nota explicativa, orientador e curso
-- 📃 **Folha de Aprovação** — banca examinadora, 3 examinadores, campo de nota
+- 📃 **Folha de Rosto, Folha de Aprovação** — elementos pré-textuais obrigatórios
 - 📖 **Dedicatória, Agradecimentos, Epígrafe** — elementos pré-textuais opcionais
-- 📝 **Resumo + Abstract** — campos dedicados com contador de palavras (150–500 conforme NBR 14724), renderizados como páginas A4
-- 🌐 **Tradução automática Transformers.js** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200, ~600MB, baixado uma vez)
+- 📝 **Resumo + Abstract** — campos dedicados com contador de palavras, renderizados como páginas A4
+- 🌐 **Tradução automática Transformers.js** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200, ~600MB)
 - 📑 **Sumário automático** a partir dos headings do documento
-- 📚 **Gerador de referências com Citation.js** — importe por DOI, ISBN ou BibTeX; formatação ABNT NBR 6023
-- 🖼️ **Lista de Figuras e Tabelas automática** — extrai do editor e gera as listas no canvas
+- 📚 **Gerador de referências com Citation.js** — DOI, ISBN, BibTeX → ABNT NBR 6023
+- 🖼️ **Lista de Figuras e Tabelas automática**
+- 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
+- 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
-- 💾 **Autosave** no localStorage a cada 20 segundos
-- 📤 **Exportar PDF** via impressão nativa do navegador (`Ctrl+P` → Salvar como PDF)
+- 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
+- 💾 **Autosave** a cada 20 segundos
+- 📤 **Exportar PDF** via impressão nativa
 - 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
 
 ---
@@ -37,9 +39,10 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.1.1** | ✅ Concluído | Folha de Rosto, Resumo, Abstract — conformidade com Manual ETEC 2022 |
 | **v0.2** | ✅ Concluído | Gerador de referências (Citation.js), Lista de Figuras/Tabelas automática |
 | **v0.3** | ✅ Concluído | Folha de Aprovação, Dedicatória, Agradecimentos, Epígrafe, Tradução Transformers.js (5 idiomas), numeração de página, recuo 2,5cm |
-| **v0.4** | 📋 Planejado | Export `.editecc`, suporte a múltiplos documentos |
+| **v0.4** | ✅ Concluído | Export `.editecc`, suporte a múltiplos documentos |
 | **v0.5** | ✅ Concluído | Build Tauri — app desktop nativo Linux/Windows |
-| **v0.6** | 📋 Planejado | Anexos, Apêndices, Glossário, Notas de rodapé |
+| **v0.6** | ✅ Concluído | Anexos, Apêndices, Glossário, Notas de rodapé |
+| **v0.7** | 📋 Planejado | Aguardando instruções |
 | **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 
 ---

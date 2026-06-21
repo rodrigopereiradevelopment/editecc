@@ -19,14 +19,26 @@ import { Agradecimentos } from "@/components/Agradecimentos";
 import { Epigrafe } from "@/components/Epigrafe";
 import { ResumoPage } from "@/components/ResumoPage";
 import { AbstractPage } from "@/components/AbstractPage";
+import { AnexoPage } from "@/components/AnexoPage";
+import { ApendicePage } from "@/components/ApendicePage";
+import { GlossarioPage } from "@/components/GlossarioPage";
+import { NotasRodapePage } from "@/components/NotasRodapePage";
 import { GeradorReferencias } from "@/components/GeradorReferencias";
 import { ListaFigurasTabelas } from "@/components/ListaFigurasTabelas";
+import { DocumentManager } from "@/components/DocumentManager";
+import { PosTextuaisManager } from "@/components/PosTextuaisManager";
+import { GlossarioManager } from "@/components/GlossarioManager";
+import { NotasRodapeManager } from "@/components/NotasRodapeManager";
+import type { PosTextualItem } from "@/components/PosTextuaisManager";
+import type { GlossarioEntry } from "@/components/GlossarioManager";
+import type { NotaRodape } from "@/components/NotasRodapeManager";
 import { extractFigures, extractTables } from "@/lib/abnt/styles";
 
 // Importar hooks e libs
-import { useAutosave } from "@/hooks/useAutosave";
+import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, formatReference, Reference } from "@/lib/abnt/styles";
+import type { EditeccDocument } from "@/lib/document";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -60,7 +72,7 @@ const CheckIcon    = () => <svg width="11" height="11" viewBox="0 0 24 24" fill=
 
 export default function EditorPage() {
   // Estado geral
-  const [activeTab, setActiveTab] = useState<"capa" | "editor" | "toc" | "validate" | "refs" | "figuras">("capa");
+  const [activeTab, setActiveTab] = useState<"capa" | "editor" | "toc" | "validate" | "refs" | "figuras" | "docs">("capa");
   const [coverData, setCoverData] = useState<CoverData>({
     autor: "",
     titulo: "",
@@ -96,6 +108,21 @@ export default function EditorPage() {
   const [epigrafeTexto, setEpigrafeTexto] = useState("");
   const [epigrafeAutor, setEpigrafeAutor] = useState("");
   const [aprovacaoData, setAprovacaoData] = useState("");
+  const [anexos, setAnexos] = useState<PosTextualItem[]>([]);
+  const [apendices, setApendices] = useState<PosTextualItem[]>([]);
+  const [glossario, setGlossario] = useState<GlossarioEntry[]>([]);
+  const [notasRodape, setNotasRodape] = useState<NotaRodape[]>([]);
+  const [showAnexos, setShowAnexos] = useState(false);
+  const [showApendices, setShowApendices] = useState(false);
+  const [showGlossario, setShowGlossario] = useState(false);
+  const [showNotasRodape, setShowNotasRodape] = useState(false);
+
+  // ─── MULTI-DOCUMENT (v0.4) ─────────────────────────────────────────────
+  const {
+    docs, currentDoc, currentId, updateCurrentDoc,
+    switchDoc, addDoc, deleteDoc, renameDoc,
+    handleExport, handleImport,
+  } = useDocuments();
 
   // Editor (Tiptap)
   const editor = useEditor({
@@ -146,62 +173,94 @@ export default function EditorPage() {
     };
   }, [editor, updateCounts]);
 
-  // Autosave
-  useAutosave({
-    key: "editecc-v0.2",
-    data: {
+  // Carregar dados do doc atual no state (executa quando troca de doc)
+  const loadDocIntoState = useCallback((doc: EditeccDocument) => {
+    if (!doc) return;
+    setCoverData(doc.cover);
+    setResumo(doc.resumo);
+    setPalavrasChave(doc.palavrasChave);
+    setAbstract(doc.abstract);
+    setKeywords(doc.keywords);
+    setAbstractLang(doc.abstractLang as TargetLang);
+    setRefs(doc.refs);
+    setDedicatoriaTexto(doc.dedicatoriaTexto);
+    setAgradecimentosTexto(doc.agradecimentosTexto);
+    setEpigrafeTexto(doc.epigrafeTexto);
+    setEpigrafeAutor(doc.epigrafeAutor);
+    setAprovacaoData(doc.aprovacaoData);
+    setShowFolhaRosto(doc.showFolhaRosto);
+    setShowAprovacao(doc.showAprovacao);
+    setShowDedicatoria(doc.showDedicatoria);
+    setShowAgradecimentos(doc.showAgradecimentos);
+    setShowEpigrafe(doc.showEpigrafe);
+    setShowResumoPage(doc.showResumoPage);
+    setShowAbstractPage(doc.showAbstractPage);
+    setShowFigList(doc.showFigList);
+    setAnexos(doc.anexos || []);
+    setApendices(doc.apendices || []);
+    setGlossario(doc.glossario || []);
+    setNotasRodape(doc.notasRodape || []);
+    setShowAnexos(doc.showAnexos || false);
+    setShowApendices(doc.showApendices || false);
+    setShowGlossario(doc.showGlossario || false);
+    setShowNotasRodape(doc.showNotasRodape || false);
+    if (editor) {
+      editor.commands.setContent(doc.content || `<h1>1 INTRODUÇÃO</h1><p></p>`);
+    }
+  }, [editor]);
+
+  useEffect(() => {
+    if (currentDoc) loadDocIntoState(currentDoc);
+  }, [currentDoc, loadDocIntoState]);
+
+  // Autosave (v0.4 — salva no documento atual)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const syncToDoc = useCallback(() => {
+    if (!currentId) return;
+    updateCurrentDoc({
       cover: coverData,
       resumo,
       palavrasChave,
       abstract,
       keywords,
+      abstractLang,
       content: editor?.getHTML() || "",
       refs,
-      abstractLang,
       dedicatoriaTexto,
       agradecimentosTexto,
       epigrafeTexto,
       epigrafeAutor,
       aprovacaoData,
-    },
-    enabled: true,
-    interval: 20000,
-    onSave: () => {
-      setSavedMsg(true);
-      setTimeout(() => setSavedMsg(false), 2000);
-    },
-  });
+      showFolhaRosto,
+      showAprovacao,
+      showDedicatoria,
+      showAgradecimentos,
+      showEpigrafe,
+      showResumoPage,
+      showAbstractPage,
+      showFigList,
+      anexos,
+      apendices,
+      glossario,
+      notasRodape,
+      showAnexos,
+      showApendices,
+      showGlossario,
+      showNotasRodape,
+    });
+    setSavedMsg(true);
+    setTimeout(() => setSavedMsg(false), 2000);
+  }, [currentId, updateCurrentDoc, coverData, resumo, palavrasChave, abstract, keywords, abstractLang, editor, refs,
+    dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor, aprovacaoData,
+    showFolhaRosto, showAprovacao, showDedicatoria, showAgradecimentos, showEpigrafe,
+    showResumoPage, showAbstractPage, showFigList,
+    anexos, apendices, glossario, notasRodape, showAnexos, showApendices, showGlossario, showNotasRodape]);
 
-  // Carregar dados salvos
   useEffect(() => {
-    const saved = localStorage.getItem("editecc-v0.2") || localStorage.getItem("editecc-v0.1.1");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.cover) setCoverData(parsed.cover);
-        if (parsed.resumo) setResumo(parsed.resumo);
-        if (parsed.palavrasChave) setPalavrasChave(parsed.palavrasChave);
-        if (parsed.abstract) setAbstract(parsed.abstract);
-        if (parsed.keywords) setKeywords(parsed.keywords);
-        if (parsed.abstractLang) setAbstractLang(parsed.abstractLang);
-        if (parsed.dedicatoriaTexto) setDedicatoriaTexto(parsed.dedicatoriaTexto);
-        if (parsed.agradecimentosTexto) setAgradecimentosTexto(parsed.agradecimentosTexto);
-        if (parsed.epigrafeTexto) setEpigrafeTexto(parsed.epigrafeTexto);
-        if (parsed.epigrafeAutor) setEpigrafeAutor(parsed.epigrafeAutor);
-        if (parsed.aprovacaoData) setAprovacaoData(parsed.aprovacaoData);
-        if (parsed.content && editor) {
-          editor.commands.setContent(parsed.content);
-        }
-      } catch (e) {
-        console.error("Erro ao carregar dados salvos", e);
-      }
-    }
-    // Carregar referências
-    const savedRefs = localStorage.getItem("editecc-refs");
-    if (savedRefs) {
-      try { setRefs(JSON.parse(savedRefs)); } catch {}
-    }
-  }, [editor]);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(syncToDoc, 20000);
+    return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
+  }, [syncToDoc]);
 
   // Navegação no sumário
   const scrollToHeading = (id: string) => {
@@ -321,6 +380,7 @@ export default function EditorPage() {
                 ["figuras", "🖼️ Fig."],
                 ["toc", "📑 Sumário"],
                 ["validate", "✓ Validar"],
+                ["docs", "📁 Docs"],
               ].map(([id, label]) => (
               <button
                 key={id}
@@ -344,6 +404,18 @@ export default function EditorPage() {
 
           {/* Conteúdo */}
           <div style={{ flex: 1, overflow: "auto", padding: "14px" }}>
+            {activeTab === "docs" && (
+              <DocumentManager
+                docs={docs}
+                currentId={currentId}
+                onSwitch={switchDoc}
+                onAdd={addDoc}
+                onDelete={deleteDoc}
+                onRename={renameDoc}
+                onExport={handleExport}
+                onImport={handleImport}
+              />
+            )}
             {activeTab === "capa" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
@@ -467,6 +539,18 @@ export default function EditorPage() {
                   <button onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFigList ? "✓ Lista Fig./Tab." : "Lista Fig./Tab."}
                   </button>
+                  <button onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showAnexos ? "✓ Anexos" : "Anexos"}
+                  </button>
+                  <button onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showApendices ? "✓ Apêndices" : "Apêndices"}
+                  </button>
+                  <button onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showGlossario ? "✓ Glossário" : "Glossário"}
+                  </button>
+                  <button onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showNotasRodape ? "✓ Notas Rodapé" : "Notas Rodapé"}
+                  </button>
                 </div>
               </div>
             )}
@@ -568,6 +652,33 @@ export default function EditorPage() {
                       }}
                     />
                   </label>
+                </div>
+
+                <div style={{ borderTop: "1px solid #1e2330", margin: "20px 0", paddingTop: "16px" }}>
+                  <PosTextuaisManager
+                    label="Apêndices"
+                    prefix="APÊNDICE"
+                    items={apendices}
+                    onChange={setApendices}
+                  />
+                  <PosTextuaisManager
+                    label="Anexos"
+                    prefix="ANEXO"
+                    items={anexos}
+                    onChange={setAnexos}
+                  />
+                  <GlossarioManager
+                    entries={glossario}
+                    onChange={setGlossario}
+                  />
+                  <NotasRodapeManager
+                    notas={notasRodape}
+                    onChange={setNotasRodape}
+                    onInsertMarker={(num) => {
+                      if (!editor) return;
+                      editor.chain().focus().insertContent(`<sup>${num}</sup>`).run();
+                    }}
+                  />
                 </div>
               </>
             )}
@@ -715,6 +826,10 @@ export default function EditorPage() {
             {showEpigrafe && <Epigrafe texto={epigrafeTexto} autor={epigrafeAutor} />}
             {showResumoPage && <ResumoPage value={resumo} palavrasChave={palavrasChave} />}
             {showAbstractPage && <AbstractPage value={abstract} keywords={keywords} language={abstractLang} />}
+            {showGlossario && <GlossarioPage entries={glossario} />}
+            {showApendices && apendices.length > 0 && <ApendicePage items={apendices} />}
+            {showAnexos && anexos.length > 0 && <AnexoPage items={anexos} />}
+            {showNotasRodape && notasRodape.length > 0 && <NotasRodapePage notas={notasRodape} />}
             <EditorContent editor={editor} />
             {/* Lista de Figuras e Tabelas automática (v0.2) */}
             {showFigList && (() => {
