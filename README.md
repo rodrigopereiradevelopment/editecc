@@ -45,7 +45,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.6** | ✅ Concluído | Anexos, Apêndices, Glossário, Notas de rodapé |
 | **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS + placeholder 1º parágrafo) |
 | **v0.8** | ✅ Concluído | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo — bullets formatados, loading com progresso na toolbar |
-| **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
+| **v0.9** | 📋 Planejado | Acessibilidade (WCAG 2.2): contraste, foco visível, aria-labels, suporte a leitores de tela |
 | **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 
 ---
