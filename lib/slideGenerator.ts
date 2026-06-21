@@ -23,12 +23,19 @@ const SECOES_CONHECIDAS: Record<string, string> = {
 };
 
 function normalizarTitulo(raw: string): string {
-  const cleaned = raw.replace(/^\d+\s*/, "").trim().toLowerCase();
+  // Remove numeração tipo "1 ", "1. ", "1.1 ", "1.1. ", "1 - " etc.
+  const stripped = raw.replace(/^[\d]+(?:\.\d+)*\s*[.\-–—]?\s*/, "").trim();
+  const cleaned = stripped.toLowerCase();
   for (const [chave, label] of Object.entries(SECOES_CONHECIDAS)) {
     if (cleaned.includes(chave)) return label;
   }
-  // Se não achou, retorna o título original sem o número
-  return raw.replace(/^\d+\s*/, "").trim();
+  return stripped;
+}
+
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.lastIndexOf(" ", max);
+  return text.slice(0, cut > 0 ? cut : max) + "…";
 }
 
 export function parseSections(html: string): SlideSection[] {
@@ -56,7 +63,7 @@ export function parseSections(html: string): SlideSection[] {
     if (conteudo) {
       sections.push({
         titulo: normalizarTitulo(text),
-        conteudo: conteudo.slice(0, 500), // limita a 500 chars
+        conteudo: truncate(conteudo, 500),
       });
     }
   }

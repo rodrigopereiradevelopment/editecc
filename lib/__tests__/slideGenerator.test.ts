@@ -66,12 +66,25 @@ describe("parseSections", () => {
     expect(result[0].titulo).toBe("Objetivo Geral");
   });
 
-  it("limita conteúdo a 500 caracteres", () => {
+  it("limita conteúdo a 500 caracteres com ellipsis se cortar no meio", () => {
     const longText = "A".repeat(600);
     const html = `<h1>INTRODUÇÃO</h1><p>${longText}</p>`;
     const result = parseSections(html);
-    expect(result[0].conteudo.length).toBe(500);
-    expect(result[0].conteudo).toBe("A".repeat(500));
+    expect(result[0].conteudo).toBe("A".repeat(500) + "…");
+  });
+
+  it("corta no último espaço antes de 500 se possível", () => {
+    const text = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum. ".repeat(5);
+    const html = `<h1>INTRODUÇÃO</h1><p>${text}</p>`;
+    const result = parseSections(html);
+    expect(result[0].conteudo.length).toBeLessThanOrEqual(501);
+    expect(result[0].conteudo).toMatch(/…$/);
+  });
+
+  it("mantém texto intacto com menos de 500 chars (sem ellipsis)", () => {
+    const html = "<h1>INTRODUÇÃO</h1><p>Texto curto.</p>";
+    const result = parseSections(html);
+    expect(result[0].conteudo).toBe("Texto curto.");
   });
 
   it("extrai apenas primeiro parágrafo, ignorando headings seguintes", () => {
@@ -95,6 +108,30 @@ describe("parseSections", () => {
     const result = parseSections(html);
     expect(result).toHaveLength(1);
     expect(result[0].titulo).toBe("Objetivos");
+  });
+
+  it("reconhece '1. Introdução' (com ponto e capitalizada)", () => {
+    const html = "<h1>1. Introdução</h1><p>Texto.</p>";
+    const result = parseSections(html);
+    expect(result[0].titulo).toBe("Introdução");
+  });
+
+  it("reconhece '1 - INTRODUÇÃO' (com traço)", () => {
+    const html = "<h1>1 - INTRODUÇÃO</h1><p>Texto.</p>";
+    const result = parseSections(html);
+    expect(result[0].titulo).toBe("Introdução");
+  });
+
+  it("reconhece 'I INTRODUÇÃO' (romano)", () => {
+    const html = "<h1>I INTRODUÇÃO</h1><p>Texto.</p>";
+    const result = parseSections(html);
+    expect(result[0].titulo).toBe("Introdução");
+  });
+
+  it("usa título genérico sem numeração suja para seção desconhecida numerada", () => {
+    const html = "<h1>1.1. Minha Seção</h1><p>Texto.</p>";
+    const result = parseSections(html);
+    expect(result[0].titulo).toBe("Minha Seção");
   });
 
   it("manipula HTML com tags diversas entre heading e parágrafo", () => {
