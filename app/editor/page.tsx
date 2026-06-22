@@ -905,12 +905,8 @@ export default function EditorPage() {
             {showEpigrafe && <Epigrafe texto={epigrafeTexto} autor={epigrafeAutor} />}
             {showResumoPage && <ResumoPage value={resumo} palavrasChave={palavrasChave} />}
             {showAbstractPage && <AbstractPage value={abstract} keywords={keywords} language={abstractLang} />}
-            {showGlossario && <GlossarioPage entries={glossario} />}
-            {showApendices && apendices.length > 0 && <ApendicePage items={apendices} />}
-            {showAnexos && anexos.length > 0 && <AnexoPage items={anexos} />}
-            {showNotasRodape && notasRodape.length > 0 && <NotasRodapePage notas={notasRodape} />}
             <EditorContent editor={editor} />
-            {/* Lista de Figuras e Tabelas automática (v0.2) */}
+            {/* Lista de Figuras e Tabelas automática (v0.2) — após o texto */}
             {showFigList && (() => {
               const html = editor?.getHTML() || "";
               const figs = extractFigures(html);
@@ -958,6 +954,11 @@ export default function EditorPage() {
                 ))}
               </div>
             )}
+            {/* Pós-textuais (ABNT: após referências) */}
+            {showGlossario && <GlossarioPage entries={glossario} />}
+            {showApendices && apendices.length > 0 && <ApendicePage items={apendices} />}
+            {showAnexos && anexos.length > 0 && <AnexoPage items={anexos} />}
+            {showNotasRodape && notasRodape.length > 0 && <NotasRodapePage notas={notasRodape} />}
           </div>
 
           {/* Status bar */}
