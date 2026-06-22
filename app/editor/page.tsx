@@ -1,6 +1,6 @@
 "use client";
 // app/editor/page.tsx v0.1.1 FINAL
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
@@ -129,12 +129,39 @@ export default function EditorPage() {
     loading: sumLoading, progress: sumProgress, modelStatus: sumModelStatus, error: sumError,
   } = useSummarization();
 
+  const importFileRef = useRef<HTMLInputElement>(null);
+
   // ─── MULTI-DOCUMENT (v0.4) ─────────────────────────────────────────────
   const {
     docs, currentDoc, currentId, updateCurrentDoc,
     switchDoc, addDoc, deleteDoc, renameDoc,
     handleExport, handleImport,
   } = useDocuments();
+
+  const handleImportClick = useCallback(() => {
+    importFileRef.current?.click();
+  }, []);
+
+  const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      await handleImport(file);
+    } catch {}
+    e.target.value = "";
+  }, [handleImport]);
+
+  const isNewDoc = useMemo(() => {
+    if (!currentDoc) return true;
+    return (
+      !currentDoc.cover.autor &&
+      !currentDoc.cover.titulo &&
+      !currentDoc.resumo &&
+      !currentDoc.abstract &&
+      currentDoc.refs.length === 0 &&
+      currentDoc.content === "<h1>1 INTRODUÇÃO</h1><p></p>"
+    );
+  }, [currentDoc]);
 
   // Editor (Tiptap)
   const editor = useEditor({
@@ -423,7 +450,49 @@ export default function EditorPage() {
 
       <a href="#main-content" className="skip-link">Pular para o conteúdo principal</a>
 
-      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <input ref={importFileRef} type="file" accept=".editecc" style={{ display: "none" }} onChange={handleImportFile} />
+
+      {isNewDoc ? (
+        <div style={{
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          height: "100vh", background: "#0a0c11", gap: "24px", padding: "40px",
+        }}>
+          <div style={{ textAlign: "center" }}>
+            <h1 style={{ fontSize: "36px", fontWeight: "700", color: "#f1f5f9", letterSpacing: "-1px" }}>
+              Edite<span style={{ color: "#3b82f6" }}>CC</span>
+            </h1>
+            <p style={{ fontSize: "14px", color: "#475569", marginTop: "8px" }}>
+              Editor de TCC com formatação ABNT automática
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: "16px" }}>
+            <button onClick={() => addDoc()} style={{
+              padding: "14px 32px", background: "#2563eb", color: "white",
+              border: "none", borderRadius: "8px", cursor: "pointer",
+              fontSize: "15px", fontWeight: "600", display: "flex", alignItems: "center", gap: "8px",
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Novo TCC
+            </button>
+            <button onClick={handleImportClick} style={{
+              padding: "14px 32px", background: "#1e2330", color: "#e2e8f0",
+              border: "1px solid #334155", borderRadius: "8px", cursor: "pointer",
+              fontSize: "15px", fontWeight: "500", display: "flex", alignItems: "center", gap: "8px",
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Importar .editecc
+            </button>
+          </div>
+          <p style={{ fontSize: "12px", color: "#334155", marginTop: "8px" }}>
+            v0.9.1 · 100% local · sem cadastro · sem API externa
+          </p>
+        </div>
+      ) : (
+      <div style={{ display: "flex", height: "100vh", minWidth: "1024px", overflow: "auto" }}>
 
         {/* ── SIDEBAR ── */}
         <aside className="no-print" aria-label="Painel lateral" style={{
@@ -972,6 +1041,7 @@ export default function EditorPage() {
           </div>
         </main>
       </div>
+      )}
     </>
   );
 }

@@ -24,6 +24,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
 - 📽️ **Gerador de Slides v2** — sumarização automática das seções via Transformers.js (`distilbart-cnn`), formatação em bullets, geração `.pptx` (parser H1/H2 + PptxGenJS)
 - ♿ **Acessibilidade WCAG 2.2** — landmarks (`<main>`, `<nav>`, `<aside>`), `aria-label` em botões com ícone, `:focus-visible`, skip link, `aria-live` em notificações, `prefers-reduced-motion`
+- 👋 **Onboarding** — tela de boas-vindas no primeiro acesso com "Novo TCC" e "Importar .editecc"
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
@@ -47,7 +48,10 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS + placeholder 1º parágrafo) |
 | **v0.8** | ✅ Concluído | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo — bullets formatados, loading com progresso na toolbar |
 | **v0.9** | ✅ Concluído | Acessibilidade (WCAG 2.2): aria-labels, foco visível, landmarks (main/nav/aside), skip link, live regions, reduced motion |
-| **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
+| **v0.9.1** | ✅ Concluído | Onboarding (boas-vindas + Novo/Importar), estados vazios, responsivo mínimo (min-width 1024px) |
+| **v0.9.2** | 📋 Planejado | Atalhos de teclado visíveis, landing page melhorada, tema claro |
+| **v0.9.3** | 📋 Planejado | Feedback de loading (skeleton), atalhos, documentação de uso |
+| **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---
 
