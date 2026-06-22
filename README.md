@@ -23,6 +23,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
 - 📽️ **Gerador de Slides v2** — sumarização automática das seções via Transformers.js (`distilbart-cnn`), formatação em bullets, geração `.pptx` (parser H1/H2 + PptxGenJS)
+- ♿ **Acessibilidade WCAG 2.2** — landmarks (`<main>`, `<nav>`, `<aside>`), `aria-label` em botões com ícone, `:focus-visible`, skip link, `aria-live` em notificações, `prefers-reduced-motion`
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
@@ -45,7 +46,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.6** | ✅ Concluído | Anexos, Apêndices, Glossário, Notas de rodapé |
 | **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS + placeholder 1º parágrafo) |
 | **v0.8** | ✅ Concluído | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo — bullets formatados, loading com progresso na toolbar |
-| **v0.9** | 📋 Planejado | Acessibilidade (WCAG 2.2): contraste, foco visível, aria-labels, suporte a leitores de tela |
+| **v0.9** | ✅ Concluído | Acessibilidade (WCAG 2.2): aria-labels, foco visível, landmarks (main/nav/aside), skip link, live regions, reduced motion |
 | **v1.0** | 🎯 Meta | UI polida, onboarding, documentação completa |
 
 ---

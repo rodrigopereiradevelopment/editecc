@@ -421,10 +421,12 @@ export default function EditorPage() {
         }
       `}</style>
 
+      <a href="#main-content" className="skip-link">Pular para o conteúdo principal</a>
+
       <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
 
         {/* ── SIDEBAR ── */}
-        <div className="no-print" style={{
+        <aside className="no-print" aria-label="Painel lateral" style={{
           width: "280px", background: "#0d0f15", borderRight: "1px solid #1e2330",
           display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden",
         }}>
@@ -580,40 +582,40 @@ export default function EditorPage() {
                   />
                 </label>
                 <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <button onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showFolhaRosto ? "Ocultar Folha de Rosto" : "Mostrar Folha de Rosto"} onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFolhaRosto ? "✓ Folha de Rosto" : "Folha de Rosto"}
                   </button>
-                  <button onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAprovacao ? "Ocultar Folha de Aprovação" : "Mostrar Folha de Aprovação"} onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAprovacao ? "✓ Folha de Aprovação" : "Folha de Aprovação"}
                   </button>
-                  <button onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showDedicatoria ? "Ocultar Dedicatória" : "Mostrar Dedicatória"} onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showDedicatoria ? "✓ Dedicatória" : "Dedicatória"}
                   </button>
-                  <button onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAgradecimentos ? "Ocultar Agradecimentos" : "Mostrar Agradecimentos"} onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAgradecimentos ? "✓ Agradecimentos" : "Agradecimentos"}
                   </button>
-                  <button onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showEpigrafe ? "Ocultar Epígrafe" : "Mostrar Epígrafe"} onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showEpigrafe ? "✓ Epígrafe" : "Epígrafe"}
                   </button>
-                  <button onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showResumoPage ? "Ocultar Página Resumo" : "Mostrar Página Resumo"} onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showResumoPage ? "✓ Página Resumo" : "Página Resumo"}
                   </button>
-                  <button onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAbstractPage ? "Ocultar Página Abstract" : "Mostrar Página Abstract"} onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAbstractPage ? "✓ Página Abstract" : "Página Abstract"}
                   </button>
-                  <button onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showFigList ? "Ocultar Lista de Figuras e Tabelas" : "Mostrar Lista de Figuras e Tabelas"} onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFigList ? "✓ Lista Fig./Tab." : "Lista Fig./Tab."}
                   </button>
-                  <button onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAnexos ? "Ocultar Anexos" : "Mostrar Anexos"} onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAnexos ? "✓ Anexos" : "Anexos"}
                   </button>
-                  <button onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showApendices ? "Ocultar Apêndices" : "Mostrar Apêndices"} onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showApendices ? "✓ Apêndices" : "Apêndices"}
                   </button>
-                  <button onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showGlossario ? "Ocultar Glossário" : "Mostrar Glossário"} onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showGlossario ? "✓ Glossário" : "Glossário"}
                   </button>
-                  <button onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showNotasRodape ? "Ocultar Notas de Rodapé" : "Mostrar Notas de Rodapé"} onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showNotasRodape ? "✓ Notas Rodapé" : "Notas Rodapé"}
                   </button>
                 </div>
@@ -793,9 +795,9 @@ export default function EditorPage() {
                   Validação ABNT
                 </p>
                 {validationIssues.length === 0 ? (
-                  <p style={{ fontSize: "12px", color: "#10b981" }}>✓ Documento válido!</p>
+                  <p aria-live="polite" style={{ fontSize: "12px", color: "#10b981" }}>✓ Documento válido!</p>
                 ) : (
-                  <ul style={{ listStyle: "none", padding: 0, gap: "8px", display: "flex", flexDirection: "column" }}>
+                  <ul aria-live="polite" style={{ listStyle: "none", padding: 0, gap: "8px", display: "flex", flexDirection: "column" }}>
                     {validationIssues.map((issue, i) => (
                       <li
                         key={i}
@@ -820,35 +822,35 @@ export default function EditorPage() {
           <div style={{ padding: "9px 14px", borderTop: "1px solid #1e2330", fontSize: "9px", color: "#1e2d3d" }}>
             Open Source · MIT · rodrigopereiradevelopment
           </div>
-        </div>
+        </aside>
 
         {/* ── MAIN ── */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <main id="main-content" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
           {/* Toolbar */}
-          <div className="no-print" style={{
+          <nav className="no-print" aria-label="Ferramentas de formatação" style={{
             background: "#0d0f15", borderBottom: "1px solid #1e2330",
             padding: "6px 10px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap",
           }}>
-            <button onMouseDown={e => { e.preventDefault(); applyFormat("toggleBold"); }} title="Negrito (Ctrl+B)"
+            <button aria-label="Negrito" onMouseDown={e => { e.preventDefault(); applyFormat("toggleBold"); }} title="Negrito (Ctrl+B)"
               style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
               <BoldIcon />
             </button>
-            <button onMouseDown={e => { e.preventDefault(); applyFormat("toggleItalic"); }} title="Itálico (Ctrl+I)"
+            <button aria-label="Itálico" onMouseDown={e => { e.preventDefault(); applyFormat("toggleItalic"); }} title="Itálico (Ctrl+I)"
               style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
               <ItalicIcon />
             </button>
-            <button onMouseDown={e => { e.preventDefault(); applyFormat("toggleUnderline"); }} title="Sublinhado (Ctrl+U)"
+            <button aria-label="Sublinhado" onMouseDown={e => { e.preventDefault(); applyFormat("toggleUnderline"); }} title="Sublinhado (Ctrl+U)"
               style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
               <UnderlineIcon />
             </button>
-            <button onMouseDown={e => { e.preventDefault(); applyFormat("setTextAlign", { align: "justify" }); }} title="Justificar"
+            <button aria-label="Justificar" onMouseDown={e => { e.preventDefault(); applyFormat("setTextAlign", { align: "justify" }); }} title="Justificar"
               style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
@@ -856,7 +858,7 @@ export default function EditorPage() {
             </button>
 
             <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>
-              {savedMsg && <span style={{ color: "#10b981", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
+              {savedMsg && <span aria-live="polite" style={{ color: "#10b981", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
               <button onClick={handleGerarSlides} disabled={slidesLoading} style={{
                 background: slidesLoading ? "#6b7280" : "#10b981", border: "none", color: "white",
                 padding: "5px 12px", borderRadius: "6px", cursor: slidesLoading ? "wait" : "pointer",
@@ -865,7 +867,7 @@ export default function EditorPage() {
                 <SlidesIcon /> {slidesLoading ? slidesProgress + "%" : "Slides"}
               </button>
               {slidesLoading && slidesStatus && (
-                <span style={{ color: "#94a3b8", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span aria-live="polite" style={{ color: "#94a3b8", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {slidesStatus}
                 </span>
               )}
@@ -877,7 +879,7 @@ export default function EditorPage() {
                 <PrintIcon /> Exportar PDF
               </button>
             </div>
-          </div>
+          </nav>
 
           {/* Editor Canvas */}
           <div ref={editorContainerRef} style={{
@@ -967,7 +969,7 @@ export default function EditorPage() {
             <span style={{ color: "#1e2d3d" }}>Caracteres: <span style={{ color: "#334155" }}>{charCount}</span></span>
             <span style={{ color: "#1e2d3d", marginLeft: "auto" }}>🖥️ ABNT NBR 14724:2011 · v0.2</span>
           </div>
-        </div>
+        </main>
       </div>
     </>
   );
