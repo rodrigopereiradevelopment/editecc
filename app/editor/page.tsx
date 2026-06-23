@@ -122,6 +122,8 @@ export default function EditorPage() {
   const [slidesLoading, setSlidesLoading] = useState(false);
   const [slidesProgress, setSlidesProgress] = useState(0);
   const [slidesStatus, setSlidesStatus] = useState("");
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   // ─── SUMARIZAÇÃO (v0.8) ──────────────────────────────────────────────────
   const {
@@ -301,6 +303,12 @@ export default function EditorPage() {
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [syncToDoc]);
 
+  // Tema claro/escuro
+  useEffect(() => {
+    document.body.classList.toggle("theme-light", theme === "light");
+    return () => document.body.classList.remove("theme-light");
+  }, [theme]);
+
   // Navegação no sumário
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
@@ -397,13 +405,13 @@ export default function EditorPage() {
         
         body {
           font-family: 'DM Sans', sans-serif;
-          background: #0a0c11;
-          color: #e2e8f0;
+          background: var(--bg-app);
+          color: var(--text-secondary);
         }
         
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1e2330; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
         
         .a4-page {
           width: 21cm;
@@ -455,13 +463,13 @@ export default function EditorPage() {
       {isNewDoc ? (
         <div style={{
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-          height: "100vh", background: "#0a0c11", gap: "24px", padding: "40px",
+          height: "100vh", background: "var(--bg-app)", gap: "24px", padding: "40px",
         }}>
           <div style={{ textAlign: "center" }}>
-            <h1 style={{ fontSize: "36px", fontWeight: "700", color: "#f1f5f9", letterSpacing: "-1px" }}>
+            <h1 style={{ fontSize: "36px", fontWeight: "700", color: "var(--text-primary)", letterSpacing: "-1px" }}>
               Edite<span style={{ color: "#3b82f6" }}>CC</span>
             </h1>
-            <p style={{ fontSize: "14px", color: "#475569", marginTop: "8px" }}>
+            <p style={{ fontSize: "14px", color: "var(--text-dim)", marginTop: "8px" }}>
               Editor de TCC com formatação ABNT automática
             </p>
           </div>
@@ -477,7 +485,7 @@ export default function EditorPage() {
               Novo TCC
             </button>
             <button onClick={handleImportClick} style={{
-              padding: "14px 32px", background: "#1e2330", color: "#e2e8f0",
+              padding: "14px 32px", background: "var(--border-color)", color: "var(--text-secondary)",
               border: "1px solid #334155", borderRadius: "8px", cursor: "pointer",
               fontSize: "15px", fontWeight: "500", display: "flex", alignItems: "center", gap: "8px",
             }}>
@@ -487,8 +495,8 @@ export default function EditorPage() {
               Importar .editecc
             </button>
           </div>
-          <p style={{ fontSize: "12px", color: "#334155", marginTop: "8px" }}>
-            v0.9.1 · 100% local · sem cadastro · sem API externa
+          <p style={{ fontSize: "12px", color: "var(--text-very-dim)", marginTop: "8px" }}>
+            v0.9.2 · 100% local · sem cadastro · sem API externa
           </p>
         </div>
       ) : (
@@ -496,19 +504,38 @@ export default function EditorPage() {
 
         {/* ── SIDEBAR ── */}
         <aside className="no-print" aria-label="Painel lateral" style={{
-          width: "280px", background: "#0d0f15", borderRight: "1px solid #1e2330",
+          width: "280px", background: "var(--bg-surface)", borderRight: "1px solid var(--border-color)",
           display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden",
         }}>
           {/* Logo */}
-          <div style={{ padding: "14px", borderBottom: "1px solid #1e2330" }}>
-            <h2 style={{ fontSize: "18px", fontWeight: "700", color: "#f1f5f9", letterSpacing: "-0.3px" }}>
-              Edite<span style={{ color: "#3b82f6" }}>CC</span>
-            </h2>
-            <p style={{ fontSize: "9px", color: "#1e2d3d", marginTop: "2px" }}>ABNT NBR 14724 · v0.2</p>
+          <div style={{ padding: "14px", borderBottom: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--text-primary)", letterSpacing: "-0.3px" }}>
+                Edite<span style={{ color: "#3b82f6" }}>CC</span>
+              </h2>
+              <p style={{ fontSize: "9px", color: "var(--text-faint)", marginTop: "2px" }}>ABNT NBR 14724 · v0.2</p>
+            </div>
+            <button
+              aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              style={{
+                background: "none", border: "1px solid var(--border-color)", color: "var(--text-dim)",
+                cursor: "pointer", padding: "5px 7px", borderRadius: "6px",
+                fontSize: "11px", display: "flex", alignItems: "center", gap: "4px",
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--bg-hover)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}
+            >
+              {theme === "dark" ? (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              ) : (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              )}
+            </button>
           </div>
 
           {/* Tabs */}
-          <div style={{ display: "flex", borderBottom: "1px solid #1e2330", gap: "1px" }}>
+          <div style={{ display: "flex", borderBottom: "1px solid var(--border-color)", gap: "1px" }}>
               {[
                 ["capa", "📄 Capa"],
                 ["editor", "✍️ Editor"],
@@ -524,10 +551,10 @@ export default function EditorPage() {
                 style={{
                   flex: 1,
                   padding: "8px 4px",
-                  background: activeTab === id ? "#161820" : "transparent",
+                  background: activeTab === id ? "var(--bg-hover)" : "transparent",
                   border: "none",
-                  borderBottom: activeTab === id ? "2px solid #3b82f6" : "1px solid #1e2330",
-                  color: activeTab === id ? "#3b82f6" : "#334155",
+                  borderBottom: activeTab === id ? "2px solid #3b82f6" : "1px solid var(--border-color)",
+                  color: activeTab === id ? "#3b82f6" : "var(--text-very-dim)",
                   cursor: "pointer",
                   fontSize: "10px",
                   fontWeight: "500",
@@ -554,137 +581,137 @@ export default function EditorPage() {
             )}
             {activeTab === "capa" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Instituição
                   <input
                     value={coverData.etec}
                     onChange={e => setCoverData({ ...coverData, etec: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Curso
                   <input
                     value={coverData.curso}
                     onChange={e => setCoverData({ ...coverData, curso: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Autor
                   <input
                     value={coverData.autor}
                     onChange={e => setCoverData({ ...coverData, autor: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Título
                   <input
                     value={coverData.titulo}
                     onChange={e => setCoverData({ ...coverData, titulo: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Subtítulo
                   <input
                     value={coverData.subtitulo}
                     onChange={e => setCoverData({ ...coverData, subtitulo: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Orientador
                   <input
                     value={coverData.orientador}
                     onChange={e => setCoverData({ ...coverData, orientador: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Cidade
                   <input
                     value={coverData.local}
                     onChange={e => setCoverData({ ...coverData, local: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "#475569", textTransform: "uppercase" }}>
+                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Ano
                   <input
                     value={coverData.ano}
                     onChange={e => setCoverData({ ...coverData, ano: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                       borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                     }}
                   />
                 </label>
                 <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <button aria-label={showFolhaRosto ? "Ocultar Folha de Rosto" : "Mostrar Folha de Rosto"} onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showFolhaRosto ? "Ocultar Folha de Rosto" : "Mostrar Folha de Rosto"} onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFolhaRosto ? "✓ Folha de Rosto" : "Folha de Rosto"}
                   </button>
-                  <button aria-label={showAprovacao ? "Ocultar Folha de Aprovação" : "Mostrar Folha de Aprovação"} onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAprovacao ? "Ocultar Folha de Aprovação" : "Mostrar Folha de Aprovação"} onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAprovacao ? "✓ Folha de Aprovação" : "Folha de Aprovação"}
                   </button>
-                  <button aria-label={showDedicatoria ? "Ocultar Dedicatória" : "Mostrar Dedicatória"} onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showDedicatoria ? "Ocultar Dedicatória" : "Mostrar Dedicatória"} onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showDedicatoria ? "✓ Dedicatória" : "Dedicatória"}
                   </button>
-                  <button aria-label={showAgradecimentos ? "Ocultar Agradecimentos" : "Mostrar Agradecimentos"} onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAgradecimentos ? "Ocultar Agradecimentos" : "Mostrar Agradecimentos"} onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAgradecimentos ? "✓ Agradecimentos" : "Agradecimentos"}
                   </button>
-                  <button aria-label={showEpigrafe ? "Ocultar Epígrafe" : "Mostrar Epígrafe"} onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showEpigrafe ? "Ocultar Epígrafe" : "Mostrar Epígrafe"} onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showEpigrafe ? "✓ Epígrafe" : "Epígrafe"}
                   </button>
-                  <button aria-label={showResumoPage ? "Ocultar Página Resumo" : "Mostrar Página Resumo"} onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showResumoPage ? "Ocultar Página Resumo" : "Mostrar Página Resumo"} onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showResumoPage ? "✓ Página Resumo" : "Página Resumo"}
                   </button>
-                  <button aria-label={showAbstractPage ? "Ocultar Página Abstract" : "Mostrar Página Abstract"} onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAbstractPage ? "Ocultar Página Abstract" : "Mostrar Página Abstract"} onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAbstractPage ? "✓ Página Abstract" : "Página Abstract"}
                   </button>
-                  <button aria-label={showFigList ? "Ocultar Lista de Figuras e Tabelas" : "Mostrar Lista de Figuras e Tabelas"} onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showFigList ? "Ocultar Lista de Figuras e Tabelas" : "Mostrar Lista de Figuras e Tabelas"} onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFigList ? "✓ Lista Fig./Tab." : "Lista Fig./Tab."}
                   </button>
-                  <button aria-label={showAnexos ? "Ocultar Anexos" : "Mostrar Anexos"} onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showAnexos ? "Ocultar Anexos" : "Mostrar Anexos"} onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAnexos ? "✓ Anexos" : "Anexos"}
                   </button>
-                  <button aria-label={showApendices ? "Ocultar Apêndices" : "Mostrar Apêndices"} onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showApendices ? "Ocultar Apêndices" : "Mostrar Apêndices"} onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showApendices ? "✓ Apêndices" : "Apêndices"}
                   </button>
-                  <button aria-label={showGlossario ? "Ocultar Glossário" : "Mostrar Glossário"} onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showGlossario ? "Ocultar Glossário" : "Mostrar Glossário"} onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showGlossario ? "✓ Glossário" : "Glossário"}
                   </button>
-                  <button aria-label={showNotasRodape ? "Ocultar Notas de Rodapé" : "Mostrar Notas de Rodapé"} onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "#1e293b" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-label={showNotasRodape ? "Ocultar Notas de Rodapé" : "Mostrar Notas de Rodapé"} onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showNotasRodape ? "✓ Notas Rodapé" : "Notas Rodapé"}
                   </button>
                 </div>
@@ -708,12 +735,12 @@ export default function EditorPage() {
                   onLanguageChange={setAbstractLang}
                   resumo={resumo}
                 />
-                <div style={{ borderTop: "1px solid #1e2330", margin: "20px 0", paddingTop: "16px" }}>
-                  <p style={{ color: "#334155", fontSize: "10px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px" }}>
+                <div style={{ borderTop: "1px solid var(--border-color)", margin: "20px 0", paddingTop: "16px" }}>
+                  <p style={{ color: "var(--text-very-dim)", fontSize: "10px", textTransform: "uppercase", fontWeight: "600", marginBottom: "12px" }}>
                     Elementos Opcionais
                   </p>
 
-                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                  <label style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
                     Dedicatória
                     <textarea
                       value={dedicatoriaTexto}
@@ -722,14 +749,14 @@ export default function EditorPage() {
                       placeholder="Dedico este trabalho a..."
                       style={{
                         width: "100%", marginTop: "3px", padding: "6px 10px",
-                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                         borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                         resize: "vertical", fontFamily: "'DM Sans', sans-serif",
                       }}
                     />
                   </label>
 
-                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                  <label style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
                     Agradecimentos
                     <textarea
                       value={agradecimentosTexto}
@@ -738,14 +765,14 @@ export default function EditorPage() {
                       placeholder="Agradeço a..."
                       style={{
                         width: "100%", marginTop: "3px", padding: "6px 10px",
-                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                         borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                         resize: "vertical", fontFamily: "'DM Sans', sans-serif",
                       }}
                     />
                   </label>
 
-                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                  <label style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
                     Epígrafe — Texto
                     <textarea
                       value={epigrafeTexto}
@@ -754,14 +781,14 @@ export default function EditorPage() {
                       placeholder='"A imaginação é mais importante que o conhecimento."'
                       style={{
                         width: "100%", marginTop: "3px", padding: "6px 10px",
-                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                         borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                         resize: "vertical", fontFamily: "'DM Sans', sans-serif",
                       }}
                     />
                   </label>
 
-                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                  <label style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
                     Epígrafe — Autor
                     <input
                       value={epigrafeAutor}
@@ -769,13 +796,13 @@ export default function EditorPage() {
                       placeholder="Albert Einstein"
                       style={{
                         width: "100%", marginTop: "3px", padding: "6px 10px",
-                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                         borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                       }}
                     />
                   </label>
 
-                  <label style={{ color: "#475569", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                  <label style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
                     Data da Aprovação
                     <input
                       type="date"
@@ -783,14 +810,14 @@ export default function EditorPage() {
                       onChange={e => setAprovacaoData(e.target.value)}
                       style={{
                         width: "100%", marginTop: "3px", padding: "6px 10px",
-                        background: "#0f1117", border: "1px solid #1e2330", color: "#cbd5e1",
+                        background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
                         borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
                       }}
                     />
                   </label>
                 </div>
 
-                <div style={{ borderTop: "1px solid #1e2330", margin: "20px 0", paddingTop: "16px" }}>
+                <div style={{ borderTop: "1px solid var(--border-color)", margin: "20px 0", paddingTop: "16px" }}>
                   <PosTextuaisManager
                     label="Apêndices"
                     prefix="APÊNDICE"
@@ -821,7 +848,7 @@ export default function EditorPage() {
 
             {activeTab === "toc" && (
               <div>
-                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "#334155", fontWeight: "600", marginBottom: "12px" }}>
+                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "var(--text-very-dim)", fontWeight: "600", marginBottom: "12px" }}>
                   Sumário Automático
                 </p>
                 {toc.length === 0 ? (
@@ -835,7 +862,7 @@ export default function EditorPage() {
                           paddingLeft: `${(item.level - 1) * 12 + 4}px`,
                           paddingTop: "4px",
                           paddingBottom: "4px",
-                          color: item.level === 1 ? "#e2e8f0" : item.level === 2 ? "#94a3b8" : "#64748b",
+                          color: item.level === 1 ? "var(--text-secondary)" : item.level === 2 ? "var(--text-muted-2)" : "#64748b",
                           fontSize: "12px",
                           borderLeft: `2px solid ${item.level === 1 ? "#3b82f6" : "transparent"}`,
                           cursor: "pointer",
@@ -860,11 +887,11 @@ export default function EditorPage() {
 
             {activeTab === "validate" && (
               <div>
-                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "#334155", fontWeight: "600", marginBottom: "12px" }}>
+                <p style={{ fontSize: "10px", textTransform: "uppercase", color: "var(--text-very-dim)", fontWeight: "600", marginBottom: "12px" }}>
                   Validação ABNT
                 </p>
                 {validationIssues.length === 0 ? (
-                  <p aria-live="polite" style={{ fontSize: "12px", color: "#10b981" }}>✓ Documento válido!</p>
+                  <p aria-live="polite" style={{ fontSize: "12px", color: "var(--text-success)" }}>✓ Documento válido!</p>
                 ) : (
                   <ul aria-live="polite" style={{ listStyle: "none", padding: 0, gap: "8px", display: "flex", flexDirection: "column" }}>
                     {validationIssues.map((issue, i) => (
@@ -872,11 +899,11 @@ export default function EditorPage() {
                         key={i}
                         style={{
                           padding: "8px 10px",
-                          background: "#0a0c11",
+                          background: "var(--bg-app)",
                           borderLeft: `2px solid ${issue.type === "error" ? "#ef4444" : issue.type === "warning" ? "#f59e0b" : "#3b82f6"}`,
                           borderRadius: "4px",
                           fontSize: "11px",
-                          color: "#94a3b8",
+                          color: "var(--text-muted-2)",
                         }}
                       >
                         {issue.type === "error" ? "❌" : issue.type === "warning" ? "⚠️" : "ℹ️"} {issue.message}
@@ -888,7 +915,7 @@ export default function EditorPage() {
             )}
           </div>
 
-          <div style={{ padding: "9px 14px", borderTop: "1px solid #1e2330", fontSize: "9px", color: "#1e2d3d" }}>
+          <div style={{ padding: "9px 14px", borderTop: "1px solid var(--border-color)", fontSize: "9px", color: "var(--text-faint)" }}>
             Open Source · MIT · rodrigopereiradevelopment
           </div>
         </aside>
@@ -898,45 +925,51 @@ export default function EditorPage() {
 
           {/* Toolbar */}
           <nav className="no-print" aria-label="Ferramentas de formatação" style={{
-            background: "#0d0f15", borderBottom: "1px solid #1e2330",
+            background: "var(--bg-surface)", borderBottom: "1px solid var(--border-color)",
             padding: "6px 10px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap",
           }}>
             <button aria-label="Negrito" onMouseDown={e => { e.preventDefault(); applyFormat("toggleBold"); }} title="Negrito (Ctrl+B)"
-              style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
+              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
               <BoldIcon />
             </button>
             <button aria-label="Itálico" onMouseDown={e => { e.preventDefault(); applyFormat("toggleItalic"); }} title="Itálico (Ctrl+I)"
-              style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
+              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
               <ItalicIcon />
             </button>
             <button aria-label="Sublinhado" onMouseDown={e => { e.preventDefault(); applyFormat("toggleUnderline"); }} title="Sublinhado (Ctrl+U)"
-              style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
+              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
               <UnderlineIcon />
             </button>
             <button aria-label="Justificar" onMouseDown={e => { e.preventDefault(); applyFormat("setTextAlign", { align: "justify" }); }} title="Justificar"
-              style={{ background: "none", border: "none", color: "#475569", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#1e2330"; (e.currentTarget as HTMLButtonElement).style.color = "#e2e8f0"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}>
+              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
               <JustifyIcon />
             </button>
 
+            <button aria-label="Atalhos de teclado" onClick={() => setShowShortcuts(true)} title="Atalhos (Ctrl+?)"
+              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h.01M10 16h.01M14 16h.01M18 16h.01"/></svg>
+            </button>
             <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>
-              {savedMsg && <span aria-live="polite" style={{ color: "#10b981", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
+              {savedMsg && <span aria-live="polite" style={{ color: "var(--text-success)", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
               <button onClick={handleGerarSlides} disabled={slidesLoading} style={{
-                background: slidesLoading ? "#6b7280" : "#10b981", border: "none", color: "white",
+                background: slidesLoading ? "#6b7280" : "var(--text-success)", border: "none", color: "white",
                 padding: "5px 12px", borderRadius: "6px", cursor: slidesLoading ? "wait" : "pointer",
                 fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px", position: "relative",
               }}>
                 <SlidesIcon /> {slidesLoading ? slidesProgress + "%" : "Slides"}
               </button>
               {slidesLoading && slidesStatus && (
-                <span aria-live="polite" style={{ color: "#94a3b8", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span aria-live="polite" style={{ color: "var(--text-muted-2)", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {slidesStatus}
                 </span>
               )}
@@ -952,7 +985,7 @@ export default function EditorPage() {
 
           {/* Editor Canvas */}
           <div ref={editorContainerRef} style={{
-            flex: 1, overflow: "auto", background: "#0f1117",
+            flex: 1, overflow: "auto", background: "var(--bg-elevated)",
             display: "flex", flexDirection: "column", alignItems: "center",
             padding: "28px 20px", gap: "20px",
             counterReset: "page",
@@ -1032,15 +1065,77 @@ export default function EditorPage() {
 
           {/* Status bar */}
           <div className="no-print" style={{
-            background: "#0d0f15", borderTop: "1px solid #1e2330",
+            background: "var(--bg-surface)", borderTop: "1px solid var(--border-color)",
             padding: "4px 14px", display: "flex", gap: "16px", alignItems: "center", fontSize: "10px",
           }}>
-            <span style={{ color: "#1e2d3d" }}>Palavras: <span style={{ color: "#334155" }}>{wordCount}</span></span>
-            <span style={{ color: "#1e2d3d" }}>Caracteres: <span style={{ color: "#334155" }}>{charCount}</span></span>
-            <span style={{ color: "#1e2d3d", marginLeft: "auto" }}>🖥️ ABNT NBR 14724:2011 · v0.2</span>
+            <span style={{ color: "var(--text-faint)" }}>Palavras: <span style={{ color: "var(--text-very-dim)" }}>{wordCount}</span></span>
+            <span style={{ color: "var(--text-faint)" }}>Caracteres: <span style={{ color: "var(--text-very-dim)" }}>{charCount}</span></span>
+            <span style={{ color: "var(--text-faint)", marginLeft: "auto" }}>🖥️ ABNT NBR 14724:2011 · v0.2</span>
           </div>
         </main>
       </div>
+      )}
+      
+      {/* ── SHORTCUTS MODAL ── */}
+      {showShortcuts && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Atalhos de teclado"
+          onClick={() => setShowShortcuts(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9999,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >
+          <div onClick={e => e.stopPropagation()} style={{
+            background: "var(--bg-surface)", border: "1px solid var(--border-color)",
+            borderRadius: "12px", padding: "28px 32px", maxWidth: "420px", width: "90%",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+              <h2 style={{ fontSize: "16px", fontWeight: "600", color: "var(--text-primary)" }}>⌨ Atalhos de Teclado</h2>
+              <button onClick={() => setShowShortcuts(false)} aria-label="Fechar"
+                style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", fontSize: "18px", padding: "4px" }}>
+                ✕
+              </button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <p style={{ fontSize: "10px", fontWeight: "600", textTransform: "uppercase", color: "var(--text-very-dim)", letterSpacing: "0.05em" }}>Formatação</p>
+              {[
+                ["Ctrl+B", "Negrito"],
+                ["Ctrl+I", "Itálico"],
+                ["Ctrl+U", "Sublinhado"],
+                ["Ctrl+Z", "Desfazer"],
+                ["Ctrl+Y / Ctrl+Shift+Z", "Refazer"],
+              ].map(([key, desc]) => (
+                <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{desc}</span>
+                  <kbd style={{
+                    background: "var(--bg-elevated)", border: "1px solid var(--border-color)",
+                    borderRadius: "4px", padding: "2px 8px", fontSize: "11px",
+                    color: "var(--text-muted)", fontFamily: "DM Mono, monospace",
+                  }}>{key}</kbd>
+                </div>
+              ))}
+              <p style={{ fontSize: "10px", fontWeight: "600", textTransform: "uppercase", color: "var(--text-very-dim)", letterSpacing: "0.05em", marginTop: "4px" }}>Geral</p>
+              {[
+                ["Ctrl+P", "Exportar PDF"],
+                ["Esc", "Fechar modais / popups"],
+              ].map(([key, desc]) => (
+                <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{desc}</span>
+                  <kbd style={{
+                    background: "var(--bg-elevated)", border: "1px solid var(--border-color)",
+                    borderRadius: "4px", padding: "2px 8px", fontSize: "11px",
+                    color: "var(--text-muted)", fontFamily: "DM Mono, monospace",
+                  }}>{key}</kbd>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

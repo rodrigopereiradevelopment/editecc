@@ -30,16 +30,32 @@ const FEATURES = [
     desc: "Detecta citações longas mal formatadas, resumo fora do tamanho ideal (150–500 palavras) e seções obrigatórias faltando.",
   },
   {
-    icon: "◈",
+    icon: "⬡",
     title: "100% Local",
     desc: "Autosave com IndexedDB. Seus dados ficam no seu dispositivo. Nenhum servidor, nenhuma nuvem, nenhum cadastro.",
+  },
+  {
+    icon: "▤",
+    title: "Slides Automáticos",
+    desc: "Gera apresentações PPTX a partir dos títulos H1/H2. Usa IA local (Transformers.js) para resumir cada seção.",
+  },
+  {
+    icon: "♿",
+    title: "Acessível por Teclado",
+    desc: "Navegação completa por Tab, skip link, focus-visible, aria-labels e suporte a leitores de tela (WCAG 2.2).",
+  },
+  {
+    icon: "→",
+    title: "Onboarding Inteligente",
+    desc: "Tela de boas-vindas na primeira vez: crie ou importe um TCC em segundos. Estados vazios guiam cada etapa.",
   },
 ];
 
 const STEPS = [
   { n: "01", title: "Preencha a Capa", desc: "Instituição, autor e título no painel lateral. A capa é gerada automaticamente." },
   { n: "02", title: "Escreva o Conteúdo", desc: "Use os estilos ABNT pré-definidos. O editor formata enquanto você escreve." },
-  { n: "03", title: "Exporte o PDF", desc: "Clique em Exportar PDF. O documento sai pronto, formatado e dentro das normas." },
+  { n: "03", title: "Gere Slides", desc: "Clique em Slides e o EditeCC resume cada seção com IA local e exporta para PPTX." },
+  { n: "04", title: "Exporte o PDF", desc: "Clique em Exportar PDF. O documento sai pronto, formatado e dentro das normas." },
 ];
 
 // ─── PAPER MOCKUP (folha A4 em miniatura) ────────────────────────────────────
@@ -564,7 +580,7 @@ export default function LandingPage() {
             </span>
           </div>
           <span style={{ color: "#1e2d3d", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
-            ABNT NBR 14724:2011
+              v0.9.2 · ABNT NBR 14724:2011
           </span>
         </footer>
       </main>
