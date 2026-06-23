@@ -25,6 +25,10 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📽️ **Gerador de Slides v2** — sumarização automática das seções via Transformers.js (`distilbart-cnn`), formatação em bullets, geração `.pptx` (parser H1/H2 + PptxGenJS)
 - ♿ **Acessibilidade WCAG 2.2** — landmarks (`<main>`, `<nav>`, `<aside>`), `aria-label` em botões com ícone, `:focus-visible`, skip link, `aria-live` em notificações, `prefers-reduced-motion`
 - 👋 **Onboarding** — tela de boas-vindas no primeiro acesso com "Novo TCC" e "Importar .editecc"
+- 🎯 **Atalhos de teclado visíveis** — modal com todas as combinações (Ctrl+B/I/U/Z/Y, Esc, Ctrl+P)
+- 💡 **Tema claro/escuro** — toggle com ícone sol/lua no painel lateral, CSS variables internas
+- ⌨️ **Skeleton loading** — shimmer animado simulando sidebar + toolbar + canvas A4 durante carregamento
+- 🔤 **Botões de heading** — H1/H2/H3 na toolbar para aplicar títulos ABNT com um clique
 - ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
@@ -50,7 +54,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9** | ✅ Concluído | Acessibilidade (WCAG 2.2): aria-labels, foco visível, landmarks (main/nav/aside), skip link, live regions, reduced motion |
 | **v0.9.1** | ✅ Concluído | Onboarding (boas-vindas + Novo/Importar), estados vazios, responsivo mínimo (min-width 1024px) |
 | **v0.9.2** | ✅ Concluído | Atalhos de teclado visíveis (modal), landing page (hero + features grid + steps + CTA), tema claro (CSS variables + toggle) |
-| **v0.9.3** | 📋 Planejado | Skeleton loading (canvas + sidebar + toolbar), atalhos de formatação H1/H2/H3 na toolbar, documentação de uso |
+| **v0.9.3** | ✅ Concluído | Skeleton loading (canvas + sidebar + toolbar), atalhos H1/H2/H3 na toolbar, documentação de uso (USAGE.md) |
+| **v0.9.4** | 📋 Planejado | Refinamentos de UI/UX (transições, feedback visual), testes de integração, performance (memoização, lazy loading dos modelos de IA) |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---

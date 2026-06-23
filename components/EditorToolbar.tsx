@@ -67,6 +67,18 @@ export function EditorToolbar({
         <JustifyIcon />
       </ToolbarBtn>
 
+      <div className="no-print" style={{ width: "1px", height: "20px", background: "var(--border-color)", margin: "0 4px" }} />
+
+      <ToolbarBtn label="Título 1" title="Título 1 (seção principal)" onMouseDown={e => { e.preventDefault(); applyFormat("toggleHeading", { level: 1 }); }}>
+        <span style={{ fontWeight: 700, fontSize: "10px", letterSpacing: "0.3px" }}>H1</span>
+      </ToolbarBtn>
+      <ToolbarBtn label="Título 2" title="Título 2 (subseção)" onMouseDown={e => { e.preventDefault(); applyFormat("toggleHeading", { level: 2 }); }}>
+        <span style={{ fontWeight: 600, fontSize: "10px" }}>H2</span>
+      </ToolbarBtn>
+      <ToolbarBtn label="Título 3" title="Título 3 (sub-subseção)" onMouseDown={e => { e.preventDefault(); applyFormat("toggleHeading", { level: 3 }); }}>
+        <span style={{ fontStyle: "italic", fontWeight: 600, fontSize: "10px" }}>H3</span>
+      </ToolbarBtn>
+
       <ToolbarBtn label="Atalhos de teclado" title="Atalhos (Ctrl+?)" onMouseDown={e => { e.preventDefault(); onOpenShortcuts(); }}>
         <KeyboardIcon />
       </ToolbarBtn>

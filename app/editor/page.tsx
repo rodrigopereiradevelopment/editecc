@@ -33,6 +33,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { EditorToolbar } from "@/components/EditorToolbar";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorStatusBar } from "@/components/EditorStatusBar";
+import { EditorSkeleton } from "@/components/EditorSkeleton";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -384,7 +385,7 @@ export default function EditorPage() {
   };
 
   if (!editor) {
-    return <div className="flex items-center justify-center h-screen">Carregando editor...</div>;
+    return <EditorSkeleton />;
   }
 
   return (
@@ -999,6 +1000,7 @@ export default function EditorPage() {
                 ["Ctrl+B", "Negrito"],
                 ["Ctrl+I", "Itálico"],
                 ["Ctrl+U", "Sublinhado"],
+                ["H1 / H2 / H3", "Títulos ABNT"],
                 ["Ctrl+Z", "Desfazer"],
                 ["Ctrl+Y / Ctrl+Shift+Z", "Refazer"],
               ].map(([key, desc]) => (
