@@ -309,6 +309,16 @@ export default function EditorPage() {
     return () => document.body.classList.remove("theme-light");
   }, [theme]);
 
+  // Fechar modal de atalhos com Esc
+  useEffect(() => {
+    if (!showShortcuts) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowShortcuts(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showShortcuts]);
+
   // Navegação no sumário
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
@@ -513,7 +523,7 @@ export default function EditorPage() {
               <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--text-primary)", letterSpacing: "-0.3px" }}>
                 Edite<span style={{ color: "#3b82f6" }}>CC</span>
               </h2>
-              <p style={{ fontSize: "9px", color: "var(--text-faint)", marginTop: "2px" }}>ABNT NBR 14724 · v0.2</p>
+              <p style={{ fontSize: "9px", color: "var(--text-faint)", marginTop: "2px" }}>ABNT NBR 14724</p>
             </div>
             <button
               aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
@@ -678,40 +688,40 @@ export default function EditorPage() {
                   />
                 </label>
                 <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <button aria-label={showFolhaRosto ? "Ocultar Folha de Rosto" : "Mostrar Folha de Rosto"} onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showFolhaRosto} aria-label={showFolhaRosto ? "Ocultar Folha de Rosto" : "Mostrar Folha de Rosto"} onClick={() => setShowFolhaRosto(!showFolhaRosto)} style={{ padding: "8px 12px", background: showFolhaRosto ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFolhaRosto ? "✓ Folha de Rosto" : "Folha de Rosto"}
                   </button>
-                  <button aria-label={showAprovacao ? "Ocultar Folha de Aprovação" : "Mostrar Folha de Aprovação"} onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showAprovacao} aria-label={showAprovacao ? "Ocultar Folha de Aprovação" : "Mostrar Folha de Aprovação"} onClick={() => setShowAprovacao(!showAprovacao)} style={{ padding: "8px 12px", background: showAprovacao ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAprovacao ? "✓ Folha de Aprovação" : "Folha de Aprovação"}
                   </button>
-                  <button aria-label={showDedicatoria ? "Ocultar Dedicatória" : "Mostrar Dedicatória"} onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showDedicatoria} aria-label={showDedicatoria ? "Ocultar Dedicatória" : "Mostrar Dedicatória"} onClick={() => setShowDedicatoria(!showDedicatoria)} style={{ padding: "8px 12px", background: showDedicatoria ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showDedicatoria ? "✓ Dedicatória" : "Dedicatória"}
                   </button>
-                  <button aria-label={showAgradecimentos ? "Ocultar Agradecimentos" : "Mostrar Agradecimentos"} onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showAgradecimentos} aria-label={showAgradecimentos ? "Ocultar Agradecimentos" : "Mostrar Agradecimentos"} onClick={() => setShowAgradecimentos(!showAgradecimentos)} style={{ padding: "8px 12px", background: showAgradecimentos ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAgradecimentos ? "✓ Agradecimentos" : "Agradecimentos"}
                   </button>
-                  <button aria-label={showEpigrafe ? "Ocultar Epígrafe" : "Mostrar Epígrafe"} onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showEpigrafe} aria-label={showEpigrafe ? "Ocultar Epígrafe" : "Mostrar Epígrafe"} onClick={() => setShowEpigrafe(!showEpigrafe)} style={{ padding: "8px 12px", background: showEpigrafe ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showEpigrafe ? "✓ Epígrafe" : "Epígrafe"}
                   </button>
-                  <button aria-label={showResumoPage ? "Ocultar Página Resumo" : "Mostrar Página Resumo"} onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showResumoPage} aria-label={showResumoPage ? "Ocultar Página Resumo" : "Mostrar Página Resumo"} onClick={() => setShowResumoPage(!showResumoPage)} style={{ padding: "8px 12px", background: showResumoPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showResumoPage ? "✓ Página Resumo" : "Página Resumo"}
                   </button>
-                  <button aria-label={showAbstractPage ? "Ocultar Página Abstract" : "Mostrar Página Abstract"} onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showAbstractPage} aria-label={showAbstractPage ? "Ocultar Página Abstract" : "Mostrar Página Abstract"} onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAbstractPage ? "✓ Página Abstract" : "Página Abstract"}
                   </button>
-                  <button aria-label={showFigList ? "Ocultar Lista de Figuras e Tabelas" : "Mostrar Lista de Figuras e Tabelas"} onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showFigList} aria-label={showFigList ? "Ocultar Lista de Figuras e Tabelas" : "Mostrar Lista de Figuras e Tabelas"} onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFigList ? "✓ Lista Fig./Tab." : "Lista Fig./Tab."}
                   </button>
-                  <button aria-label={showAnexos ? "Ocultar Anexos" : "Mostrar Anexos"} onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showAnexos} aria-label={showAnexos ? "Ocultar Anexos" : "Mostrar Anexos"} onClick={() => setShowAnexos(!showAnexos)} style={{ padding: "8px 12px", background: showAnexos ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAnexos ? "✓ Anexos" : "Anexos"}
                   </button>
-                  <button aria-label={showApendices ? "Ocultar Apêndices" : "Mostrar Apêndices"} onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showApendices} aria-label={showApendices ? "Ocultar Apêndices" : "Mostrar Apêndices"} onClick={() => setShowApendices(!showApendices)} style={{ padding: "8px 12px", background: showApendices ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showApendices ? "✓ Apêndices" : "Apêndices"}
                   </button>
-                  <button aria-label={showGlossario ? "Ocultar Glossário" : "Mostrar Glossário"} onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showGlossario} aria-label={showGlossario ? "Ocultar Glossário" : "Mostrar Glossário"} onClick={() => setShowGlossario(!showGlossario)} style={{ padding: "8px 12px", background: showGlossario ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showGlossario ? "✓ Glossário" : "Glossário"}
                   </button>
-                  <button aria-label={showNotasRodape ? "Ocultar Notas de Rodapé" : "Mostrar Notas de Rodapé"} onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                  <button aria-expanded={showNotasRodape} aria-label={showNotasRodape ? "Ocultar Notas de Rodapé" : "Mostrar Notas de Rodapé"} onClick={() => setShowNotasRodape(!showNotasRodape)} style={{ padding: "8px 12px", background: showNotasRodape ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showNotasRodape ? "✓ Notas Rodapé" : "Notas Rodapé"}
                   </button>
                 </div>
