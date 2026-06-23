@@ -105,7 +105,7 @@ export default function EditorPage() {
   const [slidesProgress, setSlidesProgress] = useState(0);
   const [slidesStatus, setSlidesStatus] = useState("");
   const [showShortcuts, setShowShortcuts] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (localStorage.getItem("editecc-theme") as "dark" | "light") : "dark") || "dark");
 
   // ─── SUMARIZAÇÃO (v0.8) ──────────────────────────────────────────────────
   const {
@@ -137,15 +137,18 @@ export default function EditorPage() {
 
   const isNewDoc = useMemo(() => {
     if (!currentDoc) return true;
-    return (
-      !currentDoc.cover.autor &&
-      !currentDoc.cover.titulo &&
-      !currentDoc.resumo &&
-      !currentDoc.abstract &&
-      currentDoc.refs.length === 0 &&
-      currentDoc.content === "<h1>1 INTRODUÇÃO</h1><p></p>"
-    );
+    const { cover, resumo, abstract, refs, content } = currentDoc;
+    if (cover.autor || cover.titulo || resumo || abstract || refs.length > 0) return false;
+    const DEFAULT_CONTENT = "<h1>1 INTRODUÇÃO</h1><p></p>";
+    return content.trim() === DEFAULT_CONTENT || content.length <= DEFAULT_CONTENT.length + 5;
   }, [currentDoc]);
+
+  // Debounce coverData para o canvas (evita re-render a cada caractere)
+  const [debouncedCover, setDebouncedCover] = useState(coverData);
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedCover(coverData), 400);
+    return () => clearTimeout(t);
+  }, [coverData]);
 
   // Editor (Tiptap)
   const editor = useEditor({
@@ -288,6 +291,7 @@ export default function EditorPage() {
   // Tema claro/escuro
   useEffect(() => {
     document.body.classList.toggle("theme-light", theme === "light");
+    localStorage.setItem("editecc-theme", theme);
     return () => document.body.classList.remove("theme-light");
   }, [theme]);
 
@@ -372,6 +376,18 @@ export default function EditorPage() {
       setTimeout(() => setSlidesLoading(false), 4000);
     }
   };
+
+  // Ctrl+Shift+S → gerar slides
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "S") {
+        e.preventDefault();
+        handleGerarSlides();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [handleGerarSlides]);
 
   // Comandos de formatação
   const applyFormat = (command: string, attrs?: Record<string, unknown>) => {
@@ -930,7 +946,7 @@ export default function EditorPage() {
 
           {/* Editor Canvas */}
           <EditorCanvas
-            coverData={coverData}
+            coverData={debouncedCover}
             editor={editor}
             editorContainerRef={editorContainerRef}
             showFolhaRosto={showFolhaRosto}
