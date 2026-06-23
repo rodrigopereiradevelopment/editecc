@@ -210,17 +210,6 @@ export default function LandingPage() {
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-          background: #0a0c11;
-          color: #e2e8f0;
-          font-family: 'DM Sans', sans-serif;
-          overflow-x: hidden;
-        }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1e2330; border-radius: 3px; }
-
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(-1deg); }
           50%       { transform: translateY(-10px) rotate(-1deg); }

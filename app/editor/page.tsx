@@ -1,7 +1,7 @@
 "use client";
 // app/editor/page.tsx v0.1.1 FINAL
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
@@ -12,17 +12,6 @@ import CharacterCount from "@tiptap/extension-character-count";
 import { FolhaRosto } from "@/components/FolhaRosto";
 import { ResumoSection } from "@/components/ResumoSection";
 import { AbstractSection } from "@/components/AbstractSection";
-import { Capa } from "@/components/Capa";
-import { FolhaAprovacao } from "@/components/FolhaAprovacao";
-import { Dedicatoria } from "@/components/Dedicatoria";
-import { Agradecimentos } from "@/components/Agradecimentos";
-import { Epigrafe } from "@/components/Epigrafe";
-import { ResumoPage } from "@/components/ResumoPage";
-import { AbstractPage } from "@/components/AbstractPage";
-import { AnexoPage } from "@/components/AnexoPage";
-import { ApendicePage } from "@/components/ApendicePage";
-import { GlossarioPage } from "@/components/GlossarioPage";
-import { NotasRodapePage } from "@/components/NotasRodapePage";
 import { GeradorReferencias } from "@/components/GeradorReferencias";
 import { ListaFigurasTabelas } from "@/components/ListaFigurasTabelas";
 import { DocumentManager } from "@/components/DocumentManager";
@@ -32,15 +21,18 @@ import { NotasRodapeManager } from "@/components/NotasRodapeManager";
 import type { PosTextualItem } from "@/components/PosTextuaisManager";
 import type { GlossarioEntry } from "@/components/GlossarioManager";
 import type { NotaRodape } from "@/components/NotasRodapeManager";
-import { extractFigures, extractTables } from "@/lib/abnt/styles";
 
 // Importar hooks e libs
 import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
-import { validateDocument, generateTOC, countWords, formatReference, Reference } from "@/lib/abnt/styles";
+import { validateDocument, generateTOC, countWords, Reference } from "@/lib/abnt/styles";
 import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerator";
 import { useSummarization } from "@/hooks/useSummarization";
 import type { EditeccDocument } from "@/lib/document";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { EditorToolbar } from "@/components/EditorToolbar";
+import { EditorCanvas } from "@/components/EditorCanvas";
+import { EditorStatusBar } from "@/components/EditorStatusBar";
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -59,17 +51,6 @@ interface ValidationIssue {
   type: "error" | "warning" | "info";
   message: string;
 }
-
-// ─── ICONS ────────────────────────────────────────────────────────────────────
-
-const BoldIcon     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>;
-const ItalicIcon   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>;
-const UnderlineIcon= () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><line x1="4" y1="20" x2="20" y2="20"/></svg>;
-const JustifyIcon  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>;
-const SaveIcon     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
-const PrintIcon    = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>;
-const SlidesIcon   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>;
-const CheckIcon    = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>;
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
@@ -931,158 +912,59 @@ export default function EditorPage() {
         </aside>
 
         {/* ── MAIN ── */}
+        <ErrorBoundary>
         <main id="main-content" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
           {/* Toolbar */}
-          <nav className="no-print" aria-label="Ferramentas de formatação" style={{
-            background: "var(--bg-surface)", borderBottom: "1px solid var(--border-color)",
-            padding: "6px 10px", display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap",
-          }}>
-            <button aria-label="Negrito" onMouseDown={e => { e.preventDefault(); applyFormat("toggleBold"); }} title="Negrito (Ctrl+B)"
-              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
-              <BoldIcon />
-            </button>
-            <button aria-label="Itálico" onMouseDown={e => { e.preventDefault(); applyFormat("toggleItalic"); }} title="Itálico (Ctrl+I)"
-              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
-              <ItalicIcon />
-            </button>
-            <button aria-label="Sublinhado" onMouseDown={e => { e.preventDefault(); applyFormat("toggleUnderline"); }} title="Sublinhado (Ctrl+U)"
-              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
-              <UnderlineIcon />
-            </button>
-            <button aria-label="Justificar" onMouseDown={e => { e.preventDefault(); applyFormat("setTextAlign", { align: "justify" }); }} title="Justificar"
-              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
-              <JustifyIcon />
-            </button>
-
-            <button aria-label="Atalhos de teclado" onClick={() => setShowShortcuts(true)} title="Atalhos (Ctrl+?)"
-              style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", padding: "5px 7px", borderRadius: "5px", display: "flex", alignItems: "center" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--border-color)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "none"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-dim)"; }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h.01M10 16h.01M14 16h.01M18 16h.01"/></svg>
-            </button>
-            <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>
-              {savedMsg && <span aria-live="polite" style={{ color: "var(--text-success)", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}><CheckIcon /> Salvo</span>}
-              <button onClick={handleGerarSlides} disabled={slidesLoading} style={{
-                background: slidesLoading ? "#6b7280" : "var(--text-success)", border: "none", color: "white",
-                padding: "5px 12px", borderRadius: "6px", cursor: slidesLoading ? "wait" : "pointer",
-                fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px", position: "relative",
-              }}>
-                <SlidesIcon /> {slidesLoading ? slidesProgress + "%" : "Slides"}
-              </button>
-              {slidesLoading && slidesStatus && (
-                <span aria-live="polite" style={{ color: "var(--text-muted-2)", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {slidesStatus}
-                </span>
-              )}
-              <button onClick={handleExportPdf} style={{
-                background: "#2563eb", border: "none", color: "white",
-                padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
-                fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
-              }}>
-                <PrintIcon /> Exportar PDF
-              </button>
-            </div>
-          </nav>
+          <EditorToolbar
+            applyFormat={applyFormat}
+            handleGerarSlides={handleGerarSlides}
+            handleExportPdf={handleExportPdf}
+            slidesLoading={slidesLoading}
+            slidesProgress={slidesProgress}
+            slidesStatus={slidesStatus}
+            savedMsg={savedMsg}
+            onOpenShortcuts={() => setShowShortcuts(true)}
+          />
 
           {/* Editor Canvas */}
-          <div ref={editorContainerRef} style={{
-            flex: 1, overflow: "auto", background: "var(--bg-elevated)",
-            display: "flex", flexDirection: "column", alignItems: "center",
-            padding: "28px 20px", gap: "20px",
-            counterReset: "page",
-          }}>
-            <Capa {...coverData} />
-            {showFolhaRosto && <FolhaRosto {...coverData} />}
-            {showAprovacao && (
-              <FolhaAprovacao
-                autor={coverData.autor}
-                titulo={coverData.titulo}
-                subtitulo={coverData.subtitulo}
-                curso={coverData.curso}
-                orientador={coverData.orientador}
-                data={aprovacaoData}
-              />
-            )}
-            {showDedicatoria && <Dedicatoria value={dedicatoriaTexto} />}
-            {showAgradecimentos && <Agradecimentos value={agradecimentosTexto} />}
-            {showEpigrafe && <Epigrafe texto={epigrafeTexto} autor={epigrafeAutor} />}
-            {showResumoPage && <ResumoPage value={resumo} palavrasChave={palavrasChave} />}
-            {showAbstractPage && <AbstractPage value={abstract} keywords={keywords} language={abstractLang} />}
-            <EditorContent editor={editor} />
-            {/* Lista de Figuras e Tabelas automática (v0.2) — após o texto */}
-            {showFigList && (() => {
-              const html = editor?.getHTML() || "";
-              const figs = extractFigures(html);
-              const tbls = extractTables(html);
-              if (!figs.length && !tbls.length) return null;
-              return (
-                <div className="a4-page" style={{ padding: "3cm 2cm 2cm 3cm", marginTop: "20px" }}>
-                  {figs.length > 0 && (
-                    <>
-                      <h1 style={{ fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", textAlign: "center", marginBottom: "1.5em" }}>
-                        LISTA DE FIGURAS
-                      </h1>
-                      {figs.map((f, i) => (
-                        <p key={f.id} style={{ fontSize: "12pt", lineHeight: "1.5", marginBottom: "4pt" }}>
-                          FIGURA {f.index} – {f.caption}
-                        </p>
-                      ))}
-                    </>
-                  )}
-                  {tbls.length > 0 && (
-                    <>
-                      <h1 style={{ fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", textAlign: "center", margin: "2em 0 1em" }}>
-                        LISTA DE TABELAS
-                      </h1>
-                      {tbls.map((t, i) => (
-                        <p key={t.id} style={{ fontSize: "12pt", lineHeight: "1.5", marginBottom: "4pt" }}>
-                          TABELA {t.index} – {t.caption}
-                        </p>
-                      ))}
-                    </>
-                  )}
-                </div>
-              );
-            })()}
-            {/* Referências (v0.2) */}
-            {refs.length > 0 && (
-              <div className="a4-page" style={{ padding: "3cm 2cm 2cm 3cm", marginTop: "20px" }}>
-                <h1 style={{ fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", textAlign: "center", marginBottom: "1.5em" }}>
-                  REFERÊNCIAS
-                </h1>
-                {refs.map((r, i) => (
-                  <p key={i} style={{ fontSize: "12pt", lineHeight: "1.0", marginBottom: "6pt", textAlign: "justify" }}>
-                    {formatReference(r)}
-                  </p>
-                ))}
-              </div>
-            )}
-            {/* Pós-textuais (ABNT: após referências) */}
-            {showGlossario && <GlossarioPage entries={glossario} />}
-            {showApendices && apendices.length > 0 && <ApendicePage items={apendices} />}
-            {showAnexos && anexos.length > 0 && <AnexoPage items={anexos} />}
-            {showNotasRodape && notasRodape.length > 0 && <NotasRodapePage notas={notasRodape} />}
-          </div>
+          <EditorCanvas
+            coverData={coverData}
+            editor={editor}
+            editorContainerRef={editorContainerRef}
+            showFolhaRosto={showFolhaRosto}
+            showAprovacao={showAprovacao}
+            showDedicatoria={showDedicatoria}
+            showAgradecimentos={showAgradecimentos}
+            showEpigrafe={showEpigrafe}
+            showResumoPage={showResumoPage}
+            showAbstractPage={showAbstractPage}
+            showFigList={showFigList}
+            showGlossario={showGlossario}
+            showApendices={showApendices}
+            showAnexos={showAnexos}
+            showNotasRodape={showNotasRodape}
+            dedicatoriaTexto={dedicatoriaTexto}
+            agradecimentosTexto={agradecimentosTexto}
+            epigrafeTexto={epigrafeTexto}
+            epigrafeAutor={epigrafeAutor}
+            aprovacaoData={aprovacaoData}
+            resumo={resumo}
+            palavrasChave={palavrasChave}
+            abstract={abstract}
+            keywords={keywords}
+            abstractLang={abstractLang}
+            refs={refs}
+            anexos={anexos}
+            apendices={apendices}
+            glossario={glossario}
+            notasRodape={notasRodape}
+          />
 
           {/* Status bar */}
-          <div className="no-print" style={{
-            background: "var(--bg-surface)", borderTop: "1px solid var(--border-color)",
-            padding: "4px 14px", display: "flex", gap: "16px", alignItems: "center", fontSize: "10px",
-          }}>
-            <span style={{ color: "var(--text-faint)" }}>Palavras: <span style={{ color: "var(--text-very-dim)" }}>{wordCount}</span></span>
-            <span style={{ color: "var(--text-faint)" }}>Caracteres: <span style={{ color: "var(--text-very-dim)" }}>{charCount}</span></span>
-            <span style={{ color: "var(--text-faint)", marginLeft: "auto" }}>🖥️ ABNT NBR 14724:2011 · v0.2</span>
-          </div>
+          <EditorStatusBar wordCount={wordCount} charCount={charCount} />
         </main>
+        </ErrorBoundary>
       </div>
       )}
       
