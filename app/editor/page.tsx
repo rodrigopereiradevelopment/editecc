@@ -1,6 +1,6 @@
 "use client";
 // app/editor/page.tsx v0.1.1 FINAL
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, useReducer } from "react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
@@ -53,21 +53,55 @@ interface ValidationIssue {
   message: string;
 }
 
+// ─── UNDO/REDO COVER ────────────────────────────────────────────────────────
+
+type CoverAction =
+  | { type: "SET_FIELD"; field: keyof CoverData; value: string }
+  | { type: "UNDO" }
+  | { type: "REDO" }
+  | { type: "RESET"; cover: CoverData };
+
+interface CoverHistory { past: CoverData[]; present: CoverData; future: CoverData[] }
+const MAX_HISTORY = 50;
+
+function coverReducer(state: CoverHistory, action: CoverAction): CoverHistory {
+  switch (action.type) {
+    case "SET_FIELD": {
+      const next = { ...state.present, [action.field]: action.value };
+      return { past: [...state.past.slice(-MAX_HISTORY + 1), state.present], present: next, future: [] };
+    }
+    case "UNDO": {
+      if (!state.past.length) return state;
+      const previous = state.past[state.past.length - 1];
+      return { past: state.past.slice(0, -1), present: previous, future: [state.present, ...state.future] };
+    }
+    case "REDO": {
+      if (!state.future.length) return state;
+      return { past: [...state.past, state.present], present: state.future[0], future: state.future.slice(1) };
+    }
+    case "RESET":
+      return { past: [], present: action.cover, future: [] };
+  }
+}
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
 export default function EditorPage() {
   // Estado geral
   const [activeTab, setActiveTab] = useState<"capa" | "editor" | "toc" | "validate" | "refs" | "figuras" | "docs">("capa");
-  const [coverData, setCoverData] = useState<CoverData>({
-    autor: "",
-    titulo: "",
-    subtitulo: "",
-    orientador: "",
-    curso: "",
-    etec: "Centro Paula Souza – ETEC",
-    local: "São Paulo",
-    ano: new Date().getFullYear().toString(),
+  const [coverHistory, dispatchCover] = useReducer(coverReducer, {
+    past: [], present: {
+      autor: "",
+      titulo: "",
+      subtitulo: "",
+      orientador: "",
+      curso: "",
+      etec: "Centro Paula Souza – ETEC",
+      local: "São Paulo",
+      ano: new Date().getFullYear().toString(),
+    }, future: [],
   });
+  const coverData = coverHistory.present;
 
   const [resumo, setResumo] = useState("");
   const [palavrasChave, setPalavrasChave] = useState<string[]>([]);
@@ -202,7 +236,7 @@ export default function EditorPage() {
   // Carregar dados do doc atual no state (executa quando troca de doc)
   const loadDocIntoState = useCallback((doc: EditeccDocument) => {
     if (!doc) return;
-    setCoverData(doc.cover);
+    dispatchCover({ type: "RESET", cover: doc.cover });
     setResumo(doc.resumo);
     setPalavrasChave(doc.palavrasChave);
     setAbstract(doc.abstract);
@@ -588,12 +622,44 @@ export default function EditorPage() {
               />
             )}
             {activeTab === "capa" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+                onKeyDown={e => {
+                  if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+                    e.preventDefault();
+                    if (e.shiftKey) dispatchCover({ type: "REDO" });
+                    else dispatchCover({ type: "UNDO" });
+                  }
+                }}
+              >
+                {/* Undo/Redo buttons */}
+                <div style={{ display: "flex", gap: "4px", marginBottom: "2px" }}>
+                  <button
+                    aria-label="Desfazer alterações da capa (Ctrl+Z)"
+                    onClick={() => dispatchCover({ type: "UNDO" })}
+                    disabled={coverHistory.past.length === 0}
+                    style={{
+                      background: "none", border: "1px solid var(--border-color)", color: coverHistory.past.length === 0 ? "var(--text-very-dim)" : "var(--text-dim)",
+                      cursor: coverHistory.past.length === 0 ? "not-allowed" : "pointer", padding: "3px 6px", borderRadius: "4px",
+                      fontSize: "10px", lineHeight: "1",
+                    }}
+                  >↩ Desfazer</button>
+                  <button
+                    aria-label="Refazer alterações da capa (Ctrl+Shift+Z)"
+                    onClick={() => dispatchCover({ type: "REDO" })}
+                    disabled={coverHistory.future.length === 0}
+                    style={{
+                      background: "none", border: "1px solid var(--border-color)", color: coverHistory.future.length === 0 ? "var(--text-very-dim)" : "var(--text-dim)",
+                      cursor: coverHistory.future.length === 0 ? "not-allowed" : "pointer", padding: "3px 6px", borderRadius: "4px",
+                      fontSize: "10px", lineHeight: "1",
+                    }}
+                  >↪ Refazer</button>
+                </div>
                 <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Instituição
                   <input
                     value={coverData.etec}
-                    onChange={e => setCoverData({ ...coverData, etec: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "etec", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -605,7 +671,7 @@ export default function EditorPage() {
                   Curso
                   <input
                     value={coverData.curso}
-                    onChange={e => setCoverData({ ...coverData, curso: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "curso", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -617,7 +683,7 @@ export default function EditorPage() {
                   Autor
                   <input
                     value={coverData.autor}
-                    onChange={e => setCoverData({ ...coverData, autor: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "autor", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -629,7 +695,7 @@ export default function EditorPage() {
                   Título
                   <input
                     value={coverData.titulo}
-                    onChange={e => setCoverData({ ...coverData, titulo: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "titulo", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -641,7 +707,7 @@ export default function EditorPage() {
                   Subtítulo
                   <input
                     value={coverData.subtitulo}
-                    onChange={e => setCoverData({ ...coverData, subtitulo: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "subtitulo", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -653,7 +719,7 @@ export default function EditorPage() {
                   Orientador
                   <input
                     value={coverData.orientador}
-                    onChange={e => setCoverData({ ...coverData, orientador: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "orientador", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -665,7 +731,7 @@ export default function EditorPage() {
                   Cidade
                   <input
                     value={coverData.local}
-                    onChange={e => setCoverData({ ...coverData, local: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "local", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
@@ -677,7 +743,7 @@ export default function EditorPage() {
                   Ano
                   <input
                     value={coverData.ano}
-                    onChange={e => setCoverData({ ...coverData, ano: e.target.value })}
+                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "ano", value: e.target.value })}
                     style={{
                       width: "100%", marginTop: "3px", padding: "6px 10px",
                       background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",

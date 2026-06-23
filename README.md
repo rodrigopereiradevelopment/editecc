@@ -55,8 +55,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.1** | ✅ Concluído | Onboarding (boas-vindas + Novo/Importar), estados vazios, responsivo mínimo (min-width 1024px) |
 | **v0.9.2** | ✅ Concluído | Atalhos de teclado visíveis (modal), landing page (hero + features grid + steps + CTA), tema claro (CSS variables + toggle) |
 | **v0.9.3** | ✅ Concluído | Skeleton loading (canvas + sidebar + toolbar), atalhos H1/H2/H3 na toolbar, documentação de uso (USAGE.md) |
-| **v0.9.4** | ✅ Concluído | Performance (debounce coverData), tema claro na landing page, atalho Ctrl+Shift+S para slides, heurística isNewDoc robusta, persistência de tema em localStorage |
-| **v0.9.5** | 📋 Planejado | Testes de integração do editor, undo/redo para dados da capa/resumo, lazy loading dos modelos de IA |
+| **v0.9.4** | ✅ Concluído | Performance (debounce coverData), tema claro na landing page, atalho Ctrl+Shift+S para slides, heurística isNewDoc robusta, persistência de tema em localStorage, undo/redo para dados da capa (reducer + Ctrl+Z) |
+| **v0.9.5** | 📋 Planejado | Testes de integração do editor, lazy loading dos modelos de IA |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---
