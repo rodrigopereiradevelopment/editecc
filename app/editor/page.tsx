@@ -496,7 +496,7 @@ export default function EditorPage() {
             </button>
           </div>
           <p style={{ fontSize: "12px", color: "var(--text-very-dim)", marginTop: "8px" }}>
-            v0.9.2 · 100% local · sem cadastro · sem API externa
+            v0.9.3 · 100% local · sem cadastro · sem API externa
           </p>
         </div>
       ) : (

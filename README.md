@@ -49,8 +49,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.8** | ✅ Concluído | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo — bullets formatados, loading com progresso na toolbar |
 | **v0.9** | ✅ Concluído | Acessibilidade (WCAG 2.2): aria-labels, foco visível, landmarks (main/nav/aside), skip link, live regions, reduced motion |
 | **v0.9.1** | ✅ Concluído | Onboarding (boas-vindas + Novo/Importar), estados vazios, responsivo mínimo (min-width 1024px) |
-| **v0.9.2** | 📋 Planejado | Atalhos de teclado visíveis, landing page melhorada, tema claro |
-| **v0.9.3** | 📋 Planejado | Feedback de loading (skeleton), atalhos, documentação de uso |
+| **v0.9.2** | ✅ Concluído | Atalhos de teclado visíveis (modal), landing page (hero + features grid + steps + CTA), tema claro (CSS variables + toggle) |
+| **v0.9.3** | 📋 Planejado | Skeleton loading (canvas + sidebar + toolbar), atalhos de formatação H1/H2/H3 na toolbar, documentação de uso |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---
