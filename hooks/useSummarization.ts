@@ -2,13 +2,15 @@
 
 import { useState, useCallback, useRef } from "react";
 
+const MODEL_KEY = "editecc-model-summarization";
+
 export function useSummarization() {
   const pipeRef = useRef<any>(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [modelStatus, setModelStatus] = useState<
-    "idle" | "downloading" | "ready" | "error"
-  >("idle");
+  const [modelStatus, setModelStatus] = useState<"idle" | "downloading" | "ready" | "error">(
+    () => (typeof window !== "undefined" && localStorage.getItem(MODEL_KEY) === "ready") ? "ready" : "idle"
+  );
   const [error, setError] = useState("");
 
   const loadModel = useCallback(async () => {
@@ -33,6 +35,7 @@ export function useSummarization() {
       });
       pipeRef.current = p;
       setModelStatus("ready");
+      localStorage.setItem(MODEL_KEY, "ready");
     } catch (err: any) {
       setModelStatus("error");
       setError(err?.message || "Falha ao carregar modelo de sumarização");

@@ -25,7 +25,7 @@ import type { NotaRodape } from "@/components/NotasRodapeManager";
 // Importar hooks e libs
 import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
-import { validateDocument, generateTOC, countWords, Reference } from "@/lib/abnt/styles";
+import { validateDocument, generateTOC, countWords, Reference, type ValidationIssue } from "@/lib/abnt/styles";
 import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerator";
 import { useSummarization } from "@/hooks/useSummarization";
 import type { EditeccDocument } from "@/lib/document";
@@ -34,55 +34,7 @@ import { EditorToolbar } from "@/components/EditorToolbar";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorStatusBar } from "@/components/EditorStatusBar";
 import { EditorSkeleton } from "@/components/EditorSkeleton";
-
-// ─── TIPOS ────────────────────────────────────────────────────────────────────
-
-interface CoverData {
-  autor: string;
-  titulo: string;
-  subtitulo: string;
-  orientador: string;
-  curso: string;
-  etec: string;
-  local: string;
-  ano: string;
-}
-
-interface ValidationIssue {
-  type: "error" | "warning" | "info";
-  message: string;
-}
-
-// ─── UNDO/REDO COVER ────────────────────────────────────────────────────────
-
-type CoverAction =
-  | { type: "SET_FIELD"; field: keyof CoverData; value: string }
-  | { type: "UNDO" }
-  | { type: "REDO" }
-  | { type: "RESET"; cover: CoverData };
-
-interface CoverHistory { past: CoverData[]; present: CoverData; future: CoverData[] }
-const MAX_HISTORY = 50;
-
-function coverReducer(state: CoverHistory, action: CoverAction): CoverHistory {
-  switch (action.type) {
-    case "SET_FIELD": {
-      const next = { ...state.present, [action.field]: action.value };
-      return { past: [...state.past.slice(-MAX_HISTORY + 1), state.present], present: next, future: [] };
-    }
-    case "UNDO": {
-      if (!state.past.length) return state;
-      const previous = state.past[state.past.length - 1];
-      return { past: state.past.slice(0, -1), present: previous, future: [state.present, ...state.future] };
-    }
-    case "REDO": {
-      if (!state.future.length) return state;
-      return { past: [...state.past, state.present], present: state.future[0], future: state.future.slice(1) };
-    }
-    case "RESET":
-      return { past: [], present: action.cover, future: [] };
-  }
-}
+import { coverReducer, coverInitial, type CoverData, type CoverHistory } from "@/lib/coverReducer";
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
@@ -90,16 +42,7 @@ export default function EditorPage() {
   // Estado geral
   const [activeTab, setActiveTab] = useState<"capa" | "editor" | "toc" | "validate" | "refs" | "figuras" | "docs">("capa");
   const [coverHistory, dispatchCover] = useReducer(coverReducer, {
-    past: [], present: {
-      autor: "",
-      titulo: "",
-      subtitulo: "",
-      orientador: "",
-      curso: "",
-      etec: "Centro Paula Souza – ETEC",
-      local: "São Paulo",
-      ano: new Date().getFullYear().toString(),
-    }, future: [],
+    past: [], present: coverInitial, future: [],
   });
   const coverData = coverHistory.present;
 
