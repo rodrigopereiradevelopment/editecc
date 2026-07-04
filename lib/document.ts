@@ -125,15 +125,30 @@ export function getAllDocuments(): EditeccDocument[] {
 }
 
 export function saveAllDocuments(docs: EditeccDocument[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+  } catch (err: unknown) {
+    if (err instanceof DOMException && err.name === "QuotaExceededError") {
+      throw new Error("Espaço de armazenamento esgotado. Exporte e limpe documentos antigos.");
+    }
+    throw new Error(`Erro ao salvar: ${err instanceof Error ? err.message : "desconhecido"}`);
+  }
 }
 
 export function getCurrentId(): string | null {
-  return localStorage.getItem(CURRENT_KEY);
+  try {
+    return localStorage.getItem(CURRENT_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export function setCurrentId(id: string): void {
-  localStorage.setItem(CURRENT_KEY, id);
+  try {
+    localStorage.setItem(CURRENT_KEY, id);
+  } catch {
+    // Fallha silenciosa — id não crítico
+  }
 }
 
 export function exportDoc(doc: EditeccDocument): void {

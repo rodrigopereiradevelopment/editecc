@@ -133,7 +133,7 @@ export function validateDocument(html: string): ValidationIssue[] {
   const results: ValidationIssue[] = [];
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = html;
-  const text = tempDiv.innerText || "";
+  const text = tempDiv.textContent || "";
 
   // 1. Verificar seções obrigatórias
   const h1Elements = tempDiv.querySelectorAll("h1");
@@ -160,7 +160,23 @@ export function validateDocument(html: string): ValidationIssue[] {
     });
   }
 
-  // 2. Validar resumo (se houver)
+  // 2. Validar hierarquia de seções (H1 → H2 → H3)
+  const headings = tempDiv.querySelectorAll("h1, h2, h3");
+  let lastLevel = 0;
+  let hierarchyOk = true;
+  headings.forEach(h => {
+    const level = parseInt(h.tagName[1]);
+    if (level > lastLevel + 1 && lastLevel > 0) hierarchyOk = false;
+    lastLevel = level;
+  });
+  if (!hierarchyOk) {
+    results.push({
+      type: "warning",
+      message: "Hierarquia de seções quebrada — H2 deve vir após H1, H3 após H2",
+    });
+  }
+
+  // 3. Validar resumo (se houver)
   const resumoH = Array.from(h1Elements).find(h =>
     h.textContent?.toLowerCase().includes("resumo")
   );
@@ -187,11 +203,11 @@ export function validateDocument(html: string): ValidationIssue[] {
     }
   }
 
-  // 3. Verificar citações longas (blockquote)
+  // 4. Verificar citações longas (blockquote)
   const blockquotes = tempDiv.querySelectorAll("blockquote");
   let badQuotes = 0;
   blockquotes.forEach(bq => {
-    const lines = (bq.textContent || "").split("\n").filter(l => l.trim()).length;
+    const lines = bq.querySelectorAll("p, br").length;
     if (lines < 3) badQuotes++;
   });
   if (badQuotes > 0) {
@@ -201,7 +217,27 @@ export function validateDocument(html: string): ValidationIssue[] {
     });
   }
 
-  // 4. Status geral
+  // 5. Verificar numeração de seções primárias (ex: "1 ", "2 ")
+  if (h1Texts.length > 0) {
+    const numbered = h1Texts.filter(t => /^\d/.test(t)).length;
+    if (numbered < h1Texts.length) {
+      results.push({
+        type: "info",
+        message: `${h1Texts.length - numbered} título(s) primário(s) sem numeração — ex: "1 INTRODUÇÃO"`,
+      });
+    }
+  }
+
+  // 6. Verificar itálico em título de obra (palavras estrangeiras)
+  const italicEls = tempDiv.querySelectorAll("em, i");
+  if (italicEls.length === 0 && text.length > 500) {
+    results.push({
+      type: "info",
+      message: "Nenhum termo em itálico detectado — obras estrangeiras devem estar em itálico",
+    });
+  }
+
+  // 7. Status geral
   if (results.length === 0) {
     results.push({
       type: "info",

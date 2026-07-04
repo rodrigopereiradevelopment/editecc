@@ -201,7 +201,12 @@ function FeatureCard({ icon, title, desc, index }: { icon: string; title: string
 // ─── LANDING PAGE ─────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (localStorage.getItem("editecc-theme") as "dark" | "light") : "dark") || "dark");
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark";
+    try {
+      return (localStorage.getItem("editecc-theme") as "dark" | "light") || "dark";
+    } catch { return "dark"; }
+  });
 
   useEffect(() => {
     document.body.classList.toggle("theme-light", theme === "light");
@@ -489,7 +494,7 @@ export default function LandingPage() {
           <div style={{ maxWidth: "900px", margin: "0 auto" }}>
             <p className="section-label">Como funciona</p>
             <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: "700", color: "#f1f5f9", marginBottom: "56px", lineHeight: "1.2" }}>
-              Do zero ao PDF em três passos.
+              Do zero ao PDF em quatro passos.
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
               {STEPS.map((s, i) => (
@@ -595,7 +600,7 @@ export default function LandingPage() {
             </span>
           </div>
           <span style={{ color: "#1e2d3d", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
-              v0.9.7 · ABNT NBR 14724:2011
+              v0.9.8 · ABNT NBR 14724:2011
           </span>
         </footer>
       </main>

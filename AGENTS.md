@@ -31,9 +31,9 @@ npm run tauri:build:windows      # build Windows
 
 - **`app/`**: Next.js App Router — landing page (`app/page.tsx`) e editor (`app/editor/page.tsx`)
 - **`components/`**: 22 componentes React — Capa, FolhaRosto, FolhaAprovacao, ResumoPage, AbstractPage, AnexoPage, ApendicePage, GlossarioPage, NotasRodapePage, Editor, DocumentManager, PosTextuaisManager, etc.
-- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação, sumário), `lib/document.ts` (tipos, storage, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
-- **`hooks/`**: React hooks — `useAutosave`, `useDocuments`, `useTranslation` (Transformers.js NLLB-200), `useSummarization` (Transformers.js distilbart-cnn), `useTauri`
-- **`app/editor/page.tsx`**: Entry point do editor (~900 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar
+- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação expandida: hierarquia, numeração, itálico), `lib/document.ts` (tipos, storage com try/catch, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
+- **`hooks/`**: React hooks — `useAutosave.ts` (intervalo 20s + tratamento de erro), `useDocuments`, `useTranslation` (Transformers.js NLLB-200), `useSummarization` (Transformers.js distilbart-cnn), `useTauri`
+- **`app/editor/page.tsx`**: Entry point do editor (~1200 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar
 - **Persistência**: 100% localStorage (`editecc-docs`), autosave a cada 20s
 - **Desktop**: Tauri v2 — Rust backend opcional para app nativo (Linux/Windows)
 
@@ -79,9 +79,18 @@ Custom slash commands configured in `.opencode/commands/`:
 ## Test Status
 
 ```bash
-# 1 suite, 21 tests passing
+# 7 suites, 82 tests passing
 npm test
 ```
+
+## CI/CD
+
+GitHub Actions configurado em `.github/workflows/ci.yml`:
+
+| Evento | Ações |
+|--------|-------|
+| Push/PR na `main` | `npm ci` → `npm run lint` → `npm test` → `npm run build` |
+| Tag `v*` | Tudo acima + `tauri-action` gera `.deb`/`.exe`/`.AppImage` automaticamente |
 
 ## Prerequisites
 

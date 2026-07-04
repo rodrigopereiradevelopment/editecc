@@ -8,7 +8,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.7)
+## ✨ Funcionalidades (v0.9.8)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
@@ -29,12 +29,13 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 💡 **Tema claro/escuro** — toggle com ícone sol/lua no painel lateral, CSS variables internas
 - ⌨️ **Skeleton loading** — shimmer animado simulando sidebar + toolbar + canvas A4 durante carregamento
 - 🔤 **Botões de heading** — H1/H2/H3 na toolbar para aplicar títulos ABNT com um clique
-- ✅ **Validador ABNT** — detecta problemas de formatação, seções faltando e tamanho do resumo
+- ✅ **Validador ABNT expandido** — hierarquia de seções, numeração, itálico em obras, citações longas, seções obrigatórias e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
-- 💾 **Autosave** a cada 20 segundos
-- 📤 **Exportar PDF** via impressão nativa
+- 💾 **Autosave** a cada 20 segundos com tratamento de erros de armazenamento
+- 📤 **Exportar PDF** via impressão nativa com `@page { margin: 0 }`
 - 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
+- 🤖 **CI/CD** — GitHub Actions com lint, test, build e tauri-action para release automático
 
 ---
 
@@ -59,6 +60,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.5** | ✅ Concluído | Testes de integração (coverReducer: 10 testes), cache de status de modelo em localStorage, refatoração coverReducer para módulo separado |
 | **v0.9.6** | ✅ Concluído | Folha de Aprovação completa: examinadores editáveis (nome, título, instituição), cidade, UI no sidebar, persistência em EditeccDocument |
 | **v0.9.7** | ✅ Concluído | Múltiplos autores: `autores[]` no schema, UI com +/✕ na sidebar, Capa/FolhaRosto/FolhaAprovacao renderizam lista |
+| **v0.9.8** | ✅ Concluído | CI/CD (GitHub Actions + tauri-action), validador ABNT expandido (hierarquia, numeração, itálico), favicon + metadata, localStorage com try/catch e feedback, ErrorBoundary na sidebar, useAutosave hook, testes (45→82) |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---
@@ -117,11 +119,16 @@ editecc/
 │   ├── GeradorReferencias.tsx  # Gerador de referências com Citation.js
 │   └── ListaFigurasTabelas.tsx # Lista automática de figuras e tabelas
 ├── lib/
-│   └── abnt/
-│       └── styles.ts           # Estilos, validações e gerador de sumário ABNT
+│   ├── abnt/
+│   │   └── styles.ts           # Estilos, validação expandida e gerador de sumário ABNT
+│   ├── coverReducer.ts         # Reducer undo/redo para dados da capa
+│   ├── document.ts             # Tipos, storage com try/catch, export/import .editecc
+│   └── slideGenerator.ts       # Parser Tiptap → PptxGenJS + sumarização
 ├── hooks/
-│   ├── useAutosave.ts          # Autosave (localStorage e IndexedDB)
+│   ├── useAutosave.ts          # Autosave com intervalo 20s + tratamento de erro
+│   ├── useDocuments.ts         # Gerenciamento multi-documento (CRUD + persistência)
 │   ├── useTranslation.ts       # Tradução Transformers.js (NLLB-200, 5 idiomas)
+│   ├── useSummarization.ts     # Sumarização Transformers.js (distilbart-cnn)
 │   └── useTauri.ts             # Abstração para backend Rust do Tauri
 └── src-tauri/                  # Backend Rust para build desktop (Tauri)
 ```

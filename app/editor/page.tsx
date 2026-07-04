@@ -92,6 +92,14 @@ export default function EditorPage() {
     loading: sumLoading, progress: sumProgress, modelStatus: sumModelStatus, error: sumError,
   } = useSummarization();
 
+  // Sincroniza sumProgress → slidesProgress durante download do modelo
+  useEffect(() => {
+    if (slidesLoading && sumModelStatus === "downloading" && sumProgress > 0) {
+      setSlidesProgress(sumProgress);
+      setSlidesStatus(`Baixando modelo de sumarização… (${sumProgress}%, ~300MB, único download)`);
+    }
+  }, [sumProgress, sumModelStatus, slidesLoading]);
+
   const importFileRef = useRef<HTMLInputElement>(null);
 
   // ─── MULTI-DOCUMENT (v0.4) ─────────────────────────────────────────────
@@ -222,43 +230,49 @@ export default function EditorPage() {
 
   // Autosave (v0.4 — salva no documento atual)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [storageError, setStorageError] = useState("");
   const syncToDoc = useCallback(() => {
     if (!currentId) return;
-    updateCurrentDoc({
-      cover: coverData,
-      resumo,
-      palavrasChave,
-      abstract,
-      keywords,
-      abstractLang,
-      content: editor?.getHTML() || "",
-      refs,
-      dedicatoriaTexto,
-      agradecimentosTexto,
-      epigrafeTexto,
-      epigrafeAutor,
-      aprovacaoData,
-      aprovacaoCidade,
-      examinadores,
-      showFolhaRosto,
-      showAprovacao,
-      showDedicatoria,
-      showAgradecimentos,
-      showEpigrafe,
-      showResumoPage,
-      showAbstractPage,
-      showFigList,
-      anexos,
-      apendices,
-      glossario,
-      notasRodape,
-      showAnexos,
-      showApendices,
-      showGlossario,
-      showNotasRodape,
-    });
-    setSavedMsg(true);
-    setTimeout(() => setSavedMsg(false), 2000);
+    try {
+      updateCurrentDoc({
+        cover: coverData,
+        resumo,
+        palavrasChave,
+        abstract,
+        keywords,
+        abstractLang,
+        content: editor?.getHTML() || "",
+        refs,
+        dedicatoriaTexto,
+        agradecimentosTexto,
+        epigrafeTexto,
+        epigrafeAutor,
+        aprovacaoData,
+        aprovacaoCidade,
+        examinadores,
+        showFolhaRosto,
+        showAprovacao,
+        showDedicatoria,
+        showAgradecimentos,
+        showEpigrafe,
+        showResumoPage,
+        showAbstractPage,
+        showFigList,
+        anexos,
+        apendices,
+        glossario,
+        notasRodape,
+        showAnexos,
+        showApendices,
+        showGlossario,
+        showNotasRodape,
+      });
+      setSavedMsg(true);
+      setStorageError("");
+      setTimeout(() => setSavedMsg(false), 2000);
+    } catch (err: unknown) {
+      setStorageError(err instanceof Error ? err.message : "Erro ao salvar documento");
+    }
   }, [currentId, updateCurrentDoc, coverData, resumo, palavrasChave, abstract, keywords, abstractLang, editor, refs,
     dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor, aprovacaoData, aprovacaoCidade, examinadores,
     showFolhaRosto, showAprovacao, showDedicatoria, showAgradecimentos, showEpigrafe,
@@ -494,6 +508,7 @@ export default function EditorPage() {
       <div style={{ display: "flex", height: "100vh", minWidth: "1024px", overflow: "auto" }}>
 
         {/* ── SIDEBAR ── */}
+        <ErrorBoundary>
         <aside className="no-print" aria-label="Painel lateral" style={{
           width: "280px", background: "var(--bg-surface)", borderRight: "1px solid var(--border-color)",
           display: "flex", flexDirection: "column", flexShrink: 0, overflow: "hidden",
@@ -1054,6 +1069,7 @@ export default function EditorPage() {
             Open Source · MIT · rodrigopereiradevelopment
           </div>
         </aside>
+        </ErrorBoundary>
 
         {/* ── MAIN ── */}
         <ErrorBoundary>
@@ -1068,6 +1084,7 @@ export default function EditorPage() {
             slidesProgress={slidesProgress}
             slidesStatus={slidesStatus}
             savedMsg={savedMsg}
+            storageError={storageError}
             onOpenShortcuts={() => setShowShortcuts(true)}
           />
 

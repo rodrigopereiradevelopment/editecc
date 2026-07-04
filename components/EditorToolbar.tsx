@@ -24,6 +24,7 @@ interface EditorToolbarProps {
   slidesProgress: number;
   slidesStatus: string;
   savedMsg: boolean;
+  storageError: string;
   onOpenShortcuts: () => void;
 }
 
@@ -47,7 +48,7 @@ function ToolbarBtn({ label, title, onMouseDown, children }: {
 
 export function EditorToolbar({
   applyFormat, handleGerarSlides, handleExportPdf,
-  slidesLoading, slidesProgress, slidesStatus, savedMsg, onOpenShortcuts,
+  slidesLoading, slidesProgress, slidesStatus, savedMsg, storageError, onOpenShortcuts,
 }: EditorToolbarProps) {
   return (
     <nav className="no-print" aria-label="Ferramentas de formatação" style={{
@@ -84,7 +85,11 @@ export function EditorToolbar({
       </ToolbarBtn>
 
       <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>
-        {savedMsg && (
+        {storageError ? (
+          <span aria-live="assertive" style={{ color: "#ef4444", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px", maxWidth: "200px" }}>
+            ⚠ {storageError}
+          </span>
+        ) : savedMsg && (
           <span aria-live="polite" style={{ color: "var(--text-success)", fontSize: "11px", display: "flex", alignItems: "center", gap: "3px" }}>
             <CheckIcon /> Salvo
           </span>
@@ -96,10 +101,22 @@ export function EditorToolbar({
         }}>
           <SlidesIcon /> {slidesLoading ? slidesProgress + "%" : "Slides"}
         </button>
-        {slidesLoading && slidesStatus && (
-          <span aria-live="polite" style={{ color: "var(--text-muted-2)", fontSize: "10px", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {slidesStatus}
-          </span>
+        {slidesLoading && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "3px", maxWidth: "200px" }}>
+            {slidesStatus && (
+              <span aria-live="polite" style={{
+                color: slidesStatus.startsWith("Erro") ? "#ef4444" : "var(--text-muted-2)",
+                fontSize: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
+                {slidesStatus}
+              </span>
+            )}
+            {slidesProgress > 0 && slidesProgress < 100 && (
+              <div style={{ width: "100%", height: "4px", background: "var(--border-color)", borderRadius: "2px", overflow: "hidden" }}>
+                <div style={{ width: `${slidesProgress}%`, height: "100%", background: "#3b82f6", borderRadius: "2px", transition: "width 0.3s ease" }} />
+              </div>
+            )}
+          </div>
         )}
         <button onClick={handleExportPdf} style={{
           background: "#2563eb", border: "none", color: "white",
