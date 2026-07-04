@@ -8,6 +8,7 @@ interface FolhaAprovacaoProps {
   titulo: string;
   subtitulo?: string;
   curso: string;
+  etec: string;
   orientador: string;
   data?: string;
   cidade?: string;
@@ -20,7 +21,7 @@ const font: React.CSSProperties = {
 };
 
 export function FolhaAprovacao({
-  autor, autores, titulo, subtitulo, curso, orientador, data, cidade, examinadores,
+  autor, autores, titulo, subtitulo, curso, etec, orientador, data, cidade, examinadores,
 }: FolhaAprovacaoProps) {
   const nomes = autores.some(Boolean) ? autores : [autor];
   const cidadeFinal = cidade || "________________";
@@ -124,7 +125,7 @@ export function FolhaAprovacao({
             Professor Especialista
           </p>
           <p style={{ ...font, fontSize: "10pt" }}>
-            {curso || "[curso]"}
+            {etec || "[instituição]"}
           </p>
         </div>
 

@@ -24,6 +24,9 @@ export function FolhaRosto({
   autor, autores, titulo, subtitulo, orientador, curso, etec, local, ano,
 }: FolhaRostoProps) {
   const nomes = autores.some(Boolean) ? autores : [autor];
+  const etecNome = etec || "Escola Técnica Estadual";
+  const cidadeState = local || "Cidade";
+
   return (
     <div style={{
       background: "white",
@@ -89,13 +92,20 @@ export function FolhaRosto({
         <p style={{
           ...font,
           fontSize: "12pt",
-          lineHeight: "1.0",
+          lineHeight: "1.5",
         }}>
           Trabalho de Conclusão de Curso apresentado como exigência parcial
-          para obtenção da Habilitação Profissional Técnica de Nível Médio de
-          Técnico em <strong>{curso || "[curso]"}</strong>,
-          à {etec || "Escola Técnica Estadual"},
-          sob orientação do Professor <strong>{orientador || "[orientador]"}</strong>.
+          para obtenção do título de Técnico em{" "}
+          <strong>{curso || "[curso]"}</strong>
+          , pelo Centro Paula Souza – {etecNome} – {cidadeState}-SP.
+        </p>
+        <p style={{
+          ...font,
+          fontSize: "12pt",
+          lineHeight: "1.5",
+          marginTop: "1cm",
+        }}>
+          Orientador: Prof. {orientador || "___________________________"}
         </p>
       </div>
 

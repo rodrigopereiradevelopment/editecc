@@ -86,6 +86,7 @@ export function EditorCanvas({
           titulo={coverData.titulo}
           subtitulo={coverData.subtitulo}
           curso={coverData.curso}
+          etec={coverData.etec}
           orientador={coverData.orientador}
           data={aprovacaoData}
           cidade={aprovacaoCidade}
