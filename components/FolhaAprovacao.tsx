@@ -4,6 +4,7 @@ import type { Examinador } from "@/lib/document";
 
 interface FolhaAprovacaoProps {
   autor: string;
+  autores: string[];
   titulo: string;
   subtitulo?: string;
   curso: string;
@@ -19,8 +20,9 @@ const font: React.CSSProperties = {
 };
 
 export function FolhaAprovacao({
-  autor, titulo, subtitulo, curso, orientador, data, cidade, examinadores,
+  autor, autores, titulo, subtitulo, curso, orientador, data, cidade, examinadores,
 }: FolhaAprovacaoProps) {
+  const nomes = autores.some(Boolean) ? autores : [autor];
   const cidadeFinal = cidade || "________________";
   const dataFinal = data || "__ de _________ de ____";
   const numExaminadores = examinadores.length;
@@ -40,13 +42,16 @@ export function FolhaAprovacao({
       lineHeight: "1.5",
     }}>
       {/* Nome do(s) Autor(es) */}
-      <p style={{
-        ...font, fontSize: "12pt", fontWeight: "bold",
-        textAlign: "center", textTransform: "uppercase",
-        marginBottom: "4cm",
-      }}>
-        {autor || "NOME DO(S) AUTOR(ES)"}
-      </p>
+      <div style={{ textAlign: "center", marginBottom: "4cm" }}>
+        {nomes.map((n, i) => (
+          <p key={i} style={{
+            ...font, fontSize: "12pt", fontWeight: "bold",
+            textTransform: "uppercase",
+          }}>
+            {n || "NOME DO(S) AUTOR(ES)"}
+          </p>
+        ))}
+      </div>
 
       {/* Título */}
       <div style={{ textAlign: "center", marginBottom: "2cm" }}>

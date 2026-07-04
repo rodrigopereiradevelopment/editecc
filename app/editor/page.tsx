@@ -628,18 +628,46 @@ export default function EditorPage() {
                     }}
                   />
                 </label>
-                <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
-                  Autor
-                  <input
-                    value={coverData.autor}
-                    onChange={e => dispatchCover({ type: "SET_FIELD", field: "autor", value: e.target.value })}
+                <div style={{ marginTop: "10px" }}>
+                  <p style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", marginBottom: "6px" }}>
+                    Autores
+                  </p>
+                  {coverData.autores.map((a, i) => (
+                    <div key={i} style={{ display: "flex", gap: "4px", marginBottom: "4px" }}>
+                      <input
+                        value={a}
+                        onChange={e => {
+                          const next = [...coverData.autores];
+                          next[i] = e.target.value;
+                          dispatchCover({ type: "SET_AUTORES", value: next });
+                        }}
+                        placeholder="Nome do autor"
+                        style={{
+                          flex: 1, padding: "6px 10px",
+                          background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
+                          borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                        }}
+                      />
+                      {coverData.autores.length > 1 && (
+                        <button
+                          onClick={() => dispatchCover({ type: "SET_AUTORES", value: coverData.autores.filter((_, j) => j !== i) })}
+                          style={{
+                            background: "none", border: "1px solid var(--border-color)", color: "#ef4444",
+                            cursor: "pointer", padding: "6px 8px", borderRadius: "5px", fontSize: "12px", lineHeight: "1",
+                          }}
+                        >✕</button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => dispatchCover({ type: "SET_AUTORES", value: [...coverData.autores, ""] })}
                     style={{
-                      width: "100%", marginTop: "3px", padding: "6px 10px",
-                      background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
-                      borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                      width: "100%", padding: "6px", marginTop: "4px",
+                      background: "none", border: "1px dashed var(--border-color)", color: "var(--text-dim)",
+                      borderRadius: "5px", cursor: "pointer", fontSize: "10px",
                     }}
-                  />
-                </label>
+                  >+ Adicionar autor</button>
+                </div>
                 <label style={{ fontSize: "10px", color: "var(--text-dim)", textTransform: "uppercase" }}>
                   Título
                   <input

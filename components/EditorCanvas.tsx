@@ -21,7 +21,7 @@ import type { Reference } from "@/lib/abnt/styles";
 import type { Examinador } from "@/lib/document";
 
 interface CoverShape {
-  autor: string; titulo: string; subtitulo: string; orientador: string;
+  autor: string; autores: string[]; titulo: string; subtitulo: string; orientador: string;
   curso: string; etec: string; local: string; ano: string;
 }
 
@@ -82,6 +82,7 @@ export function EditorCanvas({
       {showAprovacao && (
         <FolhaAprovacao
           autor={coverData.autor}
+          autores={coverData.autores}
           titulo={coverData.titulo}
           subtitulo={coverData.subtitulo}
           curso={coverData.curso}

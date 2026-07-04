@@ -58,6 +58,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.4** | ✅ Concluído | Performance (debounce coverData), tema claro na landing page, atalho Ctrl+Shift+S para slides, heurística isNewDoc robusta, persistência de tema em localStorage, undo/redo para dados da capa (reducer + Ctrl+Z) |
 | **v0.9.5** | ✅ Concluído | Testes de integração (coverReducer: 10 testes), cache de status de modelo em localStorage, refatoração coverReducer para módulo separado |
 | **v0.9.6** | ✅ Concluído | Folha de Aprovação completa: examinadores editáveis (nome, título, instituição), cidade, UI no sidebar, persistência em EditeccDocument |
+| **v0.9.7** | ✅ Concluído | Múltiplos autores: `autores[]` no schema, UI com +/✕ na sidebar, Capa/FolhaRosto/FolhaAprovacao renderizam lista |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---

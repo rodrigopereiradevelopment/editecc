@@ -1,5 +1,6 @@
 export interface CoverData {
   autor: string;
+  autores: string[];
   titulo: string;
   subtitulo: string;
   orientador: string;
@@ -11,6 +12,7 @@ export interface CoverData {
 
 export type CoverAction =
   | { type: "SET_FIELD"; field: keyof CoverData; value: string }
+  | { type: "SET_AUTORES"; value: string[] }
   | { type: "UNDO" }
   | { type: "REDO" }
   | { type: "RESET"; cover: CoverData };
@@ -25,6 +27,7 @@ export const MAX_HISTORY = 50;
 
 export const coverInitial: CoverData = {
   autor: "",
+  autores: [""],
   titulo: "",
   subtitulo: "",
   orientador: "",
@@ -39,6 +42,13 @@ export function coverReducer(state: CoverHistory, action: CoverAction): CoverHis
     case "SET_FIELD": {
       const next = { ...state.present, [action.field]: action.value };
       return { past: [...state.past.slice(-MAX_HISTORY + 1), state.present], present: next, future: [] };
+    }
+    case "SET_AUTORES": {
+      return {
+        past: [...state.past.slice(-MAX_HISTORY + 1), state.present],
+        present: { ...state.present, autores: action.value },
+        future: [],
+      };
     }
     case "UNDO": {
       if (!state.past.length) return state;

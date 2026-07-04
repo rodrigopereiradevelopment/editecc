@@ -5,6 +5,7 @@
 
 interface FolhaRostoProps {
   autor:     string;
+  autores:   string[];
   titulo:    string;
   subtitulo?: string;
   orientador: string;
@@ -20,8 +21,9 @@ const font: React.CSSProperties = {
 };
 
 export function FolhaRosto({
-  autor, titulo, subtitulo, orientador, curso, etec, local, ano,
+  autor, autores, titulo, subtitulo, orientador, curso, etec, local, ano,
 }: FolhaRostoProps) {
+  const nomes = autores.some(Boolean) ? autores : [autor];
   return (
     <div style={{
       background: "white",
@@ -37,17 +39,17 @@ export function FolhaRosto({
       lineHeight: "1.5",
     }}>
 
-      {/* ── Autor (topo, centralizado) ── */}
-      <p style={{
-        ...font,
-        fontSize: "12pt",
-        fontWeight: "bold",
-        textAlign: "center",
-        textTransform: "uppercase" as const,
-        marginBottom: "0",
-      }}>
-        {autor || "NOME DO(S) AUTOR(ES)"}
-      </p>
+      {/* ── Autor(es) (topo, centralizado) ── */}
+      <div style={{ textAlign: "center", marginBottom: "0" }}>
+        {nomes.map((n, i) => (
+          <p key={i} style={{
+            ...font, fontSize: "12pt", fontWeight: "bold",
+            textTransform: "uppercase" as const,
+          }}>
+            {n || "NOME DO(S) AUTOR(ES)"}
+          </p>
+        ))}
+      </div>
 
       {/* ── Espaço entre autor e título (8~16 enters Arial 12 conforme nº de alunos) ── */}
       <div style={{ flex: "0 0 5cm" }} />

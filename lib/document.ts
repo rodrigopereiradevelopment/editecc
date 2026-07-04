@@ -18,6 +18,7 @@ export interface EditeccDocument {
   updatedAt: string;
   cover: {
     autor: string;
+    autores: string[];
     titulo: string;
     subtitulo: string;
     orientador: string;
@@ -73,6 +74,7 @@ export function emptyDoc(title = "Novo TCC"): EditeccDocument {
     updatedAt: new Date().toISOString(),
     cover: {
       autor: "",
+      autores: [""],
       titulo: "",
       subtitulo: "",
       orientador: "",

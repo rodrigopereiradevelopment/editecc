@@ -8,6 +8,7 @@ interface CapaProps {
   etec:      string;
   curso:     string;
   autor:     string;
+  autores:   string[];
   titulo:    string;
   subtitulo?: string;
   local:     string;
@@ -20,9 +21,11 @@ const font: React.CSSProperties = {
   lineHeight: "1.5",
 };
 
-export function Capa({ etec, curso, autor, titulo, subtitulo, local, ano }: CapaProps) {
+export function Capa({ etec, curso, autor, autores, titulo, subtitulo, local, ano }: CapaProps) {
   // Só renderiza se tiver pelo menos título ou autor
-  if (!titulo && !autor && !etec) return null;
+  if (!titulo && !autor && !autores.some(Boolean) && !etec) return null;
+
+  const nomes = autores.some(Boolean) ? autores : [autor];
 
   return (
     <div style={{
@@ -63,17 +66,18 @@ export function Capa({ etec, curso, autor, titulo, subtitulo, local, ano }: Capa
         </p>
       )}
 
-      {/* ── Autor (centralizado, após ~8 enters Arial 12 da instituição) ── */}
+      {/* ── Autor(es) (centralizado, após ~8 enters Arial 12 da instituição) ── */}
       <div style={{ flex: "0 0 4cm" }} />
-      <p style={{
-        ...font,
-        fontSize: "12pt",
-        fontWeight: "bold",
-        textTransform: "uppercase",
-        textAlign: "center",
-      }}>
-        {autor || "NOME DO(S) AUTOR(ES)"}
-      </p>
+      <div style={{ textAlign: "center" }}>
+        {nomes.map((n, i) => (
+          <p key={i} style={{
+            ...font, fontSize: "12pt", fontWeight: "bold",
+            textTransform: "uppercase", textAlign: "center",
+          }}>
+            {n || "NOME DO(S) AUTOR(ES)"}
+          </p>
+        ))}
+      </div>
 
       {/* ── Título (centralizado verticalmente, Arial 14, maiúsculas) ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
