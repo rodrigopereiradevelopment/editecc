@@ -18,6 +18,7 @@ import type { GlossarioEntry } from "@/components/GlossarioManager";
 import type { NotaRodape } from "@/components/NotasRodapeManager";
 import { extractFigures, extractTables, formatReference } from "@/lib/abnt/styles";
 import type { Reference } from "@/lib/abnt/styles";
+import type { Examinador } from "@/lib/document";
 
 interface CoverShape {
   autor: string; titulo: string; subtitulo: string; orientador: string;
@@ -43,6 +44,8 @@ interface EditorCanvasProps {
   epigrafeTexto: string;
   epigrafeAutor: string;
   aprovacaoData: string;
+  aprovacaoCidade: string;
+  examinadores: Examinador[];
   resumo: string;
   palavrasChave: string[];
   abstract: string;
@@ -63,7 +66,8 @@ export function EditorCanvas({
   showEpigrafe, showResumoPage, showAbstractPage, showFigList,
   showGlossario, showApendices, showAnexos, showNotasRodape,
   dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor,
-  aprovacaoData, resumo, palavrasChave, abstract, keywords, abstractLang,
+  aprovacaoData, aprovacaoCidade, examinadores,
+  resumo, palavrasChave, abstract, keywords, abstractLang,
   refs, anexos, apendices, glossario, notasRodape,
 }: EditorCanvasProps) {
   return (
@@ -83,6 +87,8 @@ export function EditorCanvas({
           curso={coverData.curso}
           orientador={coverData.orientador}
           data={aprovacaoData}
+          cidade={aprovacaoCidade}
+          examinadores={examinadores}
         />
       )}
       {showDedicatoria && <Dedicatoria value={dedicatoriaTexto} />}

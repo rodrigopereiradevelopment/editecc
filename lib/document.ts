@@ -5,6 +5,12 @@ import type { PosTextualItem } from "@/components/PosTextuaisManager";
 import type { GlossarioEntry } from "@/components/GlossarioManager";
 import type { NotaRodape } from "@/components/NotasRodapeManager";
 
+export interface Examinador {
+  nome: string;
+  instituicao: string;
+  titulo: string;
+}
+
 export interface EditeccDocument {
   id: string;
   title: string;
@@ -32,6 +38,8 @@ export interface EditeccDocument {
   epigrafeTexto: string;
   epigrafeAutor: string;
   aprovacaoData: string;
+  aprovacaoCidade: string;
+  examinadores: Examinador[];
   showFolhaRosto: boolean;
   showAprovacao: boolean;
   showDedicatoria: boolean;
@@ -85,6 +93,8 @@ export function emptyDoc(title = "Novo TCC"): EditeccDocument {
     epigrafeTexto: "",
     epigrafeAutor: "",
     aprovacaoData: "",
+    aprovacaoCidade: "",
+    examinadores: [],
     showFolhaRosto: false,
     showAprovacao: false,
     showDedicatoria: false,

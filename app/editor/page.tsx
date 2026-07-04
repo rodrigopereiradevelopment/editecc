@@ -28,7 +28,7 @@ import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, Reference, type ValidationIssue } from "@/lib/abnt/styles";
 import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerator";
 import { useSummarization } from "@/hooks/useSummarization";
-import type { EditeccDocument } from "@/lib/document";
+import type { EditeccDocument, Examinador } from "@/lib/document";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { EditorToolbar } from "@/components/EditorToolbar";
 import { EditorCanvas } from "@/components/EditorCanvas";
@@ -70,6 +70,8 @@ export default function EditorPage() {
   const [epigrafeTexto, setEpigrafeTexto] = useState("");
   const [epigrafeAutor, setEpigrafeAutor] = useState("");
   const [aprovacaoData, setAprovacaoData] = useState("");
+  const [aprovacaoCidade, setAprovacaoCidade] = useState("");
+  const [examinadores, setExaminadores] = useState<Examinador[]>([]);
   const [anexos, setAnexos] = useState<PosTextualItem[]>([]);
   const [apendices, setApendices] = useState<PosTextualItem[]>([]);
   const [glossario, setGlossario] = useState<GlossarioEntry[]>([]);
@@ -191,6 +193,8 @@ export default function EditorPage() {
     setEpigrafeTexto(doc.epigrafeTexto);
     setEpigrafeAutor(doc.epigrafeAutor);
     setAprovacaoData(doc.aprovacaoData);
+    setAprovacaoCidade(doc.aprovacaoCidade || "");
+    setExaminadores(doc.examinadores || []);
     setShowFolhaRosto(doc.showFolhaRosto);
     setShowAprovacao(doc.showAprovacao);
     setShowDedicatoria(doc.showDedicatoria);
@@ -234,6 +238,8 @@ export default function EditorPage() {
       epigrafeTexto,
       epigrafeAutor,
       aprovacaoData,
+      aprovacaoCidade,
+      examinadores,
       showFolhaRosto,
       showAprovacao,
       showDedicatoria,
@@ -254,7 +260,7 @@ export default function EditorPage() {
     setSavedMsg(true);
     setTimeout(() => setSavedMsg(false), 2000);
   }, [currentId, updateCurrentDoc, coverData, resumo, palavrasChave, abstract, keywords, abstractLang, editor, refs,
-    dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor, aprovacaoData,
+    dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor, aprovacaoData, aprovacaoCidade, examinadores,
     showFolhaRosto, showAprovacao, showDedicatoria, showAgradecimentos, showEpigrafe,
     showResumoPage, showAbstractPage, showFigList,
     anexos, apendices, glossario, notasRodape, showAnexos, showApendices, showGlossario, showNotasRodape]);
@@ -832,6 +838,90 @@ export default function EditorPage() {
                       }}
                     />
                   </label>
+
+                  <label style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", display: "block", marginBottom: "4px", marginTop: "10px" }}>
+                    Cidade da Aprovação
+                    <input
+                      value={aprovacaoCidade}
+                      onChange={e => setAprovacaoCidade(e.target.value)}
+                      placeholder="Ex: Mogi Mirim"
+                      style={{
+                        width: "100%", marginTop: "3px", padding: "6px 10px",
+                        background: "var(--bg-elevated)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
+                        borderRadius: "5px", fontSize: "12px", outline: "none", boxSizing: "border-box",
+                      }}
+                    />
+                  </label>
+
+                  {/* Examinadores */}
+                  <div style={{ marginTop: "12px" }}>
+                    <p style={{ color: "var(--text-dim)", fontSize: "10px", textTransform: "uppercase", marginBottom: "6px" }}>
+                      Examinadores da Banca
+                    </p>
+                    {examinadores.map((ex, i) => (
+                      <div key={i} style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-color)", borderRadius: "6px", padding: "8px", marginBottom: "6px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                          <span style={{ color: "var(--text-dim)", fontSize: "9px", textTransform: "uppercase" }}>Examinador(a) {i + 1}</span>
+                          <button
+                            onClick={() => setExaminadores(examinadores.filter((_, j) => j !== i))}
+                            style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: "10px", padding: "2px 4px" }}
+                          >✕</button>
+                        </div>
+                        <input
+                          value={ex.nome}
+                          onChange={e => {
+                            const next = [...examinadores];
+                            next[i] = { ...next[i], nome: e.target.value };
+                            setExaminadores(next);
+                          }}
+                          placeholder="Nome"
+                          style={{
+                            width: "100%", marginBottom: "4px", padding: "5px 8px",
+                            background: "var(--bg-primary)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
+                            borderRadius: "4px", fontSize: "11px", outline: "none", boxSizing: "border-box",
+                          }}
+                        />
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          <input
+                            value={ex.titulo}
+                            onChange={e => {
+                              const next = [...examinadores];
+                              next[i] = { ...next[i], titulo: e.target.value };
+                              setExaminadores(next);
+                            }}
+                            placeholder="Título (ex: Prof. Especialista)"
+                            style={{
+                              flex: 1, padding: "5px 8px",
+                              background: "var(--bg-primary)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
+                              borderRadius: "4px", fontSize: "11px", outline: "none", boxSizing: "border-box",
+                            }}
+                          />
+                          <input
+                            value={ex.instituicao}
+                            onChange={e => {
+                              const next = [...examinadores];
+                              next[i] = { ...next[i], instituicao: e.target.value };
+                              setExaminadores(next);
+                            }}
+                            placeholder="Instituição"
+                            style={{
+                              flex: 1, padding: "5px 8px",
+                              background: "var(--bg-primary)", border: "1px solid var(--border-color)", color: "var(--text-muted)",
+                              borderRadius: "4px", fontSize: "11px", outline: "none", boxSizing: "border-box",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => setExaminadores([...examinadores, { nome: "", instituicao: "", titulo: "Professor" }])}
+                      style={{
+                        width: "100%", padding: "6px", background: "none",
+                        border: "1px dashed var(--border-color)", color: "var(--text-dim)",
+                        borderRadius: "6px", cursor: "pointer", fontSize: "10px",
+                      }}
+                    >+ Adicionar Examinador</button>
+                  </div>
                 </div>
 
                 <div style={{ borderTop: "1px solid var(--border-color)", margin: "20px 0", paddingTop: "16px" }}>
@@ -975,6 +1065,8 @@ export default function EditorPage() {
             epigrafeTexto={epigrafeTexto}
             epigrafeAutor={epigrafeAutor}
             aprovacaoData={aprovacaoData}
+            aprovacaoCidade={aprovacaoCidade}
+            examinadores={examinadores}
             resumo={resumo}
             palavrasChave={palavrasChave}
             abstract={abstract}
