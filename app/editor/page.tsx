@@ -84,6 +84,7 @@ export default function EditorPage() {
   const [slidesProgress, setSlidesProgress] = useState(0);
   const [slidesStatus, setSlidesStatus] = useState("");
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (localStorage.getItem("editecc-theme") as "dark" | "light") : "dark") || "dark");
 
   // ─── SUMARIZAÇÃO (v0.8) ──────────────────────────────────────────────────
@@ -300,13 +301,13 @@ export default function EditorPage() {
 
   // Fechar modal de atalhos com Esc
   useEffect(() => {
-    if (!showShortcuts) return;
+    if (!showShortcuts && !showSettings) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowShortcuts(false);
+      if (e.key === "Escape") { setShowShortcuts(false); setShowSettings(false); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [showShortcuts]);
+  }, [showShortcuts, showSettings]);
 
   // Navegação no sumário
   const scrollToHeading = (id: string) => {
@@ -1122,6 +1123,7 @@ export default function EditorPage() {
             savedMsg={savedMsg}
             storageError={storageError}
             onOpenShortcuts={() => setShowShortcuts(true)}
+            onOpenSettings={() => setShowSettings(true)}
           />
 
           {/* Editor Canvas */}
@@ -1226,6 +1228,89 @@ export default function EditorPage() {
                   }}>{key}</kbd>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── SETTINGS MODAL ── */}
+      {showSettings && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Configurações"
+          onClick={() => setShowSettings(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9999,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >
+          <div onClick={e => e.stopPropagation()} style={{
+            background: "var(--bg-surface)", border: "1px solid var(--border-color)",
+            borderRadius: "12px", padding: "28px 32px", maxWidth: "380px", width: "90%",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+              <h2 style={{ fontSize: "16px", fontWeight: "600", color: "var(--text-primary)" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: "8px", verticalAlign: "middle" }}>
+                  <circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                Configurações
+              </h2>
+              <button onClick={() => setShowSettings(false)} aria-label="Fechar"
+                style={{ background: "none", border: "none", color: "var(--text-dim)", cursor: "pointer", fontSize: "18px", padding: "4px" }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {/* Tema */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>Tema</span>
+                <button
+                  aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
+                  aria-pressed={theme === "light"}
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  style={{
+                    background: "var(--bg-elevated)", border: "1px solid var(--border-color)",
+                    color: "var(--text-dim)", cursor: "pointer", padding: "5px 12px",
+                    borderRadius: "6px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px",
+                  }}
+                >
+                  {theme === "dark" ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  )}
+                  {theme === "dark" ? "Claro" : "Escuro"}
+                </button>
+              </div>
+
+              {/* Modelos de IA */}
+              <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
+                <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-very-dim)", marginBottom: "8px" }}>Modelos de IA</p>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)" }}>
+                  <span>Tradução (NLLB-200)</span>
+                  <span style={{ color: "var(--text-success)" }}>✓ Cache</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
+                  <span>Sumarização</span>
+                  <span style={{ color: "var(--text-success)" }}>✓ Cache</span>
+                </div>
+              </div>
+
+              {/* Versão */}
+              <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)" }}>
+                  <span>Versão</span>
+                  <span style={{ fontFamily: "DM Mono, monospace" }}>v0.9.8</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
+                  <span>Licença</span>
+                  <span>MIT</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

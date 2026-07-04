@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const path = require("path");
 const isTauriBuild = process.env.TAURI_ENV_PLATFORM !== undefined;
 
 const nextConfig = {
@@ -12,6 +13,10 @@ const nextConfig = {
   }),
 
   reactStrictMode: true,
+
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
 };
 
 module.exports = nextConfig;
