@@ -8,6 +8,7 @@ const JustifyIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="
 const CheckIcon = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>;
 const SlidesIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>;
 const PrintIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>;
+const DocxIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>;
 const KeyboardIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h.01M10 16h.01M14 16h.01M18 16h.01"/></svg>;
 
 const btnBase: React.CSSProperties = {
@@ -20,6 +21,7 @@ interface EditorToolbarProps {
   applyFormat: (command: string, attrs?: Record<string, unknown>) => void;
   handleGerarSlides: () => void;
   handleExportPdf: () => void;
+  handleExportDocx: () => void;
   slidesLoading: boolean;
   slidesProgress: number;
   slidesStatus: string;
@@ -47,7 +49,7 @@ function ToolbarBtn({ label, title, onMouseDown, children }: {
 }
 
 export function EditorToolbar({
-  applyFormat, handleGerarSlides, handleExportPdf,
+  applyFormat, handleGerarSlides, handleExportPdf, handleExportDocx,
   slidesLoading, slidesProgress, slidesStatus, savedMsg, storageError, onOpenShortcuts,
 }: EditorToolbarProps) {
   return (
@@ -118,12 +120,19 @@ export function EditorToolbar({
             )}
           </div>
         )}
+        <button onClick={handleExportDocx} style={{
+          background: "#0d9488", border: "none", color: "white",
+          padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
+          fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
+        }}>
+          <DocxIcon /> .doc
+        </button>
         <button onClick={handleExportPdf} style={{
           background: "#2563eb", border: "none", color: "white",
           padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
           fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
         }}>
-          <PrintIcon /> Exportar PDF
+          <PrintIcon /> PDF
         </button>
       </div>
     </nav>

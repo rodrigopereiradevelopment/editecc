@@ -158,6 +158,8 @@ export default function EditorPage() {
       attributes: {
         class: "a4-page editor-area prose prose-sm max-w-none",
         style: "font-family: Arial, Calibri, sans-serif; font-size: 12pt; line-height: 1.5;",
+        spellcheck: "true",
+        lang: "pt-BR",
       },
     },
     immediatelyRender: false,
@@ -189,7 +191,11 @@ export default function EditorPage() {
   // Carregar dados do doc atual no state (executa quando troca de doc)
   const loadDocIntoState = useCallback((doc: EditeccDocument) => {
     if (!doc) return;
-    dispatchCover({ type: "RESET", cover: doc.cover });
+    const cover = {
+      ...doc.cover,
+      autores: doc.cover.autores?.length ? doc.cover.autores : [doc.cover.autor || ""],
+    };
+    dispatchCover({ type: "RESET", cover });
     setResumo(doc.resumo);
     setPalavrasChave(doc.palavrasChave);
     setAbstract(doc.abstract);
@@ -321,6 +327,34 @@ export default function EditorPage() {
     window.print();
   };
 
+  // Exportar DOCX (HTML → .doc — Word abre nativamente)
+  const handleExportDocx = useCallback(() => {
+    const html = editor?.getHTML() || "";
+    const titulo = coverData.titulo || "documento";
+    const style = `
+      @page { margin: 3cm 2cm 2cm 3cm; size: A4; }
+      body { font-family: Arial, Calibri, sans-serif; font-size: 12pt; line-height: 1.5; text-align: justify; }
+      h1 { font-size: 12pt; font-weight: bold; text-transform: uppercase; text-align: center; page-break-before: always; }
+      h1:first-of-type { page-break-before: auto; }
+      h2 { font-size: 12pt; font-weight: bold; text-align: left; }
+      h3 { font-size: 12pt; font-weight: bold; font-style: italic; text-align: left; }
+      p { text-indent: 2.5cm; margin: 0; }
+      blockquote { font-size: 10pt; line-height: 1; margin-left: 4cm; }
+      .abnt-referencia { font-size: 10pt; line-height: 1; text-indent: 0; margin-bottom: 6pt; }
+    `;
+    const blob = new Blob([
+      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${titulo}</title><style>${style}</style></head><body>${html}</body></html>`
+    ], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${titulo.replace(/[^a-zA-Z0-9]/g, "_")}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [editor, coverData.titulo]);
+
   // Gerar apresentação de slides (v0.8 — sumarização)
   const handleGerarSlides = async () => {
     if (!editor) return;
@@ -361,9 +395,10 @@ export default function EditorPage() {
 
       setSlidesStatus("Gerando arquivo PPTX…");
       setSlidesProgress(100);
+      const autoresStr = coverData.autores?.filter(Boolean).join("; ") || coverData.autor || "";
       gerarPPTX(summarized, {
         titulo: coverData.titulo,
-        autor: coverData.autor,
+        autor: autoresStr,
         curso: coverData.curso,
         orientador: coverData.orientador,
       });
@@ -1080,6 +1115,7 @@ export default function EditorPage() {
             applyFormat={applyFormat}
             handleGerarSlides={handleGerarSlides}
             handleExportPdf={handleExportPdf}
+            handleExportDocx={handleExportDocx}
             slidesLoading={slidesLoading}
             slidesProgress={slidesProgress}
             slidesStatus={slidesStatus}
@@ -1178,6 +1214,7 @@ export default function EditorPage() {
               <p style={{ fontSize: "10px", fontWeight: "600", textTransform: "uppercase", color: "var(--text-very-dim)", letterSpacing: "0.05em", marginTop: "4px" }}>Geral</p>
               {[
                 ["Ctrl+P", "Exportar PDF"],
+                ["Ctrl+D", "Exportar .doc"],
                 ["Esc", "Fechar modais / popups"],
               ].map(([key, desc]) => (
                 <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
