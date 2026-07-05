@@ -337,6 +337,7 @@ export default function LandingPage() {
         </div>
         <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
           <button
+            suppressHydrationWarning
             aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             style={{

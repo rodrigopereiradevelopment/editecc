@@ -36,12 +36,14 @@ export function useTranslation() {
     setError("");
     try {
       const { pipeline, env } = await import("@xenova/transformers");
+      env.allowLocalModels = false;
       env.allowRemoteModels = true;
+      env.useFS = false;
       const p = await pipeline("translation", "Xenova/nllb-200-distilled-600M", {
         quantized: true,
-        progress_callback: (p: any) => {
-          if (p.status === "progress" && typeof p.progress === "number") {
-            setProgress(Math.round(p.progress * 100));
+        progress_callback: (pr: any) => {
+          if (pr?.status === "progress" && typeof pr?.progress === "number") {
+            setProgress(Math.round(pr.progress * 100));
           }
         },
       });

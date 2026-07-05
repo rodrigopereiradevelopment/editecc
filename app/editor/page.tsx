@@ -342,8 +342,32 @@ export default function EditorPage() {
     editor.chain().focus().insertContent(`<p class="abnt-referencia">${abnt}</p><p></p>`).run();
   };
 
-  // Exportar PDF
+  // Exportar PDF — esconde sidebar com JS (contorna WebKit do Tauri) e garante quebras de página
   const handleExportPdf = () => {
+    const sidebar = document.querySelector('[aria-label="Painel lateral"]');
+    const origSide = sidebar ? (sidebar as HTMLElement).style.display : "";
+    if (sidebar) (sidebar as HTMLElement).style.display = "none";
+
+    // Adiciona page-break inline nas páginas A4 (WebKit do Tauri ignora @media print)
+    const pages = document.querySelectorAll(".a4-page");
+    const origBreaks: (string | null)[] = [];
+    pages.forEach((p, i) => {
+      const el = p as HTMLElement;
+      if (i < pages.length - 1) {
+        origBreaks[i] = el.style.pageBreakAfter || el.style.breakAfter || "";
+        el.style.pageBreakAfter = "always";
+      }
+    });
+
+    window.onafterprint = () => {
+      if (sidebar) (sidebar as HTMLElement).style.display = origSide;
+      pages.forEach((p, i) => {
+        if (origBreaks[i] !== undefined) {
+          (p as HTMLElement).style.pageBreakAfter = origBreaks[i] || "";
+        }
+      });
+      window.onafterprint = null;
+    };
     window.print();
   };
 
@@ -1355,6 +1379,24 @@ export default function EditorPage() {
                   <span>Sumarização</span>
                   <span style={{ color: "var(--text-success)" }}>✓ Cache</span>
                 </div>
+                <button
+                  onClick={async () => {
+                    localStorage.removeItem("editecc-model-nllb");
+                    localStorage.removeItem("editecc-model-sum");
+                    try {
+                      const keys = await caches.keys();
+                      await Promise.all(keys.filter(k => k.includes("transformers") || k.includes("huggingface")).map(k => caches.delete(k)));
+                    } catch {}
+                    alert("Cache de modelos de IA limpo. Recarregue a página e tente novamente.");
+                  }}
+                  style={{
+                    marginTop: "8px", padding: "4px 10px", background: "none",
+                    border: "1px solid var(--border-color)", borderRadius: "5px",
+                    cursor: "pointer", fontSize: "10px", color: "var(--text-dim)",
+                  }}
+                >
+                  Limpar cache dos modelos
+                </button>
               </div>
 
               {/* Versão */}
