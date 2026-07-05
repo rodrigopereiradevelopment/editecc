@@ -223,6 +223,17 @@ export default function LandingPage() {
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+          --hero-color: #f1f5f9;
+          --nav-bg: rgba(10,12,17,0.85);
+          --nav-border: #1e2330;
+        }
+        .theme-light {
+          --hero-color: #0f172a;
+          --nav-bg: rgba(248,250,252,0.9);
+          --nav-border: #e2e8f0;
+        }
+
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(-1deg); }
           50%       { transform: translateY(-10px) rotate(-1deg); }
@@ -244,7 +255,7 @@ export default function LandingPage() {
           font-weight: 900;
           line-height: 1.0;
           letter-spacing: -2px;
-          color: #f1f5f9;
+          color: var(--hero-color);
         }
 
         .hero-title .accent {
@@ -322,8 +333,8 @@ export default function LandingPage() {
       {/* ── NAV ── */}
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: "rgba(10,12,17,0.85)", backdropFilter: "blur(16px)",
-        borderBottom: "1px solid #1e2330",
+        background: "var(--nav-bg)", backdropFilter: "blur(16px)",
+        borderBottom: "1px solid var(--nav-border)",
         padding: "0 clamp(20px, 5vw, 80px)",
         display: "flex", alignItems: "center", height: "60px",
       }}>
@@ -331,7 +342,7 @@ export default function LandingPage() {
           <div style={{ width: "30px", height: "30px", borderRadius: "7px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "white", fontWeight: "800", fontSize: "13px" }}>E</span>
           </div>
-          <span style={{ fontWeight: "700", fontSize: "16px", letterSpacing: "-0.3px", color: "#f1f5f9" }}>
+          <span style={{ fontWeight: "700", fontSize: "16px", letterSpacing: "-0.3px", color: "var(--hero-color)" }}>
             Edite<span style={{ color: "#3b82f6" }}>CC</span>
           </span>
         </div>
