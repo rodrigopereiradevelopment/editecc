@@ -86,6 +86,11 @@ export default function EditorPage() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (localStorage.getItem("editecc-theme") as "dark" | "light") : "dark") || "dark");
+  const FONT_KEY = "editecc-editor-font";
+  const [editorFontSize, setEditorFontSize] = useState<string>(() => {
+    if (typeof window === "undefined") return "12pt";
+    try { return localStorage.getItem(FONT_KEY) || "12pt"; } catch { return "12pt"; }
+  });
 
   // ─── SUMARIZAÇÃO (v0.8) ──────────────────────────────────────────────────
   const {
@@ -299,6 +304,20 @@ export default function EditorPage() {
     return () => document.body.classList.remove("theme-light");
   }, [theme]);
 
+  // Tamanho da interface (sidebar + labels + inputs)
+  useEffect(() => {
+    const classMap: Record<string, string> = {
+      "12pt": "ui-size-p",
+      "14pt": "ui-size-m",
+      "16pt": "ui-size-g",
+      "18pt": "ui-size-xg",
+    };
+    const cls = classMap[editorFontSize] || "ui-size-p";
+    document.body.classList.remove("ui-size-p", "ui-size-m", "ui-size-g", "ui-size-xg");
+    document.body.classList.add(cls);
+    try { localStorage.setItem(FONT_KEY, editorFontSize); } catch { /* quota */ }
+  }, [editorFontSize]);
+
   // Fechar modal de atalhos com Esc
   useEffect(() => {
     if (!showShortcuts && !showSettings) return;
@@ -479,13 +498,21 @@ export default function EditorPage() {
         }
         
         .editor-area { outline: none; }
-        .editor-area h1 { font-size: 12pt; font-weight: 700; text-transform: uppercase; text-align: center; line-height: 1.5; margin: 2em 0 1em; }
-        .editor-area h2 { font-size: 12pt; font-weight: 700; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
-        .editor-area h3 { font-size: 12pt; font-weight: 700; font-style: italic; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
-        .editor-area p { font-size: 12pt; line-height: 1.5; text-align: justify; text-indent: 2.5cm; margin-bottom: 0; }
+        .editor-area h1 { font-weight: 700; text-transform: uppercase; text-align: center; line-height: 1.5; margin: 2em 0 1em; }
+        .editor-area h2 { font-weight: 700; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
+        .editor-area h3 { font-weight: 700; font-style: italic; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; }
+        .editor-area p { line-height: 1.5; text-align: justify; text-indent: 2.5cm; margin-bottom: 0; }
         .editor-area blockquote { font-size: 10pt; line-height: 1.0; margin-left: 4cm; text-align: justify; margin-bottom: 1em; border: none; padding: 0; }
-        .abnt-referencia { font-size: 12pt; line-height: 1.0; text-align: justify; margin-bottom: 6pt; }
+        .abnt-referencia { line-height: 1.0; text-align: justify; margin-bottom: 6pt; }
         .editor-area ul, .editor-area ol { padding-left: 1.5cm; line-height: 1.5; }
+        
+        /* Tamanho da interface — sidebar + labels + inputs (acessibilidade) */
+        body.ui-size-m [aria-label="Painel lateral"],
+        body.ui-size-m [aria-label="Painel lateral"] * { font-size: 13px !important; }
+        body.ui-size-g [aria-label="Painel lateral"],
+        body.ui-size-g [aria-label="Painel lateral"] * { font-size: 15px !important; }
+        body.ui-size-xg [aria-label="Painel lateral"],
+        body.ui-size-xg [aria-label="Painel lateral"] * { font-size: 17px !important; }
         
         .no-print { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
         @media print {
@@ -1287,6 +1314,36 @@ export default function EditorPage() {
                 </button>
               </div>
 
+              {/* Tamanho da fonte do editor */}
+              <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
+                <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-very-dim)", marginBottom: "6px" }}>Tamanho da interface</p>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  {[
+                    { label: "P", value: "12pt", title: "Padrão" },
+                    { label: "M", value: "14pt", title: "Médio" },
+                    { label: "G", value: "16pt", title: "Grande" },
+                    { label: "XG", value: "18pt", title: "Extra Grande" },
+                  ].map(({ label, value, title }) => (
+                    <button
+                      key={value}
+                      aria-label={title}
+                      aria-pressed={editorFontSize === value}
+                      onClick={() => setEditorFontSize(value)}
+                      title={title}
+                      style={{
+                        flex: 1, padding: "6px 0", borderRadius: "6px", cursor: "pointer",
+                        fontSize: "12px", fontWeight: editorFontSize === value ? "700" : "400",
+                        border: editorFontSize === value ? "1px solid var(--accent)" : "1px solid var(--border-color)",
+                        background: editorFontSize === value ? "var(--accent-dim)" : "var(--bg-elevated)",
+                        color: editorFontSize === value ? "var(--accent)" : "var(--text-dim)",
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Modelos de IA */}
               <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
                 <p style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-very-dim)", marginBottom: "8px" }}>Modelos de IA</p>
@@ -1304,7 +1361,7 @@ export default function EditorPage() {
               <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)" }}>
                   <span>Versão</span>
-                  <span style={{ fontFamily: "DM Mono, monospace" }}>v0.9.8</span>
+                  <span style={{ fontFamily: "DM Mono, monospace" }}>v0.9.9</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
                   <span>Licença</span>

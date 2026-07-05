@@ -8,8 +8,9 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.9.8)
+## ✨ Funcionalidades (v0.9.9)
 
+- 🔍 **Tamanho da interface ajustável** — sidebar, labels, inputs e textareas com 4 níveis (P/M/G/XG), ideal para quem tem dificuldade de leitura. O canvas ABNT permanece em 12pt fixo.
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
 - 📋 **Capa automática** — gerada em tempo real conforme você preenche o formulário
@@ -29,11 +30,14 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 💡 **Tema claro/escuro** — toggle com ícone sol/lua no painel lateral, CSS variables internas
 - ⌨️ **Skeleton loading** — shimmer animado simulando sidebar + toolbar + canvas A4 durante carregamento
 - 🔤 **Botões de heading** — H1/H2/H3 na toolbar para aplicar títulos ABNT com um clique
+- ✅ **Corretor ortográfico nativo** — `spellcheck="true"` + `lang="pt-BR"` no editor, zero dependência externa
 - ✅ **Validador ABNT expandido** — hierarquia de seções, numeração, itálico em obras, citações longas, seções obrigatórias e tamanho do resumo
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
 - 💾 **Autosave** a cada 20 segundos com tratamento de erros de armazenamento
 - 📤 **Exportar PDF** via impressão nativa com `@page { margin: 0 }`
+- 📝 **Exportar .doc** — HTML → Blob `application/msword`, compatível com Word, atalho Ctrl+D
+- ⚙️ **Modal de Configurações** — tema claro/escuro, tamanho da interface, status dos modelos de IA, versão
 - 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
 - 🤖 **CI/CD** — GitHub Actions com lint, test, build e tauri-action para release automático
 
@@ -60,7 +64,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.5** | ✅ Concluído | Testes de integração (coverReducer: 10 testes), cache de status de modelo em localStorage, refatoração coverReducer para módulo separado |
 | **v0.9.6** | ✅ Concluído | Folha de Aprovação completa: examinadores editáveis (nome, título, instituição), cidade, UI no sidebar, persistência em EditeccDocument |
 | **v0.9.7** | ✅ Concluído | Múltiplos autores: `autores[]` no schema, UI com +/✕ na sidebar, Capa/FolhaRosto/FolhaAprovacao renderizam lista |
-| **v0.9.8** | ✅ Concluído | CI/CD (GitHub Actions + tauri-action), validador ABNT expandido (hierarquia, numeração, itálico), favicon + metadata, localStorage com try/catch e feedback, ErrorBoundary na sidebar, useAutosave hook, testes (45→82) |
+| **v0.9.8** | ✅ Concluído | CI/CD (GitHub Actions + tauri-action), validador ABNT expandido (hierarquia, numeração, itálico), favicon + metadata, localStorage com try/catch e feedback, ErrorBoundary na sidebar, useAutosave hook, testes (45→82), export .docx, settings modal, spellcheck nativo |
+| **v0.9.9** | ✅ Concluído | Tamanho da interface ajustável (P/M/G/XG) na sidebar via classes `ui-size-*` no body + `!important`, preserva canvas ABNT em 12pt fixo, persistência em localStorage |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---

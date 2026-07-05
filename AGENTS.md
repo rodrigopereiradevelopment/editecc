@@ -33,7 +33,7 @@ npm run tauri:build:windows      # build Windows
 - **`components/`**: 22 componentes React — Capa, FolhaRosto, FolhaAprovacao, ResumoPage, AbstractPage, AnexoPage, ApendicePage, GlossarioPage, NotasRodapePage, Editor, DocumentManager, PosTextuaisManager, etc.
 - **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação expandida: hierarquia, numeração, itálico), `lib/document.ts` (tipos, storage com try/catch, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
 - **`hooks/`**: React hooks — `useAutosave.ts` (intervalo 20s + tratamento de erro), `useDocuments`, `useTranslation` (Transformers.js NLLB-200), `useSummarization` (Transformers.js distilbart-cnn), `useTauri`
-- **`app/editor/page.tsx`**: Entry point do editor (~1200 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar
+- **`app/editor/page.tsx`**: Entry point do editor (~1380 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar + modais + settings + tamanho da interface
 - **Persistência**: 100% localStorage (`editecc-docs`), autosave a cada 20s
 - **Desktop**: Tauri v2 — Rust backend opcional para app nativo (Linux/Windows)
 
@@ -75,6 +75,7 @@ Custom slash commands configured in `.opencode/commands/`:
 - **Icons**: Os SVGs dos ícones na toolbar são definidos inline em `app/editor/page.tsx`
 - **Estrutura do TCC no canvas**: Capa → FolhaRosto → FolhaAprovacao → Dedicatória → Agradecimentos → Epígrafe → Resumo → Abstract → Editor → ListaFigTab → Anexos → Apêndices → Glossário → NotasRodape
 - **PDF**: Export via `window.print()` — funciona bem com margens ABNT via CSS `@page`
+- **UI Font Size**: Controlado via classes `ui-size-p/m/g/xg` no `<body>`, aplica `!important` para sobrescrever inline styles. Canvas ABNT não é afetado (12pt fixo). Persiste em localStorage (`editecc-editor-font`).
 
 ## Test Status
 
