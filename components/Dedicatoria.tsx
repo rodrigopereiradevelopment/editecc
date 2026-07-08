@@ -8,7 +8,7 @@ interface DedicatoriaProps {
 
 export function Dedicatoria({ value }: DedicatoriaProps) {
   return (
-    <div style={{
+    <div className="a4-page" style={{
       background: "white",
       width: "21cm",
       minHeight: "29.7cm",

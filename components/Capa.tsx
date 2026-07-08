@@ -28,7 +28,7 @@ export function Capa({ etec, curso, autor, autores, titulo, subtitulo, local, an
   const nomes = autores.some(Boolean) ? autores : [autor];
 
   return (
-    <div style={{
+    <div className="a4-page" style={{
       background: "white",
       width: "21cm",
       minHeight: "29.7cm",

@@ -28,7 +28,7 @@ export function FolhaRosto({
   const cidadeState = local || "Cidade";
 
   return (
-    <div style={{
+    <div className="a4-page" style={{
       background: "white",
       width: "21cm",
       minHeight: "29.7cm",
@@ -97,7 +97,7 @@ export function FolhaRosto({
           Trabalho de Conclusão de Curso apresentado como exigência parcial
           para obtenção do título de Técnico em{" "}
           <strong>{curso || "[curso]"}</strong>
-          , pelo Centro Paula Souza – {etecNome} – {cidadeState}-SP.
+          , pelo {etecNome} – {cidadeState}-SP.
         </p>
         <p style={{
           ...font,
@@ -105,7 +105,7 @@ export function FolhaRosto({
           lineHeight: "1.5",
           marginTop: "1cm",
         }}>
-          Orientador: Prof. {orientador || "___________________________"}
+          Orientador: {orientador || "___________________________"}
         </p>
       </div>
 

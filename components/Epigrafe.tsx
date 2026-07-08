@@ -1,13 +1,19 @@
 "use client";
 
+import { useMemo } from "react";
+
 interface EpigrafeProps {
   texto?: string;
   autor?: string;
 }
 
 export function Epigrafe({ texto, autor }: EpigrafeProps) {
+  const textolimpo = useMemo(() =>
+    texto?.replace(/[—–\-]\s*$/, "").trim(),
+  [texto]);
+
   return (
-    <div style={{
+    <div className="a4-page" style={{
       background: "white",
       width: "21cm",
       minHeight: "29.7cm",
@@ -32,7 +38,7 @@ export function Epigrafe({ texto, autor }: EpigrafeProps) {
           lineHeight: "1.5",
           marginBottom: "8pt",
         }}>
-          {texto || "\"A imaginação é mais importante que o conhecimento.\""}
+          {textolimpo || "\"A imaginação é mais importante que o conhecimento.\""}
         </p>
         <p style={{
           textAlign: "right",

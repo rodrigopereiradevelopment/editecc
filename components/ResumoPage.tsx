@@ -7,7 +7,7 @@ interface ResumoPageProps {
 
 export function ResumoPage({ value, palavrasChave }: ResumoPageProps) {
   return (
-    <div style={{
+    <div className="a4-page" style={{
       background: "white",
       width: "21cm",
       minHeight: "29.7cm",

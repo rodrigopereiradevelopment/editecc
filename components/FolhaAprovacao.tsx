@@ -2,6 +2,17 @@
 
 import type { Examinador } from "@/lib/document";
 
+const MESES = [
+  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+];
+
+function formatarData(iso: string): string {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+  const [ano, mes, dia] = iso.split("-");
+  return `${parseInt(dia)} de ${MESES[parseInt(mes) - 1]} de ${ano}`;
+}
+
 interface FolhaAprovacaoProps {
   autor: string;
   autores: string[];
@@ -26,7 +37,10 @@ export function FolhaAprovacao({
   const nomes = autores.some(Boolean) ? autores : [autor];
   const cidadeFinal = cidade || "________________";
   const dataFinal = data || "__ de _________ de ____";
+  const dataFormatada = formatarData(dataFinal);
   const numExaminadores = examinadores.length;
+  const etecNome = etec || "Escola Técnica Estadual";
+  const cidadeState = cidade || "Cidade";
 
   return (
     <div className="a4-page" style={{
@@ -75,15 +89,14 @@ export function FolhaAprovacao({
           Trabalho de Conclusão de Curso apresentado como exigência parcial
           para obtenção do título de Técnico em{" "}
           <strong>{curso || "[curso]"}</strong> pelo{" "}
-          Centro Paula Souza – Escola Técnica Estadual Pedro Ferreira Alves
-          – Mogi Mirim-SP.
+          {etecNome} – {cidadeState}-SP.
         </p>
       </div>
 
       {/* Orientador */}
       <div style={{ textAlign: "justify", marginBottom: "1.5cm" }}>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
-          Orientador: Prof. {orientador || "___________________________"}
+          Orientador: {orientador || "___________________________"}
         </p>
       </div>
 
@@ -92,7 +105,7 @@ export function FolhaAprovacao({
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
           A Banca Examinadora deste Trabalho de Conclusão de Curso, em sessão
           realizada na cidade de {cidadeFinal}, Estado de São Paulo em{" "}
-          {dataFinal}, considerou os candidatos:
+          {dataFormatada}, considerou os candidatos:
         </p>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5", marginTop: "0.8cm" }}>
           ( &nbsp; ) Aprovado(s) &nbsp;&nbsp;&nbsp;&nbsp; ( &nbsp; ) Reprovado(s)
@@ -102,7 +115,7 @@ export function FolhaAprovacao({
       {/* Data e local */}
       <div style={{ textAlign: "justify", marginBottom: "2cm" }}>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
-          {cidadeFinal}, {dataFinal}.
+          {cidadeFinal}, {dataFormatada}.
         </p>
       </div>
 

@@ -8,7 +8,7 @@ interface ApendicePageProps {
 
 export function ApendicePage({ items }: ApendicePageProps) {
   return (
-    <div style={{
+    <div className="a4-page" style={{
       background: "white", width: "21cm", minHeight: "29.7cm",
       padding: "3cm 2cm 2cm 3cm",
       boxShadow: "0 8px 48px rgba(0,0,0,0.5)", flexShrink: 0,
