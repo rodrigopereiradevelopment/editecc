@@ -68,10 +68,14 @@ const LINHA_15 = 360;
  * - Margens ABNT
  * - Espaçamento 1,5 e recuo de primeira linha para body
  */
-const RTF_HEADER = `{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fswiss Arial;}{\\f1\\froman Times New Roman;}}\n
-\\margt${MARG_SUP}\\margb${MARG_INF}\\margl${MARG_ESQ}\\margr${MARG_DIR}
-\\f0\\fs24
-`;
+function rtfHeader(): string {
+  return [
+    "{\\rtf1\\ansi\\deff0",
+    "{\\fonttbl{\\f0\\fswiss Arial;}{\\f1\\froman Times New Roman;}}",
+    `\\margt${MARG_SUP}\\margb${MARG_INF}\\margl${MARG_ESQ}\\margr${MARG_DIR}`,
+    "\\f0\\fs24",
+  ].join("\n") + "\n";
+}
 
 // ─── Geradores de páginas ─────────────────────────────────────────────────────
 
@@ -327,7 +331,7 @@ export function generateFullRtf(
   examinadores: Examinador[],
   tiptapHtml: string,
 ): string {
-  let rtf = RTF_HEADER;
+  let rtf = rtfHeader();
 
   // Capa
   rtf += capaToRtf(cover);
@@ -352,8 +356,7 @@ export function generateFullRtf(
  * Cria Blob .rtf e dispara download
  */
 export function downloadRtf(filename: string, rtf: string): void {
-  const bom = "\uFEFF"; // BOM UTF-8 para garantir encoding correto
-  const blob = new Blob([bom + rtf], { type: "application/rtf;charset=utf-8" });
+  const blob = new Blob([rtf], { type: "application/rtf" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
