@@ -8,14 +8,15 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Name**: EditeCC
 - **Purpose**: Editor de textos acadêmicos com formatação ABNT automática (TCCs, monografias).
 - **Stack**: Next.js 16.x (App Router), Tiptap v3, Tauri v2 (Rust), Transformers.js, PptxGenJS, Citation.js, Vitest.
-- **Main Workflows**: Escrever e formatar TCC → elementos pré/pós-textuais → traduzir resumo → exportar PDF → gerar slides.
+- **Current**: v0.9.10
+- **Main Workflows**: Escrever e formatar TCC → elementos pré/pós-textuais → traduzir resumo → exportar PDF → gerar slides → **exportar .doc (com limitação conhecida no LibreOffice — migrando para RTF)**.
 
 ## Dev Commands
 
 ```bash
 npm install --legacy-peer-deps   # install deps
 npm run dev                      # dev server (Turbopack, port 3000)
-npm run build                    # production build (npx next build)
+npm run build                    # production build (next build --webpack)
 npm run start                    # serve production build
 npm run lint                     # ESLint
 npm test                         # Vitest (unit tests)
@@ -74,13 +75,16 @@ Custom slash commands configured in `.opencode/commands/`:
 - **Rust/Cargo não disponível** neste ambiente — build Tauri não pode ser executado aqui
 - **Icons**: Os SVGs dos ícones na toolbar são definidos inline em `app/editor/page.tsx`
 - **Estrutura do TCC no canvas**: Capa → FolhaRosto → FolhaAprovacao → Dedicatória → Agradecimentos → Epígrafe → Resumo → Abstract → Editor → ListaFigTab → Anexos → Apêndices → Glossário → NotasRodape
+- **`.doc` (HTML → Blob)**: Formato HTML com extensão `.doc`. Word abre corretamente. **LibreOffice ignora `page-break-before`** (abre em modo Web). Migrando para RTF (`lib/exportRtf.ts`).
+- **`stripFlex` em `lib/exportDocument.ts`**: Função que limpa `display: flex` do HTML clonado antes de gerar o .doc. Tem 3 tipos: (1) spacer vazio → `height` fixo, (2) container com flex-grow + texto → `margin`, (3) demais → só remove flex. O `.doc` exportado também leva `xmlns:o/ns:w/ns=""` e `<meta ProgId>` para sinalizar documento Word ao LibreOffice, mas o LO ignora — por isso a migração pra RTF.
+- **RTF planejado**: `lib/exportRtf.ts` — gerará Capa + FR + FA como RTF puro (`\page`, `\qc`, `\b`, `\fs24`), validado no LO real. v0.9.11.
 - **PDF**: Export via `window.print()` — funciona bem com margens ABNT via CSS `@page`
 - **UI Font Size**: Controlado via classes `ui-size-p/m/g/xg` no `<body>`, aplica `!important` para sobrescrever inline styles. Canvas ABNT não é afetado (12pt fixo). Persiste em localStorage (`editecc-editor-font`).
 
 ## Test Status
 
 ```bash
-# 7 suites, 82 tests passing
+# 8 suites, 88 tests passing
 npm test
 ```
 
@@ -102,7 +106,7 @@ GitHub Actions configurado em `.github/workflows/ci.yml`:
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **editecc** (439 symbols, 714 relationships, 16 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **editecc** (481 symbols, 803 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 

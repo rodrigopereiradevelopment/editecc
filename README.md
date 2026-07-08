@@ -8,7 +8,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.9.9)
+## ✨ Funcionalidades (v0.9.10)
 
 - 🔍 **Tamanho da interface ajustável** — sidebar, labels, inputs e textareas com 4 níveis (P/M/G/XG), ideal para quem tem dificuldade de leitura. O canvas ABNT permanece em 12pt fixo.
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
@@ -36,7 +36,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
 - 💾 **Autosave** a cada 20 segundos com tratamento de erros de armazenamento
 - 📤 **Exportar PDF** via impressão nativa com `@page { margin: 0 }`
-- 📝 **Exportar .doc** — HTML → Blob `application/msword`, compatível com Word, atalho Ctrl+D
+- 📝 **Exportar .doc** — HTML → Blob `application/msword`, compatível com Word. **Limitação:** `page-break-before` ignorado no LibreOffice (abre em modo Web). Migração para RTF em andamento (v0.9.11).
 - ⚙️ **Modal de Configurações** — tema claro/escuro, tamanho da interface, status dos modelos de IA, versão
 - 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
 - 🤖 **CI/CD** — GitHub Actions com lint, test, build e tauri-action para release automático
@@ -66,6 +66,8 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.7** | ✅ Concluído | Múltiplos autores: `autores[]` no schema, UI com +/✕ na sidebar, Capa/FolhaRosto/FolhaAprovacao renderizam lista |
 | **v0.9.8** | ✅ Concluído | CI/CD (GitHub Actions + tauri-action), validador ABNT expandido (hierarquia, numeração, itálico), favicon + metadata, localStorage com try/catch e feedback, ErrorBoundary na sidebar, useAutosave hook, testes (45→82), export .docx, settings modal, spellcheck nativo |
 | **v0.9.9** | ✅ Concluído | Tamanho da interface ajustável (P/M/G/XG) na sidebar via classes `ui-size-*` no body + `!important`, preserva canvas ABNT em 12pt fixo, persistência em localStorage |
+| **v0.9.10** | ✅ Concluído | `stripFlex` reescrito (3 tipos), bug `removeAttribute` nuking altura corrigido, MSO namespaces no .doc, slide generator PT-BR (NLLB→distilbart→NLLB), AbstractSection com pt, orientador sem "Prof." duplicado, instituição dinâmica, data ISO corrigida, epígrafe sem travessão duplicado, Centro Paula Souza não duplicado, build com `--webpack` |
+| **v0.9.11** | 🔜 Planejado | Migrar export .doc de HTML para RTF (`lib/exportRtf.ts`) — `\page` nativo no LibreOffice. Começar por Capa + FolhaRosto + FolhaAprovacao |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---
