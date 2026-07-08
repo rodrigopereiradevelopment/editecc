@@ -1,9 +1,7 @@
 // src-tauri/src/lib.rs
 use tauri::Manager;
 use tauri_plugin_dialog::DialogExt;
-use tauri_plugin_fs::FsExt;
 use std::fs;
-use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
