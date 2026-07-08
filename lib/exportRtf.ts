@@ -25,19 +25,16 @@ export function escapeRtf(text: string): string {
     .replace(/[\u0080-\uffff]/g, (c) => `\\u${c.charCodeAt(0)}'3f`);
 }
 
-/** Converte string ANSI/UTF8 para o formato \\'xx (usado em cabeçalhos fixos) */
+/** Converte string para RTF seguro: \\{ \\} \\\\ + acentos via \\uXXXX? */
 export function escapeRtfAnsi(text: string): string {
   let out = "";
   for (let i = 0; i < text.length; i++) {
     const code = text.charCodeAt(i);
-    if (code < 128) {
-      if (code === 0x5c) out += "\\\\";
-      else if (code === 0x7b) out += "\\{";
-      else if (code === 0x7d) out += "\\}";
-      else out += text[i];
-    } else {
-      out += `\\'${code.toString(16).padStart(2, "0")}`;
-    }
+    if (code === 0x5c) out += "\\\\";
+    else if (code === 0x7b) out += "\\{";
+    else if (code === 0x7d) out += "\\}";
+    else if (code < 0x80) out += text[i];
+    else out += `\\u${code}?`;
   }
   return out;
 }

@@ -40,9 +40,9 @@ describe("escapeRtf", () => {
 });
 
 describe("escapeRtfAnsi", () => {
-  it("converte acentos para \\'xx", () => {
+  it("converte acentos para \\uXXX?", () => {
     const result = escapeRtfAnsi("ação");
-    expect(result).toMatch(/\\'[0-9a-f]{2}/);
+    expect(result).toMatch(/\\u\d+\?/);
   });
 
   it("escapa caracteres especiais", () => {
