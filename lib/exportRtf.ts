@@ -2,6 +2,10 @@
 
 import type { CoverData } from "@/lib/coverReducer";
 import type { Examinador } from "@/lib/document";
+import type { PosTextualItem } from "@/components/PosTextuaisManager";
+import type { GlossarioEntry } from "@/components/GlossarioManager";
+import type { NotaRodape } from "@/components/NotasRodapeManager";
+import { extractFigures, extractTables, formatReference, type Reference } from "@/lib/abnt/styles";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -338,6 +342,111 @@ export function epigrafeToRtf(texto: string, autor: string): string {
   return `{\\pard\\li${li}\\f0\\fs24\\i\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(textolimpo)}\\par}\\par\n{\\pard\\qr\\f0\\fs22 ${escapeRtfAnsi(autor ? `— ${autor}` : "—")}\\par}`;
 }
 
+// ─── Resumo, Abstract, Listas, Anexos, Apêndices, Glossário, Notas ──────────
+
+/** Gera RTF para a página de Resumo */
+export function resumoToRtf(texto: string, palavrasChave: string[]): string {
+  if (!texto?.trim() && !palavrasChave.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b RESUMO\\par}\\par\\par\n`;
+  if (texto?.trim()) {
+    r += `{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(texto)}\\par}`;
+  }
+  if (palavrasChave.length) {
+    r += `\\par\n{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi("Palavras-chave: " + palavrasChave.join(". ") + ".")}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para a página de Abstract */
+export function abstractToRtf(texto: string, keywords: string[], language: string): string {
+  if (!texto?.trim() && !keywords.length) return "";
+  const titulos: Record<string, string> = { en: "ABSTRACT", es: "RESUMEN", fr: "RÉSUMÉ", de: "ABSTRACT", it: "ABSTRACT" };
+  const labels: Record<string, string> = { en: "Keywords:", es: "Palabras clave:", fr: "Mots-clés :", de: "Schlüsselwörter:", it: "Parole chiave:" };
+  const titulo = titulos[language] || "ABSTRACT";
+  const label = labels[language] || "Keywords:";
+  let r = `{\\qc\\f0\\fs24\\b ${escapeRtfAnsi(titulo)}\\par}\\par\\par\n`;
+  if (texto?.trim()) {
+    r += `{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(texto)}\\par}`;
+  }
+  if (keywords.length) {
+    r += `\\par\n{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(label)} ${escapeRtfAnsi(keywords.join(". ") + ".")}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para a Lista de Figuras e Tabelas */
+export function listaFigTabToRtf(editorHtml: string): string {
+  const figures = extractFigures(editorHtml);
+  const tables = extractTables(editorHtml);
+  if (!figures.length && !tables.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b LISTA DE FIGURAS E TABELAS\\par}\\par\\par\n`;
+  for (const fig of figures) {
+    r += `{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(`Figura ${fig.index}: ${fig.caption}`)}\\par}`;
+  }
+  r += `\\par\n`;
+  for (const tbl of tables) {
+    r += `{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(`Tabela ${tbl.index}: ${tbl.caption}`)}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para Referências */
+export function referenciasToRtf(refs: Reference[]): string {
+  if (!refs.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b REFERÊNCIAS\\par}\\par\\par\n`;
+  for (const ref of refs) {
+    r += `{\\pard\\fi0\\f0\\fs20\\sl240\\slmult1 ${escapeRtfAnsi(formatReference(ref))}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para Anexos */
+export function anexosToRtf(items: PosTextualItem[]): string {
+  if (!items.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b ANEXOS\\par}\\par\\par\n`;
+  for (const item of items) {
+    r += `{\\pard\\fi0\\f0\\fs24\\b ${escapeRtfAnsi(`ANEXO ${item.letra} — ${item.titulo}`)}\\par}`;
+    if (item.conteudo) {
+      r += `{\\pard\\fi${PARA_RECUO}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(item.conteudo)}\\par}\\par\n`;
+    }
+  }
+  return r;
+}
+
+/** Gera RTF para Apêndices */
+export function apendicesToRtf(items: PosTextualItem[]): string {
+  if (!items.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b APÊNDICES\\par}\\par\\par\n`;
+  for (const item of items) {
+    r += `{\\pard\\fi0\\f0\\fs24\\b ${escapeRtfAnsi(`APÊNDICE ${item.letra} — ${item.titulo}`)}\\par}`;
+    if (item.conteudo) {
+      r += `{\\pard\\fi${PARA_RECUO}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(item.conteudo)}\\par}\\par\n`;
+    }
+  }
+  return r;
+}
+
+/** Gera RTF para Glossário */
+export function glossarioToRtf(entries: GlossarioEntry[]): string {
+  if (!entries.length) return "";
+  const sorted = [...entries].sort((a, b) => a.termo.localeCompare(b.termo, "pt-BR"));
+  let r = `{\\qc\\f0\\fs24\\b GLOSSÁRIO\\par}\\par\\par\n`;
+  for (const entry of sorted) {
+    r += `{\\pard\\fi${PARA_RECUO}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(`${entry.termo}: ${entry.definicao}`)}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para Notas de Rodapé */
+export function notasRodapeToRtf(notas: NotaRodape[]): string {
+  if (!notas.length) return "";
+  let r = `{\\qc\\f0\\fs20\\b NOTAS DE RODAPÉ\\par}\\par\\par\n`;
+  for (const nota of notas) {
+    r += `{\\pard\\fi0\\f0\\fs20\\sl240\\slmult1\\j ${escapeRtfAnsi(`${nota.numero} ${nota.texto}`)}\\par}`;
+  }
+  return r;
+}
+
 // ─── Documento completo ──────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -357,15 +466,30 @@ export function generateFullRtf(
   showEpigrafe?: boolean,
   epigrafeTexto?: string,
   epigrafeAutor?: string,
+  showResumoPage?: boolean,
+  resumo?: string,
+  palavrasChave?: string[],
+  showAbstractPage?: boolean,
+  abstract?: string,
+  keywords?: string[],
+  abstractLang?: string,
+  showFigList?: boolean,
+  refs?: Reference[],
+  showAnexos?: boolean,
+  anexos?: PosTextualItem[],
+  showApendices?: boolean,
+  apendices?: PosTextualItem[],
+  showGlossario?: boolean,
+  glossario?: GlossarioEntry[],
+  showNotasRodape?: boolean,
+  notasRodape?: NotaRodape[],
 ): string {
   let rtf = rtfHeader();
 
   rtf += capaToRtf(cover);
   rtf += "\\page\n";
-
   rtf += folhaRostoToRtf(cover, curso);
   rtf += "\\page\n";
-
   rtf += folhaAprovacaoToRtf(cover, curso, aprovacaoData, aprovacaoCidade, examinadores);
   rtf += "\\page\n";
 
@@ -384,7 +508,48 @@ export function generateFullRtf(
     rtf += "\\page\n";
   }
 
+  if (showResumoPage && resumo?.trim()) {
+    rtf += resumoToRtf(resumo, (palavrasChave as string[]) || []);
+    rtf += "\\page\n";
+  }
+
+  if (showAbstractPage && abstract?.trim()) {
+    rtf += abstractToRtf(abstract, (keywords as string[]) || [], abstractLang || "en");
+    rtf += "\\page\n";
+  }
+
+  if (showFigList) {
+    const lst = listaFigTabToRtf(tiptapHtml);
+    if (lst) { rtf += lst; rtf += "\\page\n"; }
+  }
+
   rtf += tiptapToRtf(tiptapHtml);
+  rtf += "\\page\n";
+
+  if ((refs as Reference[])?.length) {
+    rtf += referenciasToRtf(refs as Reference[]);
+    rtf += "\\page\n";
+  }
+
+  if (showApendices && (apendices as PosTextualItem[])?.length) {
+    rtf += apendicesToRtf(apendices as PosTextualItem[]);
+    rtf += "\\page\n";
+  }
+
+  if (showAnexos && (anexos as PosTextualItem[])?.length) {
+    rtf += anexosToRtf(anexos as PosTextualItem[]);
+    rtf += "\\page\n";
+  }
+
+  if (showGlossario && (glossario as GlossarioEntry[])?.length) {
+    rtf += glossarioToRtf(glossario as GlossarioEntry[]);
+    rtf += "\\page\n";
+  }
+
+  if (showNotasRodape && (notasRodape as NotaRodape[])?.length) {
+    rtf += notasRodapeToRtf(notasRodape as NotaRodape[]);
+    rtf += "\\page\n";
+  }
 
   rtf += "}";
   return rtf;

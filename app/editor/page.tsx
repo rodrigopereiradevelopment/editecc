@@ -374,11 +374,21 @@ export default function EditorPage() {
       showDedicatoria, dedicatoriaTexto,
       showAgradecimentos, agradecimentosTexto,
       showEpigrafe, epigrafeTexto, epigrafeAutor,
+      showResumoPage, resumo, palavrasChave,
+      showAbstractPage, abstract, keywords, abstractLang,
+      showFigList, refs,
+      showAnexos, anexos,
+      showApendices, apendices,
+      showGlossario, glossario,
+      showNotasRodape, notasRodape,
     );
     downloadRtf(titulo, rtf);
   }, [coverData, editor, aprovacaoData, aprovacaoCidade, examinadores,
     showDedicatoria, dedicatoriaTexto, showAgradecimentos, agradecimentosTexto,
-    showEpigrafe, epigrafeTexto, epigrafeAutor]);
+    showEpigrafe, epigrafeTexto, epigrafeAutor,
+    showResumoPage, resumo, palavrasChave, showAbstractPage, abstract, keywords, abstractLang,
+    showFigList, refs, showAnexos, anexos, showApendices, apendices,
+    showGlossario, glossario, showNotasRodape, notasRodape]);
 
   // Gerar apresentação de slides (v0.8 — sumarização)
   const handleGerarSlides = async () => {
