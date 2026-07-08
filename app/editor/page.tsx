@@ -30,6 +30,7 @@ import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerato
 import { useSummarization } from "@/hooks/useSummarization";
 import { useTranslation } from "@/hooks/useTranslation";
 import { printFullDocument, downloadDoc } from "@/lib/exportDocument";
+import { generateFullRtf, downloadRtf } from "@/lib/exportRtf";
 import type { EditeccDocument, Examinador } from "@/lib/document";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { EditorToolbar } from "@/components/EditorToolbar";
@@ -362,6 +363,17 @@ export default function EditorPage() {
     const titulo = coverData.titulo || "documento";
     downloadDoc(titulo);
   }, [coverData.titulo]);
+
+  // Exportar RTF (LibreOffice/Word — \page nativo)
+  const handleExportRtf = useCallback(() => {
+    const titulo = coverData.titulo || "documento";
+    const html = editor?.getHTML() || "";
+    const curso = coverData.curso;
+    const rtf = generateFullRtf(
+      coverData, curso, aprovacaoData, aprovacaoCidade, examinadores, html,
+    );
+    downloadRtf(titulo, rtf);
+  }, [coverData, editor, aprovacaoData, aprovacaoCidade, examinadores]);
 
   // Gerar apresentação de slides (v0.8 — sumarização)
   const handleGerarSlides = async () => {
@@ -1159,6 +1171,7 @@ export default function EditorPage() {
             handleGerarSlides={handleGerarSlides}
             handleExportPdf={handleExportPdf}
             handleExportDocx={handleExportDocx}
+            handleExportRtf={handleExportRtf}
             handleSave={syncToDoc}
             slidesLoading={slidesLoading}
             slidesProgress={slidesProgress}

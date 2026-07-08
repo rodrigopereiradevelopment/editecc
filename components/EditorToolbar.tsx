@@ -24,6 +24,7 @@ interface EditorToolbarProps {
   handleGerarSlides: () => void;
   handleExportPdf: () => void;
   handleExportDocx: () => void;
+  handleExportRtf: () => void;
   handleSave: () => void;
   slidesLoading: boolean;
   slidesProgress: number;
@@ -53,7 +54,7 @@ function ToolbarBtn({ label, title, onMouseDown, children }: {
 }
 
 export function EditorToolbar({
-  applyFormat, handleGerarSlides, handleExportPdf, handleExportDocx, handleSave,
+  applyFormat, handleGerarSlides, handleExportPdf, handleExportDocx, handleExportRtf, handleSave,
   slidesLoading, slidesProgress, slidesStatus, savedMsg, storageError, onOpenShortcuts, onOpenSettings,
 }: EditorToolbarProps) {
   return (
@@ -140,6 +141,13 @@ export function EditorToolbar({
           fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
         }}>
           <DocxIcon /> .doc
+        </button>
+        <button onClick={handleExportRtf} style={{
+          background: "#f59e0b", border: "none", color: "white",
+          padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
+          fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
+        }}>
+          <DocxIcon /> .rtf
         </button>
         <button onClick={handleExportPdf} style={{
           background: "#2563eb", border: "none", color: "white",
