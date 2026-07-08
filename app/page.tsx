@@ -70,7 +70,7 @@ function PaperMockup() {
       <div style={{
         position: "absolute", top: "12px", left: "12px",
         width: "100%", height: "100%",
-        background: "#1e2330", borderRadius: "4px",
+        background: "var(--lp-border)", borderRadius: "4px",
       }} />
       {/* Folha principal */}
       <div style={{
@@ -86,14 +86,14 @@ function PaperMockup() {
         {/* Barra de app simulada */}
         <div style={{
           position: "absolute", top: 0, left: 0, right: 0,
-          background: "#0d0f15", borderRadius: "4px 4px 0 0",
+          background: "var(--lp-surface)", borderRadius: "4px 4px 0 0",
           padding: "8px 14px",
           display: "flex", alignItems: "center", gap: "8px",
         }}>
           <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "white", fontWeight: "800", fontSize: "11px", fontFamily: "sans-serif" }}>E</span>
           </div>
-          <span style={{ color: "#f1f5f9", fontWeight: "700", fontSize: "12px", fontFamily: "DM Sans, sans-serif" }}>
+          <span style={{ color: "var(--lp-heading)", fontWeight: "700", fontSize: "12px", fontFamily: "DM Sans, sans-serif" }}>
             Edite<span style={{ color: "#3b82f6" }}>CC</span>
           </span>
           <div style={{ marginLeft: "auto", display: "flex", gap: "4px" }}>
@@ -162,8 +162,8 @@ function FeatureCard({ icon, title, desc, index }: { icon: string; title: string
   return (
     <div ref={ref} style={{
       padding: "24px",
-      background: "#0d0f15",
-      border: "1px solid #1e2330",
+      background: "var(--lp-surface)",
+      border: "1px solid var(--lp-border)",
       borderRadius: "10px",
       transition: "all 0.4s ease",
       transitionDelay: `${index * 60}ms`,
@@ -173,25 +173,25 @@ function FeatureCard({ icon, title, desc, index }: { icon: string; title: string
     }}
       onMouseEnter={e => {
         (e.currentTarget as HTMLDivElement).style.borderColor = "#2563eb40";
-        (e.currentTarget as HTMLDivElement).style.background = "#0f1420";
+        (e.currentTarget as HTMLDivElement).style.background = "var(--lp-surface-hover)";
       }}
       onMouseLeave={e => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = "#1e2330";
-        (e.currentTarget as HTMLDivElement).style.background = "#0d0f15";
+        (e.currentTarget as HTMLDivElement).style.borderColor = "var(--lp-border)";
+        (e.currentTarget as HTMLDivElement).style.background = "var(--lp-surface)";
       }}
     >
       <div style={{
         width: "40px", height: "40px", borderRadius: "8px",
-        background: "#1e2330", display: "flex", alignItems: "center",
+        background: "var(--lp-surface-hover)", display: "flex", alignItems: "center",
         justifyContent: "center", fontSize: "18px", marginBottom: "14px",
         fontFamily: "serif", color: "#3b82f6",
       }}>
         {icon}
       </div>
-      <h3 style={{ color: "#e2e8f0", fontSize: "14px", fontWeight: "600", marginBottom: "8px", fontFamily: "DM Sans, sans-serif" }}>
+      <h3 style={{ color: "var(--lp-card-title)", fontSize: "14px", fontWeight: "600", marginBottom: "8px", fontFamily: "DM Sans, sans-serif" }}>
         {title}
       </h3>
-      <p style={{ color: "#475569", fontSize: "13px", lineHeight: "1.6", fontFamily: "DM Sans, sans-serif" }}>
+      <p style={{ color: "var(--lp-body)", fontSize: "13px", lineHeight: "1.6", fontFamily: "DM Sans, sans-serif" }}>
         {desc}
       </p>
     </div>
@@ -227,11 +227,39 @@ export default function LandingPage() {
           --hero-color: #f1f5f9;
           --nav-bg: rgba(10,12,17,0.85);
           --nav-border: #1e2330;
+          --lp-heading: #f1f5f9;
+          --lp-body: #475569;
+          --lp-muted: #64748b;
+          --lp-surface: #0d0f15;
+          --lp-border: #1e2330;
+          --lp-card-title: #e2e8f0;
+          --lp-stat-label: #334155;
+          --lp-surface-hover: #0f1420;
+          --lp-surface-code: #0a0c11;
+          --lp-hero-strong: #94a3b8;
+          --lp-step-icon-0: #1e3a5f;
+          --lp-step-icon-1: #1e2330;
+          --lp-step-icon-2: #0f2a1e;
+          --lp-code-text: #94a3b8;
         }
         .theme-light {
           --hero-color: #0f172a;
           --nav-bg: rgba(248,250,252,0.9);
           --nav-border: #e2e8f0;
+          --lp-heading: #0f172a;
+          --lp-body: #334155;
+          --lp-muted: #64748b;
+          --lp-surface: #ffffff;
+          --lp-border: #e2e8f0;
+          --lp-card-title: #1e293b;
+          --lp-stat-label: #475569;
+          --lp-surface-hover: #f1f5f9;
+          --lp-surface-code: #e2e8f0;
+          --lp-hero-strong: #1e293b;
+          --lp-step-icon-0: #dbeafe;
+          --lp-step-icon-1: #e2e8f0;
+          --lp-step-icon-2: #d1fae5;
+          --lp-code-text: #334155;
         }
 
         @keyframes float {
@@ -293,20 +321,20 @@ export default function LandingPage() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          color: #64748b;
+          color: var(--lp-muted);
           padding: 14px 20px;
           border-radius: 8px;
           font-size: 15px;
           font-weight: 500;
           text-decoration: none;
           transition: all 0.2s;
-          border: 1px solid #1e2330;
+          border: 1px solid var(--lp-border);
         }
 
         .cta-secondary:hover {
-          color: #e2e8f0;
-          border-color: #334155;
-          background: #0d0f15;
+          color: var(--lp-card-title);
+          border-color: var(--lp-stat-label);
+          background: var(--lp-surface);
         }
 
         .section-label {
@@ -352,24 +380,24 @@ export default function LandingPage() {
             aria-label={theme === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             style={{
-              background: "none", border: "1px solid #1e2330", color: "#475569",
+              background: "none", border: "1px solid var(--lp-border)", color: "var(--lp-body)",
               cursor: "pointer", padding: "6px 10px", borderRadius: "6px",
               fontSize: "13px", display: "flex", alignItems: "center", gap: "4px",
               transition: "color 0.15s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = "#e2e8f0"; e.currentTarget.style.borderColor = "#334155"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "#475569"; e.currentTarget.style.borderColor = "#1e2330"; }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--lp-card-title)"; e.currentTarget.style.borderColor = "var(--lp-stat-label)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--lp-body)"; e.currentTarget.style.borderColor = "var(--lp-border)"; }}
           >
-            {theme === "dark" ? (
+            {mounted ? (theme === "dark" ? (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
             ) : (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            )}
+            )) : <span style={{ width: 14, height: 14 }} />}
           </button>
           <a href="https://github.com/rodrigopereiradevelopment/editecc" target="_blank" rel="noopener noreferrer"
-            style={{ color: "#475569", fontSize: "13px", textDecoration: "none", padding: "6px 12px", borderRadius: "6px", display: "flex", alignItems: "center", gap: "6px", transition: "color 0.15s" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#e2e8f0")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#475569")}>
+            style={{ color: "var(--lp-body)", fontSize: "13px", textDecoration: "none", padding: "6px 12px", borderRadius: "6px", display: "flex", alignItems: "center", gap: "6px", transition: "color 0.15s" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--lp-card-title)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--lp-body)")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             GitHub
           </a>
@@ -406,13 +434,13 @@ export default function LandingPage() {
             <div style={{ flex: "1 1 400px", maxWidth: "580px" }}>
               <div style={{
                 display: "inline-flex", alignItems: "center", gap: "8px",
-                background: "#0d0f15", border: "1px solid #1e2330",
+                background: "var(--lp-surface)", border: "1px solid var(--lp-border)",
                 padding: "5px 12px", borderRadius: "20px", marginBottom: "24px",
                 opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(10px)",
                 transition: "all 0.5s ease 0.1s",
               }}>
                 <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981" }} />
-                <span style={{ fontSize: "12px", color: "#64748b" }}>Open Source · MIT License</span>
+                <span style={{ fontSize: "12px", color: "var(--lp-muted)" }}>Open Source · MIT License</span>
               </div>
 
               <h1 className="hero-title" style={{
@@ -427,13 +455,13 @@ export default function LandingPage() {
               </h1>
 
               <p style={{
-                color: "#64748b", fontSize: "17px", lineHeight: "1.7",
+                color: "var(--lp-muted)", fontSize: "17px", lineHeight: "1.7",
                 marginBottom: "36px", maxWidth: "460px",
                 opacity: mounted ? 1 : 0,
                 transform: mounted ? "none" : "translateY(20px)",
                 transition: "all 0.6s ease 0.35s",
               }}>
-                Editor de textos com formatação <strong style={{ color: "#94a3b8" }}>ABNT automática</strong>. Margens, fontes, espaçamentos e capa — tudo pré-configurado. Você só escreve.
+                Editor de textos com formatação <strong style={{ color: "var(--lp-hero-strong)" }}>ABNT automática</strong>. Margens, fontes, espaçamentos e capa — tudo pré-configurado. Você só escreve.
               </p>
 
               <div style={{
@@ -459,8 +487,8 @@ export default function LandingPage() {
               }}>
                 {[["ABNT", "NBR 14724:2011"], ["100%", "Local & Gratuito"], ["0", "APIs Externas"]].map(([n, l]) => (
                   <div key={n}>
-                    <div style={{ color: "#f1f5f9", fontWeight: "700", fontSize: "20px", fontFamily: "Playfair Display, serif" }}>{n}</div>
-                    <div style={{ color: "#334155", fontSize: "11px", marginTop: "2px" }}>{l}</div>
+                    <div style={{ color: "var(--lp-heading)", fontWeight: "700", fontSize: "20px", fontFamily: "Playfair Display, serif" }}>{n}</div>
+                    <div style={{ color: "var(--lp-stat-label)", fontSize: "11px", marginTop: "2px" }}>{l}</div>
                   </div>
                 ))}
               </div>
@@ -485,11 +513,11 @@ export default function LandingPage() {
             <h2 style={{
               fontFamily: "Playfair Display, serif",
               fontSize: "clamp(32px, 4vw, 48px)",
-              fontWeight: "700", color: "#f1f5f9",
+              fontWeight: "700", color: "var(--lp-heading)",
               marginBottom: "48px", lineHeight: "1.2",
             }}>
               Tudo que você precisa.<br />
-              <span style={{ color: "#334155" }}>Nada que você não precisa.</span>
+              <span style={{ color: "var(--lp-stat-label)" }}>Nada que você não precisa.</span>
             </h2>
             <div style={{
               display: "grid",
@@ -502,10 +530,10 @@ export default function LandingPage() {
         </section>
 
         {/* ── COMO FUNCIONA ── */}
-        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid #1e2330" }}>
+        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
           <div style={{ maxWidth: "900px", margin: "0 auto" }}>
             <p className="section-label">Como funciona</p>
-            <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: "700", color: "#f1f5f9", marginBottom: "56px", lineHeight: "1.2" }}>
+            <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "56px", lineHeight: "1.2" }}>
               Do zero ao PDF em quatro passos.
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
@@ -513,30 +541,30 @@ export default function LandingPage() {
                 <div key={i} style={{
                   display: "flex", gap: "32px", alignItems: "flex-start",
                   padding: "32px 0",
-                  borderBottom: i < STEPS.length - 1 ? "1px solid #1e2330" : "none",
+                  borderBottom: i < STEPS.length - 1 ? "1px solid var(--lp-border)" : "none",
                 }}>
                   <div style={{
                     fontFamily: "DM Mono, monospace",
-                    fontSize: "11px", color: "#1e2d3d",
+                    fontSize: "11px", color: "var(--lp-stat-label)",
                     paddingTop: "4px", minWidth: "28px",
                   }}>
                     {s.n}
                   </div>
                   <div style={{
                     width: "40px", height: "40px", borderRadius: "8px",
-                    background: i === 0 ? "#1e3a5f" : i === 1 ? "#1e2330" : "#0f2a1e",
-                    border: `1px solid ${i === 0 ? "#2563eb40" : i === 1 ? "#1e2330" : "#10b98130"}`,
+                    background: i === 0 ? "var(--lp-step-icon-0)" : i === 1 ? "var(--lp-step-icon-1)" : "var(--lp-step-icon-2)",
+                    border: `1px solid ${i === 0 ? "#2563eb40" : i === 1 ? "var(--lp-border)" : "#10b98130"}`,
                     display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                    color: i === 0 ? "#3b82f6" : i === 1 ? "#475569" : "#10b981",
+                    color: i === 0 ? "#3b82f6" : i === 1 ? "var(--lp-body)" : "#10b981",
                     fontSize: "18px",
                   }}>
                     {i === 0 ? "◫" : i === 1 ? "¶" : "↓"}
                   </div>
                   <div>
-                    <h3 style={{ color: "#e2e8f0", fontSize: "18px", fontWeight: "600", marginBottom: "8px", fontFamily: "Playfair Display, serif" }}>
+                    <h3 style={{ color: "var(--lp-card-title)", fontSize: "18px", fontWeight: "600", marginBottom: "8px", fontFamily: "Playfair Display, serif" }}>
                       {s.title}
                     </h3>
-                    <p style={{ color: "#475569", fontSize: "14px", lineHeight: "1.7" }}>
+                    <p style={{ color: "var(--lp-body)", fontSize: "14px", lineHeight: "1.7" }}>
                       {s.desc}
                     </p>
                   </div>
@@ -550,8 +578,8 @@ export default function LandingPage() {
         <section style={{ padding: "80px clamp(20px, 5vw, 80px)" }}>
           <div style={{ maxWidth: "800px", margin: "0 auto" }}>
             <div style={{
-              background: "#0d0f15",
-              border: "1px solid #1e2330",
+              background: "var(--lp-surface)",
+              border: "1px solid var(--lp-border)",
               borderRadius: "16px",
               padding: "56px",
               textAlign: "center",
@@ -566,21 +594,21 @@ export default function LandingPage() {
               }} />
               <div style={{
                 display: "inline-flex", alignItems: "center", gap: "8px",
-                background: "#0a0c11", border: "1px solid #1e2330",
+                background: "var(--lp-surface-code)", border: "1px solid var(--lp-border)",
                 padding: "5px 14px", borderRadius: "20px", marginBottom: "24px",
                 fontSize: "12px", color: "#10b981",
               }}>
                 ⬡ Open Source · MIT License
               </div>
-              <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(28px, 4vw, 40px)", fontWeight: "700", color: "#f1f5f9", marginBottom: "16px", lineHeight: "1.2" }}>
+              <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(28px, 4vw, 40px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "16px", lineHeight: "1.2" }}>
                 Clone, adapte, contribua.
               </h2>
-              <p style={{ color: "#475569", fontSize: "15px", lineHeight: "1.7", marginBottom: "36px", maxWidth: "480px", margin: "0 auto 36px" }}>
+              <p style={{ color: "var(--lp-body)", fontSize: "15px", lineHeight: "1.7", marginBottom: "36px", maxWidth: "480px", margin: "0 auto 36px" }}>
                 O EditeCC é open source. Qualquer aluno ou desenvolvedor pode clonar o repositório e usar ou contribuir com melhorias.
               </p>
-              <div style={{ background: "#0a0c11", border: "1px solid #1e2330", borderRadius: "8px", padding: "14px 20px", fontFamily: "DM Mono, monospace", fontSize: "13px", color: "#64748b", marginBottom: "32px", textAlign: "left" }}>
-                <span style={{ color: "#334155" }}>$ </span>
-                <span style={{ color: "#94a3b8" }}>git clone </span>
+              <div style={{ background: "var(--lp-surface-code)", border: "1px solid var(--lp-border)", borderRadius: "8px", padding: "14px 20px", fontFamily: "DM Mono, monospace", fontSize: "13px", color: "var(--lp-muted)", marginBottom: "32px", textAlign: "left" }}>
+                <span style={{ color: "var(--lp-stat-label)" }}>$ </span>
+                <span style={{ color: "var(--lp-code-text)" }}>git clone </span>
                 <span style={{ color: "#3b82f6" }}>https://github.com/rodrigopereiradevelopment/editecc</span>
               </div>
               <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
@@ -599,7 +627,7 @@ export default function LandingPage() {
         {/* ── FOOTER ── */}
         <footer style={{
           padding: "24px clamp(20px, 5vw, 80px)",
-          borderTop: "1px solid #1e2330",
+          borderTop: "1px solid var(--lp-border)",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           flexWrap: "wrap", gap: "12px",
         }}>
@@ -607,11 +635,11 @@ export default function LandingPage() {
             <div style={{ width: "22px", height: "22px", borderRadius: "5px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ color: "white", fontWeight: "800", fontSize: "10px" }}>E</span>
             </div>
-            <span style={{ color: "#334155", fontSize: "13px" }}>
+            <span style={{ color: "var(--lp-body)", fontSize: "13px" }}>
               EditeCC · MIT License · rodrigopereiradevelopment
             </span>
           </div>
-          <span style={{ color: "#1e2d3d", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
+          <span style={{ color: "var(--lp-stat-label)", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
               v0.9.9 · ABNT NBR 14724:2011
           </span>
         </footer>

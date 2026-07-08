@@ -28,6 +28,8 @@ import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, Reference, type ValidationIssue } from "@/lib/abnt/styles";
 import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerator";
 import { useSummarization } from "@/hooks/useSummarization";
+import { useTranslation } from "@/hooks/useTranslation";
+import { printFullDocument, downloadDoc } from "@/lib/exportDocument";
 import type { EditeccDocument, Examinador } from "@/lib/document";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { EditorToolbar } from "@/components/EditorToolbar";
@@ -98,6 +100,11 @@ export default function EditorPage() {
     loading: sumLoading, progress: sumProgress, modelStatus: sumModelStatus, error: sumError,
   } = useSummarization();
 
+  const {
+    translate, loadModel: loadTransModel,
+    modelStatus: transModelStatus, error: transError,
+  } = useTranslation();
+
   // Sincroniza sumProgress → slidesProgress durante download do modelo
   useEffect(() => {
     if (slidesLoading && sumModelStatus === "downloading" && sumProgress > 0) {
@@ -148,6 +155,7 @@ export default function EditorPage() {
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        underline: false,
       }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -342,62 +350,18 @@ export default function EditorPage() {
     editor.chain().focus().insertContent(`<p class="abnt-referencia">${abnt}</p><p></p>`).run();
   };
 
-  // Exportar PDF — esconde sidebar com JS (contorna WebKit do Tauri) e garante quebras de página
+  // Exportar PDF — usa iframe oculto com HTML completo de todas as páginas ABNT
   const handleExportPdf = () => {
-    const sidebar = document.querySelector('[aria-label="Painel lateral"]');
-    const origSide = sidebar ? (sidebar as HTMLElement).style.display : "";
-    if (sidebar) (sidebar as HTMLElement).style.display = "none";
-
-    // Adiciona page-break inline nas páginas A4 (WebKit do Tauri ignora @media print)
-    const pages = document.querySelectorAll(".a4-page");
-    const origBreaks: (string | null)[] = [];
-    pages.forEach((p, i) => {
-      const el = p as HTMLElement;
-      if (i < pages.length - 1) {
-        origBreaks[i] = el.style.pageBreakAfter || el.style.breakAfter || "";
-        el.style.pageBreakAfter = "always";
-      }
-    });
-
-    window.onafterprint = () => {
-      if (sidebar) (sidebar as HTMLElement).style.display = origSide;
-      pages.forEach((p, i) => {
-        if (origBreaks[i] !== undefined) {
-          (p as HTMLElement).style.pageBreakAfter = origBreaks[i] || "";
-        }
-      });
-      window.onafterprint = null;
-    };
-    window.print();
+    printFullDocument().catch((err) =>
+      console.error("Erro ao exportar PDF:", err)
+    );
   };
 
   // Exportar DOCX (HTML → .doc — Word abre nativamente)
   const handleExportDocx = useCallback(() => {
-    const html = editor?.getHTML() || "";
     const titulo = coverData.titulo || "documento";
-    const style = `
-      @page { margin: 3cm 2cm 2cm 3cm; size: A4; }
-      body { font-family: Arial, Calibri, sans-serif; font-size: 12pt; line-height: 1.5; text-align: justify; }
-      h1 { font-size: 12pt; font-weight: bold; text-transform: uppercase; text-align: center; page-break-before: always; }
-      h1:first-of-type { page-break-before: auto; }
-      h2 { font-size: 12pt; font-weight: bold; text-align: left; }
-      h3 { font-size: 12pt; font-weight: bold; font-style: italic; text-align: left; }
-      p { text-indent: 2.5cm; margin: 0; }
-      blockquote { font-size: 10pt; line-height: 1; margin-left: 4cm; }
-      .abnt-referencia { font-size: 10pt; line-height: 1; text-indent: 0; margin-bottom: 6pt; }
-    `;
-    const blob = new Blob([
-      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${titulo}</title><style>${style}</style></head><body>${html}</body></html>`
-    ], { type: "application/msword" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${titulo.replace(/[^a-zA-Z0-9]/g, "_")}.doc`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [editor, coverData.titulo]);
+    downloadDoc(titulo);
+  }, [coverData.titulo]);
 
   // Gerar apresentação de slides (v0.8 — sumarização)
   const handleGerarSlides = async () => {
@@ -415,12 +379,22 @@ export default function EditorPage() {
         return;
       }
 
+      if (transModelStatus !== "ready") {
+        setSlidesStatus("Carregando modelo de tradução… (~600MB, único download)");
+        await loadTransModel();
+      }
+      if (transError) {
+        setSlidesStatus(`Erro no modelo de tradução: ${transError}`);
+        setTimeout(() => setSlidesLoading(false), 3000);
+        return;
+      }
+
       if (sumModelStatus !== "ready") {
         setSlidesStatus("Carregando modelo de sumarização… (~300MB, único download)");
         await loadSumModel();
       }
       if (sumError) {
-        setSlidesStatus(`Erro: ${sumError}`);
+        setSlidesStatus(`Erro no modelo de sumarização: ${sumError}`);
         setTimeout(() => setSlidesLoading(false), 3000);
         return;
       }
@@ -428,12 +402,26 @@ export default function EditorPage() {
       const summarized = [];
       for (let i = 0; i < sections.length; i++) {
         const sec = sections[i];
-        setSlidesStatus(`Resumindo ${sec.titulo}… (${i + 1}/${sections.length})`);
+        if (!sec.textoCompleto) {
+          summarized.push({ titulo: sec.titulo, conteudo: "" });
+          continue;
+        }
+
+        setSlidesStatus(`Traduzindo ${sec.titulo}… (${i + 1}/${sections.length})`);
         setSlidesProgress(Math.round(((i + 1) / sections.length) * 100));
-        const resumo = await summarize(sec.textoCompleto);
+
+        // PT → EN
+        const enText = await translate(sec.textoCompleto, "en");
+
+        setSlidesStatus(`Resumindo ${sec.titulo}… (${i + 1}/${sections.length})`);
+        const sumEn = await summarize(enText);
+
+        // EN → PT
+        const sumPt = await translate(sumEn, "pt");
+
         summarized.push({
           titulo: sec.titulo,
-          conteudo: formatBullets(resumo),
+          conteudo: formatBullets(sumPt),
         });
       }
 
@@ -459,11 +447,14 @@ export default function EditorPage() {
       if (e.ctrlKey && e.shiftKey && e.key === "S") {
         e.preventDefault();
         handleGerarSlides();
+      } else if (e.ctrlKey && !e.shiftKey && e.key === "s") {
+        e.preventDefault();
+        syncToDoc();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleGerarSlides]);
+  }, [handleGerarSlides, syncToDoc]);
 
   // Comandos de formatação
   const applyFormat = (command: string, attrs?: Record<string, unknown>) => {
@@ -1168,6 +1159,7 @@ export default function EditorPage() {
             handleGerarSlides={handleGerarSlides}
             handleExportPdf={handleExportPdf}
             handleExportDocx={handleExportDocx}
+            handleSave={syncToDoc}
             slidesLoading={slidesLoading}
             slidesProgress={slidesProgress}
             slidesStatus={slidesStatus}
