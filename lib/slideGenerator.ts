@@ -64,12 +64,10 @@ export function parseSections(html: string): SlideSection[] {
       next = next.nextElementSibling;
     }
 
-    if (conteudo) {
-      sections.push({
-        titulo: normalizarTitulo(text),
-        conteudo: truncate(conteudo, 500),
-      });
-    }
+    sections.push({
+      titulo: normalizarTitulo(text),
+      conteudo: conteudo ? truncate(conteudo, 500) : "",
+    });
   }
 
   return sections;
@@ -96,13 +94,11 @@ export function parseSectionsFull(html: string): SlideSectionFull[] {
       next = next.nextElementSibling;
     }
 
-    if (conteudo) {
-      sections.push({
-        titulo: normalizarTitulo(text),
-        conteudo: truncate(conteudo, 500),
-        textoCompleto: conteudo,
-      });
-    }
+    sections.push({
+      titulo: normalizarTitulo(text),
+      conteudo: conteudo ? truncate(conteudo, 500) : "",
+      textoCompleto: conteudo,
+    });
   }
 
   return sections;

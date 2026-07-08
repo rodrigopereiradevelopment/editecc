@@ -103,11 +103,14 @@ describe("parseSections", () => {
     expect(result[1].conteudo).toBe("Parágrafo dos objetivos.");
   });
 
-  it("ignora headings sem conteúdo subsequente", () => {
+  it("inclui headings mesmo sem conteúdo subsequente", () => {
     const html = "<h1>INTRODUÇÃO</h1><h1>OBJETIVOS</h1><p>Texto obj.</p>";
     const result = parseSections(html);
-    expect(result).toHaveLength(1);
-    expect(result[0].titulo).toBe("Objetivos");
+    expect(result).toHaveLength(2);
+    expect(result[0].titulo).toBe("Introdução");
+    expect(result[0].conteudo).toBe("");
+    expect(result[1].titulo).toBe("Objetivos");
+    expect(result[1].conteudo).toBe("Texto obj.");
   });
 
   it("reconhece '1. Introdução' (com ponto e capitalizada)", () => {

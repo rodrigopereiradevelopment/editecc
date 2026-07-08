@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 
 export const NLLB_LANGUAGES = {
   en: { label: "English", code: "eng_Latn" },
@@ -8,13 +8,25 @@ export const NLLB_LANGUAGES = {
   fr: { label: "Français", code: "fra_Latn" },
   de: { label: "Deutsch", code: "deu_Latn" },
   it: { label: "Italiano", code: "ita_Latn" },
+  pt: { label: "Português", code: "por_Latn" },
 } as const;
 
-export type TargetLang = "en" | "es" | "fr" | "de" | "it";
+export type TargetLang = "en" | "es" | "fr" | "de" | "it" | "pt";
 
 type TranslateFn = (text: string, targetLang?: TargetLang) => Promise<string>;
 
 const MODEL_KEY = "editecc-model-nllb";
+
+async function clearModelCache() {
+  localStorage.removeItem(MODEL_KEY);
+  try {
+    const cache = await caches.open("transformers-cache");
+    const keys = await cache.keys();
+    await Promise.all(
+      keys.filter(k => k.url.includes("nllb")).map(k => cache.delete(k))
+    );
+  } catch {}
+}
 
 export function useTranslation() {
   const pipeRef = useRef<TranslateFn | null>(null);
@@ -35,15 +47,20 @@ export function useTranslation() {
     setModelStatus("downloading");
     setError("");
     try {
+      await clearModelCache();
       const { pipeline, env } = await import("@xenova/transformers");
       env.allowLocalModels = false;
       env.allowRemoteModels = true;
       env.useFS = false;
+      env.useBrowserCache = false;
+      env.useFSCache = false;
+      try { (env.backends as any).onnx.wasm.proxy = true; } catch {}
       const p = await pipeline("translation", "Xenova/nllb-200-distilled-600M", {
         quantized: true,
         progress_callback: (pr: any) => {
           if (pr?.status === "progress" && typeof pr?.progress === "number") {
-            setProgress(Math.round(pr.progress * 100));
+            const p = pr.progress > 1 ? pr.progress : Math.round(pr.progress * 100);
+            setProgress(Math.min(p, 100));
           }
         },
       });
@@ -58,8 +75,11 @@ export function useTranslation() {
       setModelStatus("ready");
       localStorage.setItem(MODEL_KEY, "ready");
     } catch (err: any) {
+      await clearModelCache();
       setModelStatus("error");
-      setError(err?.message || "Falha ao carregar modelo");
+      const msg = err?.message || err?.toString() || "Falha ao carregar modelo";
+      console.error("[useTranslation] Erro ao carregar modelo:", err);
+      setError(msg.includes("Object.keys") ? `Cache corrompido. Limpo e pronto para tentar novamente. Detalhes: ${msg}` : msg);
     } finally {
       setLoading(false);
     }

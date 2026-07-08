@@ -4,6 +4,17 @@ import { useState, useCallback, useRef } from "react";
 
 const MODEL_KEY = "editecc-model-summarization";
 
+async function clearModelCache() {
+  localStorage.removeItem(MODEL_KEY);
+  try {
+    const cache = await caches.open("transformers-cache");
+    const keys = await cache.keys();
+    await Promise.all(
+      keys.filter(k => k.url.includes("distilbart")).map(k => cache.delete(k))
+    );
+  } catch {}
+}
+
 export function useSummarization() {
   const pipeRef = useRef<any>(null);
   const [loading, setLoading] = useState(false);
@@ -23,13 +34,18 @@ export function useSummarization() {
     setModelStatus("downloading");
     setError("");
     try {
+      await clearModelCache();
       const { pipeline, env } = await import("@xenova/transformers");
       env.allowRemoteModels = true;
+      env.useBrowserCache = false;
+      env.useFSCache = false;
+      try { (env.backends as any).onnx.wasm.proxy = true; } catch {}
       const p = await pipeline("summarization", "Xenova/distilbart-cnn-6-6", {
         quantized: true,
         progress_callback: (p: any) => {
           if (p.status === "progress" && typeof p.progress === "number") {
-            setProgress(Math.round(p.progress * 100));
+            const val = p.progress > 1 ? p.progress : Math.round(p.progress * 100);
+            setProgress(Math.min(val, 100));
           }
         },
       });
@@ -37,8 +53,10 @@ export function useSummarization() {
       setModelStatus("ready");
       localStorage.setItem(MODEL_KEY, "ready");
     } catch (err: any) {
+      await clearModelCache();
       setModelStatus("error");
-      setError(err?.message || "Falha ao carregar modelo de sumarização");
+      const msg = err?.message || err?.toString() || "Falha ao carregar modelo de sumarização";
+      setError(msg.includes("Object.keys") ? "Cache corrompido. Limpo e pronto para tentar novamente." : msg);
     } finally {
       setLoading(false);
     }

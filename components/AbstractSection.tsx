@@ -50,11 +50,12 @@ export function AbstractSection({
     fr: { title: "Résumé (fr)", kw: "Mots-clés" },
     de: { title: "Abstract (de)", kw: "Schlüsselwörter" },
     it: { title: "Abstract (it)", kw: "Parole chiave" },
+    pt: { title: "Abstract (pt)", kw: "Palavras-chave" },
   };
   const labels = LABELS[language];
 
   const WC_LABEL: Record<string, string> = {
-    en: "words", es: "palabras", fr: "mots", de: "Wörter", it: "parole",
+    en: "words", es: "palabras", fr: "mots", de: "Wörter", it: "parole", pt: "palavras",
   };
   const PLACEHOLDERS: Record<string, { text: string; kw: string }> = {
     en: { text: "Translation of the resumo. Single paragraph, no indentation, single spacing.", kw: "Example: Technology. Education. Systems." },
@@ -62,6 +63,7 @@ export function AbstractSection({
     fr: { text: "Traduction du résumé. Paragraphe unique, sans retrait, interligne simple.", kw: "Exemple : Technologie. Éducation. Systèmes." },
     de: { text: "Übersetzung der Zusammenfassung. Einzelner Absatz, ohne Einzug, einfacher Zeilenabstand.", kw: "Beispiel: Technologie. Bildung. Systeme." },
     it: { text: "Traduzione del riassunto. Paragrafo unico, senza rientro, interlinea singola.", kw: "Esempio: Tecnologia. Educazione. Sistemi." },
+    pt: { text: "Resumo traduzido.", kw: "Exemplo: Tecnologia. Educação. Sistemas." },
   };
   const ph = PLACEHOLDERS[language] || PLACEHOLDERS.en;
 
@@ -71,6 +73,7 @@ export function AbstractSection({
     fr: "Min. 3, max. 5 mots-clés. Séparer par un point.",
     de: "Mind. 3, max. 5 Schlüsselwörter. Durch Punkt trennen.",
     it: "Min. 3, max. 5 parole chiave. Separare con un punto.",
+    pt: "Mín. 3, máx. 5 palavras-chave. Separar por ponto.",
   };
 
   const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
@@ -146,7 +149,7 @@ export function AbstractSection({
                 fontSize: "9px", fontWeight: "500", whiteSpace: "nowrap",
               }}
             >
-              {translating ? "Traduzindo..." :
+              {translating ? "Traduzindo… (~30s)" :
                loading ? `${progress}%` :
                modelStatus === "ready" ? "Auto" :
                modelStatus === "error" ? "Retentar" :
