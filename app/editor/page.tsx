@@ -371,9 +371,14 @@ export default function EditorPage() {
     const curso = coverData.curso;
     const rtf = generateFullRtf(
       coverData, curso, aprovacaoData, aprovacaoCidade, examinadores, html,
+      showDedicatoria, dedicatoriaTexto,
+      showAgradecimentos, agradecimentosTexto,
+      showEpigrafe, epigrafeTexto, epigrafeAutor,
     );
     downloadRtf(titulo, rtf);
-  }, [coverData, editor, aprovacaoData, aprovacaoCidade, examinadores]);
+  }, [coverData, editor, aprovacaoData, aprovacaoCidade, examinadores,
+    showDedicatoria, dedicatoriaTexto, showAgradecimentos, agradecimentosTexto,
+    showEpigrafe, epigrafeTexto, epigrafeAutor]);
 
   // Gerar apresentação de slides (v0.8 — sumarização)
   const handleGerarSlides = async () => {

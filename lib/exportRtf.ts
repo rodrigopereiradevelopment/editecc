@@ -315,10 +315,33 @@ function formatInline(s: string): string {
     .trim();
 }
 
+// ─── Dedicatória, Agradecimentos, Epígrafe ───────────────────────────────────
+
+/** Gera RTF para a Dedicatória */
+export function dedicatoriaToRtf(texto: string): string {
+  if (!texto?.trim()) return "";
+  const li = Math.round(8.5 * CM); // ~60% width, 40% margin-left
+  return `{\\pard\\li${li}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(texto)}\\par}`;
+}
+
+/** Gera RTF para Agradecimentos */
+export function agradecimentosToRtf(texto: string): string {
+  if (!texto?.trim()) return "";
+  return `{\\qc\\f0\\fs24\\b AGRADECIMENTOS\\par}\\par\\par\n{\\pard\\fi${PARA_RECUO}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(texto)}\\par}`;
+}
+
+/** Gera RTF para Epígrafe */
+export function epigrafeToRtf(texto: string, autor: string): string {
+  if (!texto?.trim()) return "";
+  const textolimpo = texto.replace(/[—–\-]\s*$/, "").trim();
+  const li = Math.round(8.5 * CM);
+  return `{\\pard\\li${li}\\f0\\fs24\\i\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(textolimpo)}\\par}\\par\n{\\pard\\qr\\f0\\fs22 ${escapeRtfAnsi(autor ? `— ${autor}` : "—")}\\par}`;
+}
+
 // ─── Documento completo ──────────────────────────────────────────────────────────────────────────────
 
 /**
- * Gera string RTF completa: Capa + \page + FolhaRosto + \page + FolhaAprovacao
+ * Gera string RTF completa.
  */
 export function generateFullRtf(
   cover: CoverData,
@@ -327,22 +350,40 @@ export function generateFullRtf(
   aprovacaoCidade: string,
   examinadores: Examinador[],
   tiptapHtml: string,
+  showDedicatoria?: boolean,
+  dedicatoriaTexto?: string,
+  showAgradecimentos?: boolean,
+  agradecimentosTexto?: string,
+  showEpigrafe?: boolean,
+  epigrafeTexto?: string,
+  epigrafeAutor?: string,
 ): string {
   let rtf = rtfHeader();
 
-  // Capa
   rtf += capaToRtf(cover);
   rtf += "\\page\n";
 
-  // Folha de Rosto (se habilitada)
   rtf += folhaRostoToRtf(cover, curso);
   rtf += "\\page\n";
 
-  // Folha de Aprovação
   rtf += folhaAprovacaoToRtf(cover, curso, aprovacaoData, aprovacaoCidade, examinadores);
   rtf += "\\page\n";
 
-  // Conteúdo Tiptap
+  if (showDedicatoria && dedicatoriaTexto?.trim()) {
+    rtf += dedicatoriaToRtf(dedicatoriaTexto);
+    rtf += "\\page\n";
+  }
+
+  if (showAgradecimentos && agradecimentosTexto?.trim()) {
+    rtf += agradecimentosToRtf(agradecimentosTexto);
+    rtf += "\\page\n";
+  }
+
+  if (showEpigrafe && epigrafeTexto?.trim()) {
+    rtf += epigrafeToRtf(epigrafeTexto, epigrafeAutor || "");
+    rtf += "\\page\n";
+  }
+
   rtf += tiptapToRtf(tiptapHtml);
 
   rtf += "}";
