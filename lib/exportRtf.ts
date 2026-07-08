@@ -75,14 +75,16 @@ function rtfHeader(): string {
     "{\\fonttbl{\\f0\\fswiss Arial;}{\\f1\\froman Times New Roman;}}",
     `\\margt${MARG_SUP}\\margb${MARG_INF}\\margl${MARG_ESQ}\\margr${MARG_DIR}`,
     "\\f0\\fs24",
-    // Footer vazio por padrão (pré-textuais sem numeração)
-    "{\\footer \\pard \\fs20 \\par}",
+    // Espaçamento entre parágrafos: antes 0pt, depois 6pt (113 twips)
+    "\\sb0\\sa113",
+    // Header vazio por padrão (pré-textuais sem numeração)
+    "{\\header \\pard \\plain \\qr \\f1 \\fs20 \\par}",
   ].join("\n") + "\n";
 }
 
-function rtfFooterWithNumber(): string {
-  // Footer com número de página, canto inferior direito, Times 10pt
-  return "{\\footer \\pard \\plain \\qr \\f1 \\fs20 \\chpgn \\par}";
+function rtfHeaderWithNumber(): string {
+  // Header com número de página, canto superior direito, Times 10pt
+  return "{\\header \\pard \\plain \\qr \\f1 \\fs20 \\chpgn \\par}";
 }
 
 // ─── Geradores de páginas ─────────────────────────────────────────────────────
@@ -166,14 +168,14 @@ export function folhaRostoToRtf(
   if (subtitulo) rtf += `{\\qc\\f0\\fs24 ${escapeRtfAnsi(subtitulo)}\\par}`;
   rtf += "\\par\n";
 
-  // Nota explicativa (alinhada justificada, margem esquerda 50% = ~7,8cm)
-  // Usamos \li (left indent) em vez de CSS margin-left
-  const li50 = Math.round(8.5 * CM); // 50% de 17cm de largura útil
-  rtf += `{\\pard\\li${li50}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\sa120 ${escapeRtfAnsi(
+// Nota explicativa (alinhada justificada, margem esquerda 50% = ~7,8cm)
+  // Conforme manual: Arial 11pt, espaçamento simples, alinhada a partir do centro
+  const li50 = Math.round(8.5 * CM);
+  rtf += `{\\pard\\li${li50}\\f0\\fs22\\sl240\\slmult1\\sa120 ${escapeRtfAnsi(
     `Trabalho de Conclusão de Curso apresentado como exigência parcial para obtenção do título de Técnico em ${curso || "[curso]"}, pelo ${etecNome} – ${cidadeState}-SP.`,
   )}\\par}`;
   rtf += "\\par\n";
-  rtf += `{\\pard\\li${li50}\\f0\\fs24\\sl${LINHA_15}\\slmult1\\j ${escapeRtfAnsi(`Orientador: ${orientador || "___________________________"}`)}\\par}`;
+  rtf += `{\\pard\\li${li50}\\f0\\fs22\\sl240\\slmult1\\j ${escapeRtfAnsi(`Orientador: ${orientador || "___________________________"}`)}\\par}`;
   rtf += "\\par\\par\\par\\par\\par\n";
 
   // Cidade/Ano no fundo
@@ -397,7 +399,6 @@ export function listaFigTabToRtf(editorHtml: string): string {
   return r;
 }
 
-/** Gera RTF para o Sumário (TOC) a partir do HTML do Tiptap */
 export function sumarioToRtf(html: string): string {
   const headings = html.match(/<h([1-3])[^>]*>([\s\S]*?)<\/h[1-3]>/gi);
   if (!headings?.length) return "";
@@ -410,6 +411,26 @@ export function sumarioToRtf(html: string): string {
     if (!text) continue;
     const indent = (level - 1) * Math.round(1.5 * CM);
     r += `{\\pard\\li${indent}\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(text)}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para Lista de Abreviaturas e Siglas */
+export function listaSiglasToRtf(siglas: { sigla: string; definicao: string }[]): string {
+  if (!siglas?.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b LISTA DE ABREVIATURAS E SIGLAS\\par}\\par\\par\n`;
+  for (const s of siglas) {
+    r += `{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(`${s.definicao} (${s.sigla})`)}\\par}`;
+  }
+  return r;
+}
+
+/** Gera RTF para Lista de Símbolos */
+export function listaSimbolosToRtf(simbolos: { simbolo: string; significado: string }[]): string {
+  if (!simbolos?.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b LISTA DE SÍMBOLOS\\par}\\par}\\par\n`;
+  for (const s of simbolos) {
+    r += `{\\pard\\fi0\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(`${s.simbolo}: ${s.significado}`)}\\par}`;
   }
   return r;
 }
@@ -509,6 +530,8 @@ export function generateFullRtf(
   glossario?: GlossarioEntry[],
   showNotasRodape?: boolean,
   notasRodape?: NotaRodape[],
+  siglas?: { sigla: string; definicao: string }[],
+  simbolos?: { simbolo: string; significado: string }[],
 ): string {
   let rtf = rtfHeader();
 
@@ -549,14 +572,26 @@ export function generateFullRtf(
     if (lst) { rtf += lst; rtf += "\\page\n"; }
   }
 
+  // Lista de Abreviaturas e Siglas (opcional)
+  if (siglas?.length) {
+    rtf += listaSiglasToRtf(siglas);
+    rtf += "\\page\n";
+  }
+
+  // Lista de Símbolos (opcional)
+  if (simbolos?.length) {
+    rtf += listaSimbolosToRtf(simbolos);
+    rtf += "\\page\n";
+  }
+
   // Sumário automático
   {
     const sumario = sumarioToRtf(tiptapHtml);
     if (sumario) { rtf += sumario; rtf += "\\page\n"; }
   }
 
-  // A partir daqui ativa numeração de páginas (canto inferior direito)
-  rtf += rtfFooterWithNumber();
+  // A partir daqui ativa numeração de páginas (canto superior direito)
+  rtf += rtfHeaderWithNumber();
   rtf += "\n";
 
   rtf += tiptapToRtf(tiptapHtml);

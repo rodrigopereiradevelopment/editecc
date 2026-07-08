@@ -381,6 +381,7 @@ export default function EditorPage() {
       showApendices, apendices,
       showGlossario, glossario,
       showNotasRodape, notasRodape,
+      undefined, undefined, // siglas, simbolos (TODO: adicionar UI)
     );
     downloadRtf(titulo, rtf);
   }, [coverData, editor, aprovacaoData, aprovacaoCidade, examinadores,
