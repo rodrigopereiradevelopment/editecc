@@ -560,10 +560,19 @@ export default function EditorPage() {
         .no-print { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
         @media print {
           .no-print { display: none !important; }
-          .a4-page { box-shadow: none !important; page-break-after: always; }
+          .a4-page {
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+            width: 210mm !important;
+            min-height: 297mm !important;
+            page-break-after: always;
+            page-break-inside: avoid;
+          }
           .a4-page::after { content: "" !important; }
-          @page { margin: 0; }
-          @page :first { margin: 0; }
+          @page { size: 210mm 297mm; margin: 0mm; }
+          @page :first { margin: 0mm; }
+          html, body { margin: 0 !important; padding: 0 !important; }
         }
       `}</style>
 

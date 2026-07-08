@@ -1,8 +1,10 @@
 "use client";
 
 const ABNT_CSS = `
-  @page { margin: 3cm 2cm 2cm 3cm; size: A4; }
+  @page { size: 210mm 297mm; margin: 0mm; }
+  @page :first { margin: 0mm; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; }
   body { font-family: Arial, Calibri, sans-serif; font-size: 12pt; line-height: 1.5; text-align: justify; color: #111; background: white; }
   h1 { font-size: 12pt; font-weight: 700; text-transform: uppercase; text-align: center; line-height: 1.5; margin: 2em 0 1em; text-indent: 0; }
   h2 { font-size: 12pt; font-weight: 700; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; text-indent: 0; }
@@ -11,7 +13,13 @@ const ABNT_CSS = `
   blockquote { font-size: 10pt; line-height: 1; margin-left: 4cm; text-align: justify; border: none; padding: 0; text-indent: 0; }
   blockquote p { text-indent: 0; }
   ul, ol { padding-left: 1.5cm; line-height: 1.5; }
-  .a4-page { page-break-before: always; }
+  .a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 3cm 2cm 2cm 3cm;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
   .a4-page:first-of-type { page-break-before: auto; }
   .abnt-referencia { font-size: 10pt; line-height: 1; text-indent: 0; margin-bottom: 6pt; }
   img { max-width: 100%; height: auto; }
