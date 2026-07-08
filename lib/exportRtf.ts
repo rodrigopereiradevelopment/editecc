@@ -253,10 +253,10 @@ export function folhaAprovacaoToRtf(
 export function tiptapToRtf(html: string): string {
   let rtf = html;
 
-  // <h1>, <h2>, <h3>
+  // <h1>, <h2>, <h3> — INSERE \page ANTES DE CADA H1
   rtf = rtf.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, (_m, content: string) => {
     const text = stripTags(content);
-    return `\\par\\par{\\qc\\f0\\fs24\\b ${escapeRtfAnsi(text.toUpperCase())}\\par}\\par\\par`;
+    return `\\page\n\\par\\par{\\qc\\f0\\fs24\\b ${escapeRtfAnsi(text.toUpperCase())}\\par}\\par\\par`;
   });
   rtf = rtf.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_m, content: string) => {
     const text = stripTags(content);
@@ -390,6 +390,25 @@ export function listaFigTabToRtf(editorHtml: string): string {
   return r;
 }
 
+/** Gera RTF para o Sumário (TOC) a partir do HTML do Tiptap */
+export function sumarioToRtf(html: string): string {
+  const headings = html.match(/<h([1-3])[^>]*>([\s\S]*?)<\/h[1-3]>/gi);
+  if (!headings?.length) return "";
+  let r = `{\\qc\\f0\\fs24\\b SUMÁRIO\\par}\\par\\par\n`;
+  for (const h of headings) {
+    const m = h.match(/<h([1-3])[^>]*>([\s\S]*?)<\/h[1-3]>/i);
+    if (!m) continue;
+    const level = parseInt(m[1]);
+    const text = stripTags(m[2]).trim();
+    if (!text) continue;
+    const indent = (level - 1) * Math.round(1.5 * CM);
+    r += `{\\pard\\li${indent}\\f0\\fs24\\sl${LINHA_15}\\slmult1 ${escapeRtfAnsi(text)}\\par}`;
+  }
+  return r;
+}
+
+// ─── Referências e Elementos Pós-Textuais ────────────────────────────────────
+
 /** Gera RTF para Referências */
 export function referenciasToRtf(refs: Reference[]): string {
   if (!refs.length) return "";
@@ -521,6 +540,12 @@ export function generateFullRtf(
   if (showFigList) {
     const lst = listaFigTabToRtf(tiptapHtml);
     if (lst) { rtf += lst; rtf += "\\page\n"; }
+  }
+
+  // Sumário automático
+  {
+    const sumario = sumarioToRtf(tiptapHtml);
+    if (sumario) { rtf += sumario; rtf += "\\page\n"; }
   }
 
   rtf += tiptapToRtf(tiptapHtml);
