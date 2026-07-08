@@ -71,11 +71,18 @@ const LINHA_15 = 360;
  */
 function rtfHeader(): string {
   return [
-    "{\\rtf1\\ansi\\deff0",
+    "{\\rtf1\\ansi\\ansicpg65001\\deff0",
     "{\\fonttbl{\\f0\\fswiss Arial;}{\\f1\\froman Times New Roman;}}",
     `\\margt${MARG_SUP}\\margb${MARG_INF}\\margl${MARG_ESQ}\\margr${MARG_DIR}`,
     "\\f0\\fs24",
+    // Footer vazio por padrão (pré-textuais sem numeração)
+    "{\\footer \\pard \\fs20 \\par}",
   ].join("\n") + "\n";
+}
+
+function rtfFooterWithNumber(): string {
+  // Footer com número de página, canto inferior direito, Times 10pt
+  return "{\\footer \\pard \\plain \\qr \\f1 \\fs20 \\chpgn \\par}";
 }
 
 // ─── Geradores de páginas ─────────────────────────────────────────────────────
@@ -547,6 +554,10 @@ export function generateFullRtf(
     const sumario = sumarioToRtf(tiptapHtml);
     if (sumario) { rtf += sumario; rtf += "\\page\n"; }
   }
+
+  // A partir daqui ativa numeração de páginas (canto inferior direito)
+  rtf += rtfFooterWithNumber();
+  rtf += "\n";
 
   rtf += tiptapToRtf(tiptapHtml);
   rtf += "\\page\n";
