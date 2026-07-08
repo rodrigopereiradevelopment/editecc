@@ -135,19 +135,13 @@ export function EditorToolbar({
             )}
           </div>
         )}
-        <button onClick={handleExportDocx} style={{
+        <button onClick={handleExportRtf} style={{
           background: "#0d9488", border: "none", color: "white",
           padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
           fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
-        }}>
+        }}
+          title="Salvo como RTF — abre no Word, LibreOffice e Google Docs sem precisar converter.">
           <DocxIcon /> .doc
-        </button>
-        <button onClick={handleExportRtf} style={{
-          background: "#f59e0b", border: "none", color: "white",
-          padding: "5px 12px", borderRadius: "6px", cursor: "pointer",
-          fontSize: "11px", fontWeight: "500", display: "flex", alignItems: "center", gap: "5px",
-        }}>
-          <DocxIcon /> .rtf
         </button>
         <button onClick={handleExportPdf} style={{
           background: "#2563eb", border: "none", color: "white",
