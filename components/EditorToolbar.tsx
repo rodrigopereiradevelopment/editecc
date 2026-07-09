@@ -59,7 +59,7 @@ function ToolbarBtn({ label, title, onMouseDown, children }: {
 export function EditorToolbar({
   applyFormat, handleGerarSlides, handleExportPdf, handleExportDocx, handleExportRtf, handleSave,
   slidesLoading, slidesProgress, slidesStatus, savedMsg, storageError, onOpenShortcuts, onOpenSettings,
-  onTogglePagePreview, showPagePreview,
+  onTogglePagePreview,
 }: EditorToolbarProps) {
   return (
     <nav className="no-print" aria-label="Ferramentas de formatação" style={{
