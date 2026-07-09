@@ -102,8 +102,11 @@ export function capaToRtf(cover: CoverData): string {
   const p = (s: string, extra = "") =>
     `{\\qc\\f0\\fs24 ${extra}${escapeRtfAnsi(s)}\\par}`;
 
-  const spacer = (h: string) =>
-    `{\\pard\\sl-${Math.round(parseFloat(h) * CM)}\\sa0\\sb0\\par}`;
+  const spacer = (h: string) => {
+    const twips = Math.round(parseFloat(h) * CM);
+    // Usa \sl positivo com \sa0\sb0 para criar espaço fixo
+    return `{\\pard\\sl${twips}\\sa0\\sb0\\par}`;
+  };
 
   let rtf = "";
 
@@ -265,7 +268,7 @@ export function tiptapToRtf(html: string): string {
   // <h1>, <h2>, <h3> — INSERE \page ANTES DE CADA H1
   rtf = rtf.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, (_m, content: string) => {
     const text = stripTags(content);
-    return `\\page\n\\par\\par{\\qc\\f0\\fs24\\b ${escapeRtfAnsi(text.toUpperCase())}\\par}\\par\\par`;
+    return `\\page\n{\\qc\\f0\\fs24\\b ${escapeRtfAnsi(text.toUpperCase())}\\par}\\par\\par`;
   });
   rtf = rtf.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_m, content: string) => {
     const text = stripTags(content);
