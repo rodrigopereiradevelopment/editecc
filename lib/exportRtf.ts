@@ -598,7 +598,6 @@ export function generateFullRtf(
   rtf += "\n";
 
   rtf += tiptapToRtf(tiptapHtml);
-  rtf += "\\page\n";
 
   if ((refs as Reference[])?.length) {
     rtf += referenciasToRtf(refs as Reference[]);
