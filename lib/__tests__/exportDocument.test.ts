@@ -50,10 +50,13 @@ describe("stripFlex — casos reais do canvas", () => {
     expect(html).toContain("height: 4cm");
   });
 
-  it("Capa: container título ganha margin", async () => {
+  it("Capa: container título preserva flex+display:flex (centralização vertical)", async () => {
     const html = (await import("@/lib/exportDocument")).getFullDocumentHTML();
-    expect(html).toContain("margin-top: 2cm");
-    expect(html).toContain("margin-bottom: 2cm");
+    // Container título: flex:1 + display:flex → preserva flex (Tipo 2a)
+    expect(html).toContain("display:flex");
+    expect(html).toContain("justify-content:center");
+    // Gap removido mas flex mantido
+    expect(html).not.toContain("gap:");
   });
 
   it("FolhaRosto: spacer elástico vazio (flex:1 1 0%) vira height 5cm", async () => {
@@ -62,13 +65,14 @@ describe("stripFlex — casos reais do canvas", () => {
     expect(html).toContain("height: 5cm");
   });
 
-  it("FolhaAprovacao: container com flex-start e gap ganha margin", async () => {
+  it("FolhaAprovacao: container preserva flex+display:flex (layout interno)", async () => {
     const html = (await import("@/lib/exportDocument")).getFullDocumentHTML();
-    // Container da assinatura: flex:1 + justify-content:flex-start + gap
-    expect(html).toContain("margin-top: 2cm");
-    // Gap e flex sizing devem ter sido removidos
+    // Container assinatura: flex:1 + display:flex → preserva flex (Tipo 2a)
+    // Gap e flex sizing removidos, layout mantido
     expect(html).not.toContain("gap: 1.5cm");
-    expect(html).not.toContain("flex: 1");
+    expect(html).toContain("display:flex");
+    expect(html).toContain("flex-direction:column");
+    expect(html).toContain("justify-content:flex-start");
     // Conteúdo preservado
     expect(html).toContain("Prof. José");
   });

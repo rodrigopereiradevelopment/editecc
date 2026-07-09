@@ -62,8 +62,17 @@ function stripFlex(el: HTMLElement) {
     }
   }
 
-  // ── Tipo 2: Container com flex-grow + texto → margins ──
-  // Preserva display:flex, justify-content, align-items, flex-direction (layout interno)
+  // ── Tipo 2a: Container com flex-grow E display:flex → preservar flex (layout interno) ──
+  // Ex: Capa título container — flex:1 + display:flex centraliza verticalmente
+  if (hasFlexGrow(raw, "1") && el.textContent?.trim() && /display\s*:\s*flex/i.test(raw)) {
+    // Só remover gap (sizing), manter flex, display:flex, justify-content, align-items
+    const cleaned = raw.replace(/gap\s*:\s*[^;]+;?\s*/gi, "").trim();
+    el.setAttribute("style", cleaned);
+    Array.from(el.children).forEach(child => stripFlex(child as HTMLElement));
+    return;
+  }
+
+  // ── Tipo 2b: Container com flex-grow + texto (sem display:flex) → margins ──
   if (hasFlexGrow(raw, "1") && el.textContent?.trim()) {
     const cleaned = raw.replace(FLEX_SIZING, "").trim();
     const margin = "margin-top: 2cm; margin-bottom: 2cm";
