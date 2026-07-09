@@ -37,6 +37,7 @@ import { EditorToolbar } from "@/components/EditorToolbar";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorStatusBar } from "@/components/EditorStatusBar";
 import { EditorSkeleton } from "@/components/EditorSkeleton";
+import { PagePreview } from "@/components/PagePreview";
 import { coverReducer, coverInitial, type CoverData, type CoverHistory } from "@/lib/coverReducer";
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
@@ -89,6 +90,7 @@ export default function EditorPage() {
   const [slidesStatus, setSlidesStatus] = useState("");
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showPagePreview, setShowPagePreview] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (localStorage.getItem("editecc-theme") as "dark" | "light") : "dark") || "dark");
   const FONT_KEY = "editecc-editor-font";
   const [editorFontSize, setEditorFontSize] = useState<string>(() => {
@@ -552,6 +554,31 @@ export default function EditorPage() {
         .abnt-referencia { line-height: 1.0; text-align: justify; margin-bottom: 6pt; }
         .editor-area ul, .editor-area ol { padding-left: 1.5cm; line-height: 1.5; }
         
+        /* Page break indicators */
+        .editor-content-wrapper {
+          position: relative;
+        }
+        .page-break-indicator {
+          position: relative;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+          margin: 1cm 0;
+          page-break-after: always;
+        }
+        .page-break-indicator::before {
+          content: "Quebra de página";
+          position: absolute;
+          left: 50%;
+          top: -8px;
+          transform: translateX(-50%);
+          background: white;
+          padding: 0 8px;
+          font-size: 10px;
+          color: #3b82f6;
+          font-family: Arial, sans-serif;
+          white-space: nowrap;
+        }
+        
         /* Tamanho da interface — sidebar + labels + inputs (acessibilidade) */
         body.ui-size-m [aria-label="Painel lateral"],
         body.ui-size-m [aria-label="Painel lateral"] * { font-size: 13px !important; }
@@ -567,15 +594,18 @@ export default function EditorPage() {
             box-shadow: none !important;
             border: none !important;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 3cm 2cm 2cm 3cm !important;
             width: 210mm !important;
             min-height: 297mm !important;
             page-break-after: always;
             page-break-inside: avoid;
           }
           .a4-page::after { content: "" !important; }
-          @page { size: 210mm 297mm; margin: 3cm 2cm 2cm 3cm; }
-          @page :first { margin: 3cm 2cm 2cm 3cm; }
+          .tiptap, .ProseMirror {
+            padding: 3cm 2cm 2cm 3cm !important;
+          }
+          @page { size: 210mm 297mm; margin: 0mm; }
+          @page :first { margin: 0mm; }
           html, body { margin: 0 !important; padding: 0 !important; }
         }
       `}</style>
@@ -1212,6 +1242,8 @@ export default function EditorPage() {
             storageError={storageError}
             onOpenShortcuts={() => setShowShortcuts(true)}
             onOpenSettings={() => setShowSettings(true)}
+            onTogglePagePreview={() => setShowPagePreview(!showPagePreview)}
+            showPagePreview={showPagePreview}
           />
 
           {/* Editor Canvas */}
@@ -1451,6 +1483,14 @@ export default function EditorPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── PAGE PREVIEW ── */}
+      {showPagePreview && editor && (
+        <PagePreview
+          html={editor.getHTML()}
+          onClose={() => setShowPagePreview(false)}
+        />
       )}
     </>
   );

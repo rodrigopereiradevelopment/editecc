@@ -11,6 +11,7 @@ const PrintIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="no
 const DocxIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>;
 const SettingsIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>;
 const KeyboardIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h.01M10 16h.01M14 16h.01M18 16h.01"/></svg>;
+const PreviewIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
 const SaveIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
 
 const btnBase: React.CSSProperties = {
@@ -33,6 +34,8 @@ interface EditorToolbarProps {
   storageError: string;
   onOpenShortcuts: () => void;
   onOpenSettings: () => void;
+  onTogglePagePreview: () => void;
+  showPagePreview: boolean;
 }
 
 function ToolbarBtn({ label, title, onMouseDown, children }: {
@@ -56,6 +59,7 @@ function ToolbarBtn({ label, title, onMouseDown, children }: {
 export function EditorToolbar({
   applyFormat, handleGerarSlides, handleExportPdf, handleExportDocx, handleExportRtf, handleSave,
   slidesLoading, slidesProgress, slidesStatus, savedMsg, storageError, onOpenShortcuts, onOpenSettings,
+  onTogglePagePreview, showPagePreview,
 }: EditorToolbarProps) {
   return (
     <nav className="no-print" aria-label="Ferramentas de formatação" style={{
@@ -92,6 +96,9 @@ export function EditorToolbar({
       </ToolbarBtn>
       <ToolbarBtn label="Configurações" title="Configurações" onMouseDown={e => { e.preventDefault(); onOpenSettings(); }}>
         <SettingsIcon />
+      </ToolbarBtn>
+      <ToolbarBtn label="Visualizar páginas" title="Visualizar como páginas" onMouseDown={e => { e.preventDefault(); onTogglePagePreview(); }}>
+        <PreviewIcon />
       </ToolbarBtn>
 
       <div style={{ marginLeft: "auto", display: "flex", gap: "6px", alignItems: "center" }}>

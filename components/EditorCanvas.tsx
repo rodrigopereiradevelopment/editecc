@@ -14,12 +14,14 @@ import { GlossarioPage } from "@/components/GlossarioPage";
 import { ApendicePage } from "@/components/ApendicePage";
 import { AnexoPage } from "@/components/AnexoPage";
 import { NotasRodapePage } from "@/components/NotasRodapePage";
+import { PageBreakIndicator } from "@/components/PageBreakIndicator";
 import type { PosTextualItem } from "@/components/PosTextuaisManager";
 import type { GlossarioEntry } from "@/components/GlossarioManager";
 import type { NotaRodape } from "@/components/NotasRodapeManager";
 import { extractFigures, extractTables, formatReference } from "@/lib/abnt/styles";
 import type { Reference } from "@/lib/abnt/styles";
 import type { Examinador } from "@/lib/document";
+import { getPageBreakPositions } from "@/lib/abnt/pageBreak";
 
 interface CoverShape {
   autor: string; autores: string[]; titulo: string; subtitulo: string; orientador: string;
@@ -72,6 +74,10 @@ export function EditorCanvas({
   resumo, palavrasChave, abstract, keywords, abstractLang,
   refs, anexos, apendices, glossario, notasRodape,
 }: EditorCanvasProps) {
+  // Get page break positions for the editor content
+  const editorHtml = editor?.getHTML() || "";
+  const pageBreakPositions = getPageBreakPositions(editorHtml);
+  
   return (
     <div ref={editorContainerRef} style={{
       flex: 1, overflow: "auto", background: "var(--bg-elevated)",
@@ -101,7 +107,12 @@ export function EditorCanvas({
       {showResumoPage && <ResumoPage value={resumo} palavrasChave={palavrasChave} />}
       {showAbstractPage && <AbstractPage value={abstract} keywords={keywords} language={abstractLang} />}
       {showSumario && editor && <SumarioPage editorHtml={editor.getHTML()} />}
-      {editor && <EditorContent editor={editor} />}
+      {editor && (
+        <div className="editor-content-wrapper">
+          <EditorContent editor={editor} />
+          {/* Page break indicators are shown via CSS */}
+        </div>
+      )}
       {showFigList && (() => {
         const html = editor?.getHTML() || "";
         const figs = extractFigures(html);
