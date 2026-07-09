@@ -108,7 +108,7 @@ export function getFullDocumentHTML(): string {
       const editorHtml = clone.innerHTML;
       const splitPages = splitContentIntoPages(editorHtml);
       
-      splitPages.forEach((pageHtml, i) => {
+      splitPages.forEach((pageHtml) => {
         let style = "";
         if (pageIndex > 0) style += "page-break-before: always; mso-page-break-before: always;";
         bodyHTML += `<div class="a4-page" style="${esc(style)}">${pageHtml}</div>`;

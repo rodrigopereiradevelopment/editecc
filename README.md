@@ -8,7 +8,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 
 ---
 
-## ✨ Funcionalidades (v0.9.10)
+## ✨ Funcionalidades (v0.9.13)
 
 - 🔍 **Tamanho da interface ajustável** — sidebar, labels, inputs e textareas com 4 níveis (P/M/G/XG), ideal para quem tem dificuldade de leitura. O canvas ABNT permanece em 12pt fixo.
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
@@ -35,8 +35,9 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📄 **Numeração de página** automática no canto inferior direito
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
 - 💾 **Autosave** a cada 20 segundos com tratamento de erros de armazenamento
-- 📤 **Exportar PDF** via impressão nativa com `@page { margin: 0 }`
+- 📤 **Exportar PDF** via impressão nativa com `@page { margin: 0 }` — **margens corretas em todas as páginas** (divs `.a4-page` com padding ABNT)
 - 📝 **Exportar .doc** — HTML → Blob `application/msword`, compatível com Word. **Limitação:** `page-break-before` ignorado no LibreOffice (abre em modo Web). Migração para RTF em andamento (v0.9.11).
+- 👁️ **Preview de páginas** — botão na toolbar mostra como o conteúdo será dividido em páginas A4 antes de exportar
 - ⚙️ **Modal de Configurações** — tema claro/escuro, tamanho da interface, status dos modelos de IA, versão
 - 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
 - 🤖 **CI/CD** — GitHub Actions com lint, test, build e tauri-action para release automático
@@ -67,7 +68,9 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.8** | ✅ Concluído | CI/CD (GitHub Actions + tauri-action), validador ABNT expandido (hierarquia, numeração, itálico), favicon + metadata, localStorage com try/catch e feedback, ErrorBoundary na sidebar, useAutosave hook, testes (45→82), export .docx, settings modal, spellcheck nativo |
 | **v0.9.9** | ✅ Concluído | Tamanho da interface ajustável (P/M/G/XG) na sidebar via classes `ui-size-*` no body + `!important`, preserva canvas ABNT em 12pt fixo, persistência em localStorage |
 | **v0.9.10** | ✅ Concluído | `stripFlex` reescrito (3 tipos), bug `removeAttribute` nuking altura corrigido, MSO namespaces no .doc, slide generator PT-BR (NLLB→distilbart→NLLB), AbstractSection com pt, orientador sem "Prof." duplicado, instituição dinâmica, data ISO corrigida, epígrafe sem travessão duplicado, Centro Paula Souza não duplicado, build com `--webpack` |
-| **v0.9.11** | 🔜 Planejado | Migrar export .doc de HTML para RTF (`lib/exportRtf.ts`) — `\page` nativo no LibreOffice. Começar por Capa + FolhaRosto + FolhaAprovacao |
+| **v0.9.11** | ✅ Concluído | Migrar export .doc de HTML para RTF (`lib/exportRtf.ts`) — `\page` nativo no LibreOffice. Começar por Capa + FolhaRosto + FolhaAprovacao |
+| **v0.9.12** | ✅ Concluído | RTF completo com todas seções ABNT, acentos `\uXXXX?` universal, Sumário automático, numeração de páginas canto superior direito, nota FR 11pt |
+| **v0.9.13** | ✅ Concluído | PDF com margens corretas em todas as páginas (divs `.a4-page` com padding), preview de páginas na toolbar, page break detection utility |
 | **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
 
 ---
@@ -121,15 +124,21 @@ editecc/
 │   ├── Epigrafe.tsx            # Epígrafe (opcional)
 │   ├── ResumoPage.tsx          # Resumo renderizado como página A4
 │   ├── AbstractPage.tsx        # Abstract renderizado como página A4
+│   ├── SumarioPage.tsx         # Sumário automático a partir dos headings
+│   ├── PagePreview.tsx         # Preview de páginas A4 antes de exportar
+│   ├── PageBreakIndicator.tsx  # Indicador visual de quebra de página
 │   ├── ResumoSection.tsx       # Campo de Resumo com contador de palavras
 │   ├── AbstractSection.tsx     # Campo de Abstract com tradução automática
 │   ├── GeradorReferencias.tsx  # Gerador de referências com Citation.js
 │   └── ListaFigurasTabelas.tsx # Lista automática de figuras e tabelas
 ├── lib/
 │   ├── abnt/
-│   │   └── styles.ts           # Estilos, validação expandida e gerador de sumário ABNT
+│   │   ├── styles.ts           # Estilos, validação expandida e gerador de sumário ABNT
+│   │   └── pageBreak.ts        # Detecção de quebras de página A4
 │   ├── coverReducer.ts         # Reducer undo/redo para dados da capa
 │   ├── document.ts             # Tipos, storage com try/catch, export/import .editecc
+│   ├── exportDocument.ts       # Exportação PDF/DOC com stripFlex
+│   ├── exportRtf.ts            # Exportação RTF completa
 │   └── slideGenerator.ts       # Parser Tiptap → PptxGenJS + sumarização
 ├── hooks/
 │   ├── useAutosave.ts          # Autosave com intervalo 20s + tratamento de erro
@@ -170,7 +179,7 @@ Baseado no **Manual de TCC das ETECs (2022)** e na **ABNT NBR 14724:2011**.
 | Referências | 12pt, espaço simples, linha em branco entre entradas |
 | Resumo / Abstract | 10pt, espaço simples, parágrafo único sem recuo, 150–500 palavras |
 | Título/Subtítulo na Capa | Arial 14pt, maiúsculas, centralizado |
-| Numeração de página | Canto inferior direito (todas as páginas) |
+| Numeração de página | Canto superior direito (a partir da Introdução) |
 | Norma base | ABNT NBR 14724:2011 |
 
 ---

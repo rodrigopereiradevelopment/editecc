@@ -8,7 +8,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Name**: EditeCC
 - **Purpose**: Editor de textos acadêmicos com formatação ABNT automática (TCCs, monografias).
 - **Stack**: Next.js 16.x (App Router), Tiptap v3, Tauri v2 (Rust), Transformers.js, PptxGenJS, Citation.js, Vitest.
-- **Current**: v0.9.10
+- **Current**: v0.9.13
 - **Main Workflows**: Escrever e formatar TCC → elementos pré/pós-textuais → traduzir resumo → exportar PDF → gerar slides → **exportar .doc (com limitação conhecida no LibreOffice — migrando para RTF)**.
 
 ## Dev Commands
@@ -31,8 +31,8 @@ npm run tauri:build:windows      # build Windows
 ## Architecture
 
 - **`app/`**: Next.js App Router — landing page (`app/page.tsx`) e editor (`app/editor/page.tsx`)
-- **`components/`**: 22 componentes React — Capa, FolhaRosto, FolhaAprovacao, ResumoPage, AbstractPage, AnexoPage, ApendicePage, GlossarioPage, NotasRodapePage, Editor, DocumentManager, PosTextuaisManager, etc.
-- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação expandida: hierarquia, numeração, itálico), `lib/document.ts` (tipos, storage com try/catch, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
+- **`components/`**: 24 componentes React — Capa, FolhaRosto, FolhaAprovacao, ResumoPage, AbstractPage, AnexoPage, ApendicePage, GlossarioPage, NotasRodapePage, SumarioPage, PagePreview, PageBreakIndicator, Editor, DocumentManager, PosTextuaisManager, etc.
+- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação expandida: hierarquia, numeração, itálico), `lib/abnt/pageBreak.ts` (detecção de quebras de página), `lib/document.ts` (tipos, storage com try/catch, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
 - **`hooks/`**: React hooks — `useAutosave.ts` (intervalo 20s + tratamento de erro), `useDocuments`, `useTranslation` (Transformers.js NLLB-200), `useSummarization` (Transformers.js distilbart-cnn), `useTauri`
 - **`app/editor/page.tsx`**: Entry point do editor (~1380 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar + modais + settings + tamanho da interface
 - **Persistência**: 100% localStorage (`editecc-docs`), autosave a cada 20s
@@ -78,13 +78,13 @@ Custom slash commands configured in `.opencode/commands/`:
 - **`.doc` (HTML → Blob)**: Formato HTML com extensão `.doc`. Word abre corretamente. **LibreOffice ignora `page-break-before`** (abre em modo Web). Migrando para RTF (`lib/exportRtf.ts`).
 - **`stripFlex` em `lib/exportDocument.ts`**: Função que limpa `display: flex` do HTML clonado antes de gerar o .doc. Tem 3 tipos: (1) spacer vazio → `height` fixo, (2) container com flex-grow + texto → `margin`, (3) demais → só remove flex. O `.doc` exportado também leva `xmlns:o/ns:w/ns=""` e `<meta ProgId>` para sinalizar documento Word ao LibreOffice, mas o LO ignora — por isso a migração pra RTF.
 - **RTF planejado**: `lib/exportRtf.ts` — gerará Capa + FR + FA como RTF puro (`\page`, `\qc`, `\b`, `\fs24`), validado no LO real. v0.9.11.
-- **PDF**: Export via `window.print()` — funciona bem com margens ABNT via CSS `@page`
+- **PDF**: Export via `window.print()` em iframe oculto — funciona bem com margens ABNT via CSS `@page`
 - **UI Font Size**: Controlado via classes `ui-size-p/m/g/xg` no `<body>`, aplica `!important` para sobrescrever inline styles. Canvas ABNT não é afetado (12pt fixo). Persiste em localStorage (`editecc-editor-font`).
 
 ## Test Status
 
 ```bash
-# 8 suites, 88 tests passing
+# 10 suites, 128 tests passing
 npm test
 ```
 
