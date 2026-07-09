@@ -37,10 +37,10 @@ function estimateParagraphHeight(text: string): number {
 
 // Estimate height of a heading
 function estimateHeadingHeight(text: string, level: number): number {
-  // Headings have more spacing
+  // Headings have more spacing (CSS: margin 1.5em 0 0.8em = ~2.3em total)
   const baseHeight = estimateParagraphHeight(text);
-  const spacingAbove = level === 1 ? 1.2 : level === 2 ? 0.8 : 0.6;
-  const spacingBelow = 0.6;
+  const spacingAbove = level === 1 ? 1.5 : level === 2 ? 1.2 : 1.0;
+  const spacingBelow = 0.8;
   return baseHeight + spacingAbove + spacingBelow;
 }
 
@@ -114,13 +114,27 @@ function splitBlocksIntoPages(blocks: Array<{html: string; height: number; tag: 
   let currentPageHtml: string[] = [];
   let currentHeight = 0;
 
-  for (const block of blocks) {
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    const nextBlock = blocks[i + 1];
+    const isHeading = block.tag.startsWith('h');
+    
     // Check if adding this block would exceed page height
     if (currentHeight + block.height > CONTENT_HEIGHT && currentPageHtml.length > 0) {
-      // Create new page
-      pages.push(currentPageHtml.join('\n'));
-      currentPageHtml = [block.html];
-      currentHeight = block.height;
+      // If this is a heading, check if next block exists
+      // If yes, don't split heading from its content - keep heading here
+      // The next block will start fresh on new page
+      if (isHeading && nextBlock) {
+        // End current page, heading stays here
+        pages.push(currentPageHtml.join('\n'));
+        currentPageHtml = [block.html];
+        currentHeight = block.height;
+      } else {
+        // Normal split - create new page
+        pages.push(currentPageHtml.join('\n'));
+        currentPageHtml = [block.html];
+        currentHeight = block.height;
+      }
     } else {
       currentPageHtml.push(block.html);
       currentHeight += block.height;
