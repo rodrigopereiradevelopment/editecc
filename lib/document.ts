@@ -46,6 +46,7 @@ export interface EditeccDocument {
   showDedicatoria: boolean;
   showAgradecimentos: boolean;
   showEpigrafe: boolean;
+  showSumario: boolean;
   showResumoPage: boolean;
   showAbstractPage: boolean;
   showFigList: boolean;
@@ -102,6 +103,7 @@ export function emptyDoc(title = "Novo TCC"): EditeccDocument {
     showDedicatoria: false,
     showAgradecimentos: false,
     showEpigrafe: false,
+    showSumario: true,
     showResumoPage: false,
     showAbstractPage: false,
     showFigList: false,

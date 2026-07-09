@@ -66,6 +66,7 @@ export default function EditorPage() {
   const [showEpigrafe, setShowEpigrafe] = useState(false);
   const [showResumoPage, setShowResumoPage] = useState(false);
   const [showAbstractPage, setShowAbstractPage] = useState(false);
+  const [showSumario, setShowSumario] = useState(true);
   const [refs, setRefs] = useState<Reference[]>([]);
   const [showFigList, setShowFigList] = useState(false);
   const [dedicatoriaTexto, setDedicatoriaTexto] = useState("");
@@ -231,6 +232,7 @@ export default function EditorPage() {
     setShowEpigrafe(doc.showEpigrafe);
     setShowResumoPage(doc.showResumoPage);
     setShowAbstractPage(doc.showAbstractPage);
+    setShowSumario(doc.showSumario ?? true);
     setShowFigList(doc.showFigList);
     setAnexos(doc.anexos || []);
     setApendices(doc.apendices || []);
@@ -278,6 +280,7 @@ export default function EditorPage() {
         showEpigrafe,
         showResumoPage,
         showAbstractPage,
+        showSumario,
         showFigList,
         anexos,
         apendices,
@@ -297,7 +300,7 @@ export default function EditorPage() {
   }, [currentId, updateCurrentDoc, coverData, resumo, palavrasChave, abstract, keywords, abstractLang, editor, refs,
     dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor, aprovacaoData, aprovacaoCidade, examinadores,
     showFolhaRosto, showAprovacao, showDedicatoria, showAgradecimentos, showEpigrafe,
-    showResumoPage, showAbstractPage, showFigList,
+    showResumoPage, showAbstractPage, showSumario, showFigList,
     anexos, apendices, glossario, notasRodape, showAnexos, showApendices, showGlossario, showNotasRodape]);
 
   useEffect(() => {
@@ -880,6 +883,9 @@ export default function EditorPage() {
                   <button aria-expanded={showAbstractPage} aria-label={showAbstractPage ? "Ocultar Página Abstract" : "Mostrar Página Abstract"} onClick={() => setShowAbstractPage(!showAbstractPage)} style={{ padding: "8px 12px", background: showAbstractPage ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showAbstractPage ? "✓ Página Abstract" : "Página Abstract"}
                   </button>
+                  <button aria-expanded={showSumario} aria-label={showSumario ? "Ocultar Sumário" : "Mostrar Sumário"} onClick={() => setShowSumario(!showSumario)} style={{ padding: "8px 12px", background: showSumario ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
+                    {showSumario ? "✓ Sumário" : "Sumário"}
+                  </button>
                   <button aria-expanded={showFigList} aria-label={showFigList ? "Ocultar Lista de Figuras e Tabelas" : "Mostrar Lista de Figuras e Tabelas"} onClick={() => setShowFigList(!showFigList)} style={{ padding: "8px 12px", background: showFigList ? "var(--bg-active)" : "#2563eb", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontWeight: "500" }}>
                     {showFigList ? "✓ Lista Fig./Tab." : "Lista Fig./Tab."}
                   </button>
@@ -1219,6 +1225,7 @@ export default function EditorPage() {
             showEpigrafe={showEpigrafe}
             showResumoPage={showResumoPage}
             showAbstractPage={showAbstractPage}
+            showSumario={showSumario}
             showFigList={showFigList}
             showGlossario={showGlossario}
             showApendices={showApendices}

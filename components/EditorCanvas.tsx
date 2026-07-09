@@ -9,6 +9,7 @@ import { Agradecimentos } from "@/components/Agradecimentos";
 import { Epigrafe } from "@/components/Epigrafe";
 import { ResumoPage } from "@/components/ResumoPage";
 import { AbstractPage } from "@/components/AbstractPage";
+import { SumarioPage } from "@/components/SumarioPage";
 import { GlossarioPage } from "@/components/GlossarioPage";
 import { ApendicePage } from "@/components/ApendicePage";
 import { AnexoPage } from "@/components/AnexoPage";
@@ -34,6 +35,7 @@ interface EditorCanvasProps {
   showEpigrafe: boolean;
   showResumoPage: boolean;
   showAbstractPage: boolean;
+  showSumario: boolean;
   showFigList: boolean;
   showGlossario: boolean;
   showApendices: boolean;
@@ -63,7 +65,7 @@ interface EditorCanvasProps {
 export function EditorCanvas({
   coverData, editor, editorContainerRef,
   showFolhaRosto, showAprovacao, showDedicatoria, showAgradecimentos,
-  showEpigrafe, showResumoPage, showAbstractPage, showFigList,
+  showEpigrafe, showResumoPage, showAbstractPage, showSumario, showFigList,
   showGlossario, showApendices, showAnexos, showNotasRodape,
   dedicatoriaTexto, agradecimentosTexto, epigrafeTexto, epigrafeAutor,
   aprovacaoData, aprovacaoCidade, examinadores,
@@ -98,6 +100,7 @@ export function EditorCanvas({
       {showEpigrafe && <Epigrafe texto={epigrafeTexto} autor={epigrafeAutor} />}
       {showResumoPage && <ResumoPage value={resumo} palavrasChave={palavrasChave} />}
       {showAbstractPage && <AbstractPage value={abstract} keywords={keywords} language={abstractLang} />}
+      {showSumario && editor && <SumarioPage editorHtml={editor.getHTML()} />}
       {editor && <EditorContent editor={editor} />}
       {showFigList && (() => {
         const html = editor?.getHTML() || "";
