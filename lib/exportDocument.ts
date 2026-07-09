@@ -1,5 +1,7 @@
 "use client";
 
+import { splitContentIntoPages } from "@/lib/abnt/pageBreak";
+
 const ABNT_CSS = `
   @page { size: 210mm 297mm; margin: 0; }
   @page :first { margin: 0; }
@@ -94,13 +96,32 @@ function esc(s: string): string {
 export function getFullDocumentHTML(): string {
   const pages = document.querySelectorAll<HTMLElement>(".a4-page");
   let bodyHTML = "";
-  pages.forEach((el, i) => {
+  let pageIndex = 0;
+
+  pages.forEach((el) => {
     const clone = el.cloneNode(true) as HTMLElement;
     stripFlex(clone);
-    const inner = clone.innerHTML;
-    let style = clone.getAttribute("style") || "";
-    if (i > 0) style += "; page-break-before: always; mso-page-break-before: always";
-    bodyHTML += `<div class="a4-page" style="${esc(style)}">${inner}</div>`;
+    
+    // Check if this is the editor content (Tiptap)
+    if (clone.classList.contains("editor-area")) {
+      // Split editor content into multiple pages
+      const editorHtml = clone.innerHTML;
+      const splitPages = splitContentIntoPages(editorHtml);
+      
+      splitPages.forEach((pageHtml, i) => {
+        let style = "";
+        if (pageIndex > 0) style += "page-break-before: always; mso-page-break-before: always;";
+        bodyHTML += `<div class="a4-page" style="${esc(style)}">${pageHtml}</div>`;
+        pageIndex++;
+      });
+    } else {
+      // Other pages (Capa, FolhaRosto, etc.)
+      const inner = clone.innerHTML;
+      let style = clone.getAttribute("style") || "";
+      if (pageIndex > 0) style += "; page-break-before: always; mso-page-break-before: always";
+      bodyHTML += `<div class="a4-page" style="${esc(style)}">${inner}</div>`;
+      pageIndex++;
+    }
   });
 
   return `<!DOCTYPE html>
