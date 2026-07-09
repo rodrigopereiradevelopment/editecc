@@ -57,7 +57,7 @@ export function FolhaAprovacao({
       lineHeight: "1.5",
     }}>
       {/* Nome do(s) Autor(es) */}
-      <div style={{ textAlign: "center", marginBottom: "4cm" }}>
+      <div style={{ textAlign: "center", marginBottom: "2cm" }}>
         {nomes.map((n, i) => (
           <p key={i} style={{
             ...font, fontSize: "12pt", fontWeight: "bold",
@@ -69,7 +69,7 @@ export function FolhaAprovacao({
       </div>
 
       {/* Título */}
-      <div style={{ textAlign: "center", marginBottom: "2cm" }}>
+      <div style={{ textAlign: "center", marginBottom: "1cm" }}>
         <p style={{
           ...font, fontSize: "14pt", fontWeight: "bold",
           textTransform: "uppercase", lineHeight: "1.5",
@@ -84,7 +84,7 @@ export function FolhaAprovacao({
       </div>
 
       {/* Texto descritivo */}
-      <div style={{ textAlign: "justify", marginBottom: "1.5cm" }}>
+      <div style={{ textAlign: "justify", marginBottom: "0.8cm" }}>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
           Trabalho de Conclusão de Curso apresentado como exigência parcial
           para obtenção do título de Técnico em{" "}
@@ -94,14 +94,14 @@ export function FolhaAprovacao({
       </div>
 
       {/* Orientador */}
-      <div style={{ textAlign: "justify", marginBottom: "1.5cm" }}>
+      <div style={{ textAlign: "justify", marginBottom: "0.8cm" }}>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
           Orientador: {orientador || "___________________________"}
         </p>
       </div>
 
       {/* Banca Examinadora */}
-      <div style={{ textAlign: "justify", marginBottom: "1.5cm" }}>
+      <div style={{ textAlign: "justify", marginBottom: "0.8cm" }}>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
           A Banca Examinadora deste Trabalho de Conclusão de Curso, em sessão
           realizada na cidade de {cidadeFinal}, Estado de São Paulo em{" "}
@@ -113,7 +113,7 @@ export function FolhaAprovacao({
       </div>
 
       {/* Data e local */}
-      <div style={{ textAlign: "justify", marginBottom: "2cm" }}>
+      <div style={{ textAlign: "justify", marginBottom: "1cm" }}>
         <p style={{ ...font, fontSize: "12pt", lineHeight: "1.5" }}>
           {cidadeFinal}, {dataFormatada}.
         </p>

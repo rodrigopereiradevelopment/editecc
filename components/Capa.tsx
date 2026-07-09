@@ -102,6 +102,9 @@ export function Capa({ etec, curso, autor, autores, titulo, subtitulo, local, an
         )}
       </div>
 
+      {/* ── Spacer para empurrar cidade/ano pro fundo ── */}
+      <div style={{ flex: "0 0 2cm" }} />
+
       {/* ── Cidade e Ano (centralizados, fundo da página) ── */}
       <div style={{ textAlign: "center" }}>
         <p style={{ ...font, fontSize: "12pt" }}>{local || "Cidade"}</p>
