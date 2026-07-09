@@ -1,22 +1,22 @@
 "use client";
 
 const ABNT_CSS = `
-  @page { size: 210mm 297mm; margin: 3cm 2cm 2cm 3cm; }
-  @page :first { margin: 3cm 2cm 2cm 3cm; }
+  @page { size: 210mm 297mm; margin: 0; }
+  @page :first { margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; }
   body { font-family: Arial, Calibri, sans-serif; font-size: 12pt; line-height: 1.5; text-align: justify; color: #111; background: white; }
   h1 { font-size: 12pt; font-weight: 700; text-transform: uppercase; text-align: center; line-height: 1.5; margin: 2em 0 1em; text-indent: 0; }
   h2 { font-size: 12pt; font-weight: 700; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; text-indent: 0; }
   h3 { font-size: 12pt; font-weight: 700; font-style: italic; text-align: left; line-height: 1.5; margin: 1.5em 0 0.8em; text-indent: 0; }
-  p { text-indent: 1.25cm; margin: 0; line-height: 1.5; text-align: justify; }
+  p { text-indent: 2.5cm; margin: 0; line-height: 1.5; text-align: justify; }
   blockquote { font-size: 10pt; line-height: 1; margin-left: 4cm; text-align: justify; border: none; padding: 0; text-indent: 0; }
   blockquote p { text-indent: 0; }
   ul, ol { padding-left: 1.5cm; line-height: 1.5; }
   .a4-page {
     width: 210mm;
     min-height: 297mm;
-    padding: 0;
+    padding: 3cm 2cm 2cm 3cm;
     display: flex;
     flex-direction: column;
     align-items: stretch;
