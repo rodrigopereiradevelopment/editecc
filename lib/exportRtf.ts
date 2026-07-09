@@ -587,7 +587,7 @@ export function generateFullRtf(
   // Sumário automático
   {
     const sumario = sumarioToRtf(tiptapHtml);
-    if (sumario) { rtf += sumario; rtf += "\\page\n"; }
+    if (sumario) { rtf += sumario; }
   }
 
   // A partir daqui ativa numeração de páginas (canto superior direito)
