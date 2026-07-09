@@ -115,30 +115,30 @@ export function capaToRtf(cover: CoverData): string {
   let rtf = "";
 
   // Instituição — Arial 14pt bold
-  rtf += `{\\qc\\f0\\fs28\\b ${escapeRtfAnsi(etecNome.toUpperCase())}\\par}\\par\n`;
+  rtf += `{\\qc\\f0\\fs28\\b ${escapeRtfAnsi(etecNome.toUpperCase())}\\par}\n`;
 
   // Curso
-  if (curso) rtf += `${p(curso)}\\par\n`;
+  if (curso) rtf += `{\\qc\\f0\\fs24 ${escapeRtfAnsi(curso)}\\par}\n`;
 
   // Spacer ~4cm
-  rtf += `${spacer("4")}\\par\n`;
+  rtf += spacer("4");
 
   // Autor(es) — centralizado bold
   for (const n of nomes) {
     if (n) rtf += `{\\qc\\f0\\fs24\\b ${escapeRtfAnsi(n.toUpperCase())}\\par}`;
   }
-  rtf += "\\par\\par\n";
+  rtf += "\n";
 
-  // Spacer elástico (simula flex:1 com \sl)
-  rtf += `${spacer("5")}\\par\n`;
+  // Spacer elástico (simula flex:1)
+  rtf += spacer("5");
 
   // Título — Arial 14pt bold
   rtf += `{\\qc\\f0\\fs28\\b ${escapeRtfAnsi(titulo.toUpperCase())}\\par}`;
   if (subtitulo) rtf += `{\\qc\\f0\\fs24 ${escapeRtfAnsi(subtitulo)}\\par}`;
-  rtf += "\\par\\par\n";
+  rtf += "\n";
 
   // Spacer final
-  rtf += `${spacer("5")}\\par\n`;
+  rtf += spacer("5");
 
   // Cidade/Ano
   rtf += `{\\qc\\f0\\fs24 ${escapeRtfAnsi(cidade)}\\par}`;
