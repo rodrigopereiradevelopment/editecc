@@ -40,6 +40,9 @@ export function Capa({ etec, curso, autor, autores, titulo, subtitulo, local, an
       alignItems: "center",
       ...font,
       fontSize: "12pt",
+      // Centraliza visualmente compensando margens assimétricas
+      paddingLeft: "2.5cm",
+      paddingRight: "2.5cm",
     }}>
 
       {/* ── Instituição (topo, Arial 14, maiúsculas, centralizado) ── */}
