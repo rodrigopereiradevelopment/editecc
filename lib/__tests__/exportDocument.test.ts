@@ -66,29 +66,39 @@ describe("stripFlex — casos reais do canvas", () => {
     const html = (await import("@/lib/exportDocument")).getFullDocumentHTML();
     // Container da assinatura: flex:1 + justify-content:flex-start + gap
     expect(html).toContain("margin-top: 2cm");
-    // Gap e justify-content devem ter sido removidos
-    expect(html).not.toContain("justify-content: flex-start");
+    // Gap e flex sizing devem ter sido removidos
     expect(html).not.toContain("gap: 1.5cm");
+    expect(html).not.toContain("flex: 1");
     // Conteúdo preservado
     expect(html).toContain("Prof. José");
   });
 
-  it("nenhuma flex prop sobrevive", async () => {
+  it("flex sizing removido, layout flex preservado", async () => {
     const html = (await import("@/lib/exportDocument")).getFullDocumentHTML();
-    expect(html).not.toContain("display: flex");
+    // Sizing removido
     expect(html).not.toContain("flex: 1 1 0%");
-    expect(html).not.toContain("justify-content");
-    expect(html).not.toContain("align-items");
-    expect(html).not.toContain("flex-direction");
+    expect(html).not.toContain("flex: 0 0 4cm");
+    expect(html).not.toContain("flex: 0 0 5cm");
+    expect(html).not.toContain("flex: 0 0 2cm");
+    expect(html).not.toContain("flex-grow");
+    expect(html).not.toContain("flex-shrink");
+    expect(html).not.toContain("flex-basis");
     expect(html).not.toContain("flex-wrap");
     expect(html).not.toContain("gap:");
+    // Layout interno preservado (display:flex, justify-content, align-items, flex-direction)
+    // para que Capa e FolhaRosto mantenham centralização vertical
+    expect(html).toContain("display:flex");
+    expect(html).toContain("flex-direction:column");
+    expect(html).toContain("justify-content:center");
+    expect(html).toContain("align-items:center");
   });
 
   it("page-break-before nas páginas 2+", async () => {
     const html = (await import("@/lib/exportDocument")).getFullDocumentHTML();
     // Cada inline adiciona page-break-before:always + mso-page-break-before:always
     // O regex /page-break-before:\s*always/ também pega o mso (contém a string)
+    // CSS usa page-break-after (não conta), então são apenas os inline: 2 páginas × 2
     const matches = html.match(/page-break-before:\s*always/g);
-    expect(matches?.length).toBe(5); // 1 CSS + 2 páginas × 2 (mso+normal)
+    expect(matches?.length).toBe(4); // 2 páginas × 2 (mso+normal)
   });
 });

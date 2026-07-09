@@ -17,6 +17,9 @@ const ABNT_CSS = `
     width: 210mm;
     min-height: 297mm;
     padding: 3cm 2cm 2cm 3cm;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     page-break-after: always;
     page-break-inside: avoid;
   }
@@ -30,8 +33,8 @@ const ABNT_CSS = `
   .figure-caption { font-size: 10pt; text-align: center; margin-top: 0.5em; font-weight: bold; }
 `;
 
-/** Propriedades CSS de flexbox a serem removidas */
-const FLEX_PROPS = /(?:display\s*:\s*(?:inline-)?flex|flex(?:-direction|-wrap|-grow|-shrink|-basis)?\s*:\s*[^;]+|justify-content\s*:\s*[^;]+|align-items\s*:\s*[^;]+|align-content\s*:\s*[^;]+|gap\s*:\s*[^;]+|order\s*:\s*[^;]+)\s*;?\s*/gi;
+/** Propriedades CSS de flexbox a serem removidas (sizing + gap, não layout) */
+const FLEX_SIZING = /(?:flex(?:-grow|-shrink|-basis)?\s*:\s*[^;]+|gap\s*:\s*[^;]+)\s*;?\s*/gi;
 
 /**
  * Detecta flex-grow (flex: N ou flex-grow: N) no style raw.
@@ -60,16 +63,17 @@ function stripFlex(el: HTMLElement) {
   }
 
   // ── Tipo 2: Container com flex-grow + texto → margins ──
+  // Preserva display:flex, justify-content, align-items, flex-direction (layout interno)
   if (hasFlexGrow(raw, "1") && el.textContent?.trim()) {
-    const cleaned = raw.replace(FLEX_PROPS, "").trim();
+    const cleaned = raw.replace(FLEX_SIZING, "").trim();
     const margin = "margin-top: 2cm; margin-bottom: 2cm";
     el.setAttribute("style", cleaned ? `${cleaned}; ${margin}` : margin);
     Array.from(el.children).forEach(child => stripFlex(child as HTMLElement));
     return;
   }
 
-  // ── Tipo 3: Demais elementos → só remover props flex ──
-  const cleaned = raw.replace(FLEX_PROPS, "").trim();
+  // ── Tipo 3: Demais elementos → só remover sizing flex, manter layout flex ──
+  const cleaned = raw.replace(FLEX_SIZING, "").trim();
   if (cleaned !== raw) el.setAttribute("style", cleaned);
   Array.from(el.children).forEach(child => stripFlex(child as HTMLElement));
 }
