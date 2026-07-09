@@ -1,8 +1,8 @@
 "use client";
 
 const ABNT_CSS = `
-  @page { size: 210mm 297mm; margin: 0mm; }
-  @page :first { margin: 0mm; }
+  @page { size: 210mm 297mm; margin: 3cm 2cm 2cm 3cm; }
+  @page :first { margin: 3cm 2cm 2cm 3cm; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; }
   body { font-family: Arial, Calibri, sans-serif; font-size: 12pt; line-height: 1.5; text-align: justify; color: #111; background: white; }
@@ -16,7 +16,7 @@ const ABNT_CSS = `
   .a4-page {
     width: 210mm;
     min-height: 297mm;
-    padding: 3cm 2cm 2cm 3cm;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;

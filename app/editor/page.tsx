@@ -567,14 +567,15 @@ export default function EditorPage() {
             box-shadow: none !important;
             border: none !important;
             margin: 0 !important;
+            padding: 0 !important;
             width: 210mm !important;
             min-height: 297mm !important;
             page-break-after: always;
             page-break-inside: avoid;
           }
           .a4-page::after { content: "" !important; }
-          @page { size: 210mm 297mm; margin: 0mm; }
-          @page :first { margin: 0mm; }
+          @page { size: 210mm 297mm; margin: 3cm 2cm 2cm 3cm; }
+          @page :first { margin: 3cm 2cm 2cm 3cm; }
           html, body { margin: 0 !important; padding: 0 !important; }
         }
       `}</style>
