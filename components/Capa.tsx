@@ -80,7 +80,7 @@ export function Capa({ etec, curso, autor, autores, titulo, subtitulo, local, an
       </div>
 
       {/* ── Título (centralizado verticalmente, Arial 14, maiúsculas) ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", minHeight: "8cm" }}>
         <p style={{
           ...font,
           fontSize: "14pt",
@@ -101,9 +101,6 @@ export function Capa({ etec, curso, autor, autores, titulo, subtitulo, local, an
           </p>
         )}
       </div>
-
-      {/* ── Spacer para empurrar cidade/ano pro fundo ── */}
-      <div style={{ flex: "0 0 2cm" }} />
 
       {/* ── Cidade e Ano (centralizados, fundo da página) ── */}
       <div style={{ textAlign: "center" }}>
