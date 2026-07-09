@@ -102,10 +102,14 @@ export function capaToRtf(cover: CoverData): string {
   const p = (s: string, extra = "") =>
     `{\\qc\\f0\\fs24 ${extra}${escapeRtfAnsi(s)}\\par}`;
 
+  // Cria spacer com múltiplas linhas vazias (1cm cada)
   const spacer = (h: string) => {
-    const twips = Math.round(parseFloat(h) * CM);
-    // Usa \sl positivo com \sa0\sb0 para criar espaço fixo
-    return `{\\pard\\sl${twips}\\sa0\\sb0\\par}`;
+    const cm = Math.round(parseFloat(h));
+    let r = "";
+    for (let i = 0; i < cm; i++) {
+      r += `{\\pard\\sl-${CM}\\sa0\\sb0\\par}`;
+    }
+    return r;
   };
 
   let rtf = "";
