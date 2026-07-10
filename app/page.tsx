@@ -37,7 +37,7 @@ const FEATURES = [
   {
     icon: "▤",
     title: "Slides Automáticos",
-    desc: "Gera apresentações PPTX a partir dos títulos H1/H2. Usa IA local (Transformers.js) para resumir cada seção.",
+    desc: "Gera uma apresentação em PowerPoint a partir da estrutura do seu trabalho, resumindo cada seção para facilitar a apresentação.",
   },
   {
     icon: "♿",
@@ -52,10 +52,10 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  { n: "01", title: "Preencha a Capa", desc: "Instituição, autor e título no painel lateral. A capa é gerada automaticamente." },
+  { n: "01", title: "Baixe ou Acesse", desc: "Instale o app desktop (Windows, Linux, macOS) ou use a versão web direto no navegador." },
   { n: "02", title: "Escreva o Conteúdo", desc: "Use os estilos ABNT pré-definidos. O editor formata enquanto você escreve." },
-  { n: "03", title: "Gere Slides", desc: "Clique em Slides e o EditeCC resume cada seção com IA local e exporta para PPTX." },
-  { n: "04", title: "Exporte o PDF", desc: "Clique em Exportar PDF. O documento sai pronto, formatado e dentro das normas." },
+  { n: "03", title: "Gere Slides", desc: "Clique em Slides e o EditeCC resume cada seção e exporta para PowerPoint automaticamente." },
+  { n: "04", title: "Exporte o PDF", desc: "Clique em Exportar PDF. O documento sai pronto, formatado e dentro das normas ABNT." },
 ];
 
 // ─── PAPER MOCKUP (folha A4 em miniatura) ────────────────────────────────────
@@ -401,9 +401,9 @@ export default function LandingPage() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             GitHub
           </a>
-          <Link href="/editor" className="cta-primary" style={{ padding: "7px 16px", fontSize: "13px" }}>
-            Abrir Editor →
-          </Link>
+          <a href="https://github.com/rodrigopereiradevelopment/editecc/releases/latest" target="_blank" rel="noopener noreferrer" className="cta-primary" style={{ padding: "7px 16px", fontSize: "13px" }}>
+            Baixar Grátis
+          </a>
         </div>
       </nav>
 
@@ -470,14 +470,14 @@ export default function LandingPage() {
                 transform: mounted ? "none" : "translateY(20px)",
                 transition: "all 0.6s ease 0.5s",
               }}>
-                <Link href="/editor" className="cta-primary">
-                  Abrir Editor
+                <a href="https://github.com/rodrigopereiradevelopment/editecc/releases/latest" target="_blank" rel="noopener noreferrer" className="cta-primary">
+                  Baixar grátis
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+                <Link href="/editor" className="cta-secondary">
+                  Abrir versão Web
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </Link>
-                <a href="https://github.com/rodrigopereiradevelopment/editecc" target="_blank" rel="noopener noreferrer" className="cta-secondary">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                  Ver no GitHub
-                </a>
               </div>
 
               {/* Stats */}
@@ -529,6 +529,83 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── ANTES VS DEPOIS ── */}
+        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
+          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+            <p className="section-label">A diferença</p>
+            <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "48px", lineHeight: "1.2" }}>
+              Ninguém compra uma ferramenta.<br />
+              <span style={{ color: "var(--lp-stat-label)" }}>A pessoa compra o tempo economizado.</span>
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+              {/* Google Docs / Word */}
+              <div style={{
+                background: "var(--lp-surface)", border: "1px solid var(--lp-border)",
+                borderRadius: "12px", padding: "32px",
+              }}>
+                <h3 style={{ color: "var(--lp-card-title)", fontSize: "18px", fontWeight: "600", marginBottom: "20px", fontFamily: "Playfair Display, serif" }}>
+                  Google Docs / Word
+                </h3>
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                  {[
+                    "Configurar margens manualmente",
+                    "Configurar fonte e tamanho",
+                    "Configurar espaçamento",
+                    "Definir estilos de títulos",
+                    "Gerar sumário manualmente",
+                    "Conferir formatação ABNT",
+                  ].map((item, i) => (
+                    <li key={i} style={{ color: "var(--lp-body)", fontSize: "14px", lineHeight: "1.8", display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span style={{ color: "#ef4444", fontSize: "16px" }}>✕</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {/* EditeCC */}
+              <div style={{
+                background: "var(--lp-surface)", border: "1px solid #2563eb40",
+                borderRadius: "12px", padding: "32px",
+              }}>
+                <h3 style={{ color: "#3b82f6", fontSize: "18px", fontWeight: "600", marginBottom: "20px", fontFamily: "Playfair Display, serif" }}>
+                  EditeCC
+                </h3>
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                  {[
+                    "Abrir o editor",
+                    "Escrever seu texto",
+                    "Exportar PDF pronto",
+                  ].map((item, i) => (
+                    <li key={i} style={{ color: "var(--lp-body)", fontSize: "14px", lineHeight: "1.8", display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span style={{ color: "#10b981", fontSize: "16px" }}>✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── O QUE É ABNT? ── */}
+        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+            <p className="section-label">EDUCAÇÃO</p>
+            <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(28px, 4vw, 40px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "24px", lineHeight: "1.2" }}>
+              O que é ABNT?
+            </h2>
+            <p style={{ color: "var(--lp-body)", fontSize: "16px", lineHeight: "1.8", maxWidth: "600px", margin: "0 auto 16px" }}>
+              A <strong style={{ color: "var(--lp-hero-strong)" }}>ABNT</strong> (Associação Brasileira de Normas Técnicas) define como trabalhos acadêmicos devem ser apresentados.
+            </p>
+            <p style={{ color: "var(--lp-body)", fontSize: "16px", lineHeight: "1.8", maxWidth: "600px", margin: "0 auto 16px" }}>
+              Margens, espaçamento, citações, referências, capa — tudo segue a norma <strong style={{ color: "var(--lp-hero-strong)" }}>NBR 14724:2011</strong>.
+            </p>
+            <p style={{ color: "var(--lp-body)", fontSize: "16px", lineHeight: "1.8", maxWidth: "600px", margin: "0 auto" }}>
+              O EditeCC já aplica essas regras <strong style={{ color: "#3b82f6" }}>automaticamente</strong>. Você só precisa escrever.
+            </p>
+          </div>
+        </section>
+
         {/* ── COMO FUNCIONA ── */}
         <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
           <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -574,6 +651,29 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── PRIVACIDADE ── */}
+        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+            <p className="section-label">PRIVACIDADE</p>
+            <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(28px, 4vw, 40px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "24px", lineHeight: "1.2" }}>
+              Seus dados nunca saem do seu computador.
+            </h2>
+            <div style={{ display: "flex", gap: "32px", justifyContent: "center", flexWrap: "wrap", marginTop: "32px" }}>
+              {[
+                { icon: "🔒", title: "Sem conta", desc: "Não precisa cadastrar email ou senha." },
+                { icon: "☁", title: "Sem servidor", desc: "Nada é enviado para a nuvem." },
+                { icon: "💾", title: "Sem armazenamento", desc: "Tudo fica no seu dispositivo." },
+              ].map((item, i) => (
+                <div key={i} style={{ textAlign: "center", maxWidth: "200px" }}>
+                  <div style={{ fontSize: "32px", marginBottom: "12px" }}>{item.icon}</div>
+                  <h3 style={{ color: "var(--lp-card-title)", fontSize: "16px", fontWeight: "600", marginBottom: "8px" }}>{item.title}</h3>
+                  <p style={{ color: "var(--lp-body)", fontSize: "14px", lineHeight: "1.6" }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── CTA OPEN SOURCE ── */}
         <section style={{ padding: "80px clamp(20px, 5vw, 80px)" }}>
           <div style={{ maxWidth: "800px", margin: "0 auto" }}>
@@ -601,23 +701,26 @@ export default function LandingPage() {
                 ⬡ Open Source · MIT License
               </div>
               <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(28px, 4vw, 40px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "16px", lineHeight: "1.2" }}>
-                Clone, adapte, contribua.
+                Baixe agora. É grátis.
               </h2>
               <p style={{ color: "var(--lp-body)", fontSize: "15px", lineHeight: "1.7", marginBottom: "36px", maxWidth: "480px", margin: "0 auto 36px" }}>
-                O EditeCC é open source. Qualquer aluno ou desenvolvedor pode clonar o repositório e usar ou contribuir com melhorias.
+                Disponível para Windows, Linux e macOS. Código-fonte aberto no GitHub.
               </p>
-              <div style={{ background: "var(--lp-surface-code)", border: "1px solid var(--lp-border)", borderRadius: "8px", padding: "14px 20px", fontFamily: "DM Mono, monospace", fontSize: "13px", color: "var(--lp-muted)", marginBottom: "32px", textAlign: "left" }}>
-                <span style={{ color: "var(--lp-stat-label)" }}>$ </span>
-                <span style={{ color: "var(--lp-code-text)" }}>git clone </span>
-                <span style={{ color: "#3b82f6" }}>https://github.com/rodrigopereiradevelopment/editecc</span>
-              </div>
-              <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-                <Link href="/editor" className="cta-primary">
-                  Experimentar agora
+              {/* Botões de download */}
+              <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginBottom: "24px" }}>
+                <a href="https://github.com/rodrigopereiradevelopment/editecc/releases/latest" target="_blank" rel="noopener noreferrer" className="cta-primary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Windows / Linux / macOS
+                </a>
+                <Link href="/editor" className="cta-secondary">
+                  Abrir versão Web
                 </Link>
+              </div>
+              {/* GitHub link */}
+              <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
                 <a href="https://github.com/rodrigopereiradevelopment/editecc" target="_blank" rel="noopener noreferrer" className="cta-secondary">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                  GitHub
+                  Código-fonte no GitHub
                 </a>
               </div>
             </div>
@@ -640,7 +743,7 @@ export default function LandingPage() {
             </span>
           </div>
           <span style={{ color: "var(--lp-stat-label)", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
-              v0.9.9 · ABNT NBR 14724:2011
+            v0.9.14 · ABNT NBR 14724:2011
           </span>
         </footer>
       </main>
