@@ -352,7 +352,7 @@ export interface Reference {
 }
 
 export function formatReference(ref: Reference): string {
-  const authorsList = ref.authors.join("; ");
+  const authorsList = Array.isArray(ref.authors) ? ref.authors.join("; ") : "";
 
   switch (ref.type) {
     case "book":

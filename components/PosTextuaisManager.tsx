@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 export interface PosTextualItem {
   id: string;
   letra: string;

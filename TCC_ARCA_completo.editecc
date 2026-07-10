@@ -1,0 +1,252 @@
+{
+  "id": "b9be8235",
+  "title": "ARCA: Aplicativo de Comparação de Preços entre Supermercados de Mogi Mirim",
+  "createdAt": "2026-07-09T20:37:19.195104",
+  "updatedAt": "2026-07-09T20:37:19.195104",
+  "cover": {
+    "autor": "Rodrigo Pereira",
+    "autores": [
+      "Rodrigo Pereira",
+      "Bruno Henrique Oliveira Capra",
+      "Miguel da Silva Bernades",
+      "Felix Renato Marques Junior"
+    ],
+    "titulo": "ARCA: Aplicativo de Comparação de Preços entre Supermercados de Mogi Mirim",
+    "subtitulo": "",
+    "orientador": "Prof. Maurício Aparecido das Neves",
+    "curso": "Curso Técnico em Desenvolvimento de Sistemas",
+    "etec": "ETEC Pedro Ferreira Alves",
+    "local": "Mogi Mirim",
+    "ano": "2026"
+  },
+  "resumo": "O presente trabalho descreve o desenvolvimento do ARCA, um aplicativo móvel híbrido para comparação de preços de produtos entre supermercados da cidade de Mogi Mirim, SP. O problema identificado consiste na ausência de uma plataforma centralizada que permita ao consumidor consultar e comparar preços de diferentes estabelecimentos de forma prática e eficiente. O sistema foi desenvolvido com uma arquitetura de seis camadas: coleta automatizada de dados via Python (BeautifulSoup, Scrapy e Playwright), armazenamento bruto em MongoDB, tratamento e persistência estruturada em PostgreSQL hospedado no Supabase, camada de integração e API em Next.js, interface móvel híbrida em Ionic com Angular e acesso pelo usuário final via navegador ou dispositivo Android e iOS. A metodologia adotada seguiu o modelo espiral adaptado combinado com práticas ágeis, em cinco fases iterativas. Os testes de usabilidade realizados com 15 moradores de Mogi Mirim resultaram em nota média de satisfação de 4,3 de 5,0 e taxa de conclusão de tarefas de 87%, demonstrando a adequação da solução às necessidades dos usuários. Conclui-se que o aplicativo ARCA atinge seus objetivos, oferecendo uma solução funcional, acessível e escalável para a comparação de preços no varejo local.",
+  "palavrasChave": [
+    "comparação de preços",
+    "aplicativo móvel",
+    "web scraping",
+    "Ionic",
+    "Angular",
+    "Next.js."
+  ],
+  "abstract": "This paper presents the development of ARCA, a hybrid mobile application for comparing product prices across supermarkets in the city of Mogi Mirim, SP, Brazil. The identified problem concerns the lack of a centralized platform enabling consumers to query and compare prices from different establishments in a practical and efficient manner. The system was built upon a six-layer architecture: automated data collection via Python (BeautifulSoup, Scrapy and Playwright), raw storage in MongoDB, structured treatment and persistence in PostgreSQL hosted on Supabase, an integration and API layer in Next.js, a hybrid mobile interface in Ionic with Angular, and end-user access through a browser or Android/iOS device. The development methodology followed an adapted spiral model combined with agile practices across five iterative phases. Usability tests conducted with 15 residents of Mogi Mirim yielded an average satisfaction score of 4.3 out of 5.0 and a task completion rate of 87%, demonstrating the solution's alignment with user needs. It is concluded that the ARCA application meets its objectives, providing a functional, accessible and scalable solution for price comparison in the local retail market.",
+  "keywords": [
+    "price comparison",
+    "mobile application",
+    "web scraping",
+    "Ionic",
+    "Angular",
+    "Next.js."
+  ],
+  "abstractLang": "en",
+  "content": "<h1>1 INTRODUÇÃO</h1>\n<p>Em Mogi Mirim, assim como em muitas outras cidades, os consumidores têm dificuldade para encontrar os menores preços, já que cada supermercado trabalha com promoções diferentes e não há uma forma prática de fazer essa comparação. Ir de loja em loja, ou acessar cada site separadamente, torna o processo cansativo e pouco eficiente, principalmente para quem precisa economizar.</p>\n<h2>1.1 Tema</h2>\n<p>Desenvolvimento de um aplicativo para comparação de preços entre supermercados de Mogi Mirim.</p>\n<h2>1.2 Problema</h2>\n<p>Em Mogi Mirim, a ausência de uma plataforma centralizada para consulta de preços entre supermercados dificulta a tomada de decisão dos consumidores. Cada estabelecimento divulga suas ofertas de forma independente, seja por meio de sites, redes sociais ou encartes físicos, o que exige que o usuário consulte múltiplas fontes para comparar preços. Esse processo é ineficiente, consome tempo e reduz a capacidade de economia, especialmente para famílias com orçamento limitado.</p>\n<h2>1.3 Justificativa</h2>\n<p>Em Mogi Mirim, economizar nas compras do dia a dia é uma necessidade para muitas famílias. No entanto, comparar os preços entre mercados como Ponto Novo, São Vicente, Lavapés e outros nem sempre é fácil, já que cada um tem suas promoções e não há um canal centralizado com essas informações. Um aplicativo que reúna essas ofertas de forma prática e acessível pode facilitar a vida do consumidor, ajudando na hora de escolher onde comprar mais barato.</p>\n<h2>1.4 Objetivo Geral</h2>\n<p>Desenvolver um aplicativo para dispositivos móveis que permita aos moradores de Mogi Mirim comparar preços de produtos em diferentes supermercados da cidade, de forma simples, rápida e acessível.</p>\n<h2>1.5 Objetivos Específicos</h2>\n<p>a) permitir o cadastro, login e gerenciamento seguro das contas de usuários, com autenticação via e-mail, CPF e opções de login social;</p>\n<p>b) implementar um sistema de busca que possibilite ao usuário localizar produtos por nome ou categoria;</p>\n<p>c) exibir e comparar preços de produtos entre diferentes supermercados de Mogi Mirim, apresentando dados como marca, peso, avaliações e preços atualizados;</p>\n<p>d) desenvolver filtros e opções de ordenação que permitam organizar os resultados por preço, avaliação ou proximidade;</p>\n<p>e) integrar funcionalidades de geolocalização para exibir os mercados mais próximos e permitir filtragens baseadas na distância;</p>\n<p>f) criar um histórico de pesquisas que armazene até 100 itens, permitindo exclusão manual pelo usuário;</p>\n<p>g) implementar um sistema de alerta de preços para notificar o usuário quando o produto atingir o valor desejado;</p>\n<p>h) desenvolver uma ferramenta de comparação simultânea entre produtos, limitada a até cinco itens;</p>\n<p>i) permitir que os usuários avaliem os mercados em critérios como atendimento, preço, qualidade e experiência de compra;</p>\n<p>j) integrar APIs externas de preços e mapas para obtenção de informações atualizadas dos mercados e localização geográfica;</p>\n<p>k) garantir a segurança dos dados por meio de criptografia de senhas, uso de HTTPS e validações robustas de informações sensíveis;</p>\n<p>l) assegurar boa usabilidade, desempenho e responsividade, com uma interface simples e carregamento rápido;</p>\n<p>m) garantir escalabilidade e compatibilidade do aplicativo com diferentes versões de Android e iOS, possibilitando expansão futura.</p>\n<h1>2 REFERENCIAL TEÓRICO</h1>\n<p>O desenvolvimento do aplicativo ARCA envolveu um conjunto de tecnologias modernas voltadas para a criação de aplicações móveis híbridas. A escolha dessas tecnologias foi baseada em critérios como produtividade, desempenho, compatibilidade multiplataforma e suporte da comunidade de desenvolvimento.</p>\n<h2>2.1 Tecnologias Utilizadas no Desenvolvimento</h2>\n<h3>2.1.1 Linguagens de Programação</h3>\n<p>O projeto ARCA utiliza três linguagens principais que trabalham em conjunto para compor a interface e a lógica do aplicativo.</p>\n<p>2.1.1.1 HTML</p>\n<p>O HTML (HyperText Markup Language) é a linguagem de marcação responsável por estruturar o conteúdo das páginas do aplicativo. No contexto do ARCA, o HTML é utilizado em conjunto com os componentes do framework Ionic, como ion-header, ion-content, ion-footer, ion-searchbar e swiper-container, que estendem as capacidades nativas do HTML para elementos específicos de aplicativos móveis. Cada página do aplicativo possui seu próprio arquivo HTML, onde a estrutura visual é definida de forma declarativa.</p>\n<p>2.1.1.2 CSS / SCSS</p>\n<p>O CSS (Cascading Style Sheets) é a linguagem responsável pela aparência visual do aplicativo. O ARCA utiliza o SCSS (Sassy CSS), que é uma extensão do CSS que permite o uso de variáveis, aninhamento de seletores e outros recursos avançados. A identidade visual do aplicativo é construída a partir de uma paleta de cores própria, com destaque para o verde-teal (#00BF9F), cor principal da marca ARCA. Os estilos são organizados por componente, com cada página e componente possuindo seu próprio arquivo .scss, além de um arquivo global (global.scss) que define estilos compartilhados entre todas as telas.</p>\n<p>2.1.1.3 TypeScript</p>\n<p>O TypeScript é uma linguagem de programação desenvolvida pela Microsoft que adiciona tipagem estática ao JavaScript. No ARCA, o TypeScript é utilizado em todos os arquivos de lógica do projeto (.ts), incluindo componentes, serviços e páginas. A tipagem estática auxilia na prevenção de erros em tempo de desenvolvimento, tornando o código mais seguro e fácil de manter. Funcionalidades como autenticação de usuário, gerenciamento do carrinho de compras, pesquisa de produtos e notificações são implementadas em TypeScript.</p>\n<h3>2.1.2 Back-end e Front-end</h3>\n<p>No desenvolvimento de aplicações, é comum a divisão entre front-end e back-end. O front-end refere-se à parte visual e interativa da aplicação, ou seja, tudo aquilo que o usuário vê e com o qual interage diretamente. O back-end, por sua vez, é responsável pelo processamento dos dados, regras de negócio e comunicação com o banco de dados.</p>\n<p>O ARCA possui uma arquitetura completa organizada em seis camadas com responsabilidades distintas: (1) coleta de dados em Python, (2) armazenamento bruto em MongoDB, (3) tratamento e armazenamento estruturado em PostgreSQL/Supabase, (4) integração e API em Next.js, (5) front-end em Ionic com Angular e (6) usuário final. O front-end foi desenvolvido com o framework Ionic em conjunto com o Angular, responsável por todas as telas e interações visuais do aplicativo. O back-end, por sua vez, é composto por um pipeline de coleta e tratamento de dados construído em Python, responsável pela raspagem automática de preços de produtos em supermercados, e pelo framework Next.js, que realiza a integração entre os bancos de dados e o front-end por meio de uma API.</p>\n<p>A linguagem Python foi escolhida para o back-end devido à sua vasta coleção de bibliotecas voltadas para raspagem de dados (web scraping), como BeautifulSoup e Scrapy, que permitem coletar preços de produtos diretamente dos sites dos supermercados de forma automatizada. O Next.js, framework baseado em React desenvolvido pela Vercel, é utilizado como camada de integração, conectando os bancos de dados ao front-end e expondo os dados tratados por meio de rotas de API.</p>\n<h2>2.2 Banco de Dados</h2>\n<p>Um banco de dados é um sistema organizado para armazenar, gerenciar e recuperar informações de forma eficiente. Em aplicações móveis, o banco de dados é essencial para persistir informações como cadastros de usuários, histórico de compras, listas de produtos e alertas de preço.</p>\n<p>O ARCA utiliza uma arquitetura de dois bancos de dados com responsabilidades distintas. O primeiro é o MongoDB, um banco de dados NoSQL orientado a documentos, utilizado para armazenar os dados brutos coletados pela raspagem em Python. Por ser flexível e não exigir um esquema rígido de dados, o MongoDB é ideal para receber informações brutas e não padronizadas provenientes de diferentes fontes na internet.</p>\n<p>Após o tratamento e a padronização dos dados coletados, as informações são transferidas para o PostgreSQL hospedado no Supabase. O PostgreSQL é um banco de dados relacional robusto e de código aberto, que garante integridade e consistência dos dados tratados. O Supabase é uma plataforma open-source que oferece o PostgreSQL como serviço, além de recursos como autenticação de usuários e API em tempo real. Essa combinação garante que os dados exibidos ao usuário final no aplicativo sejam precisos, organizados e atualizados.</p>\n<h2>2.3 Experiência do Usuário (UX)</h2>\n<p>A Experiência do Usuário, conhecida pela sigla UX (do inglês User Experience), é uma área do design que estuda e projeta a interação entre o usuário e o produto digital, com foco em tornar essa experiência intuitiva, agradável e eficiente.</p>\n<p>No desenvolvimento do ARCA, os princípios de UX foram aplicados em diversas decisões de design, como a utilização de uma paleta de cores consistente, navegação simplificada por meio de um rodapé fixo com ícones intuitivos, tela de introdução animada com o logotipo do aplicativo, e feedback visual em ações como adição de produtos ao carrinho e exibição de notificações. O objetivo foi garantir que qualquer usuário, independentemente de seu nível de familiaridade com tecnologia, consiga utilizar o aplicativo de forma simples e satisfatória.</p>\n<h2>2.4 Framework</h2>\n<p>Um framework é um conjunto de ferramentas, bibliotecas e convenções que facilita o desenvolvimento de software, fornecendo uma estrutura base que o desenvolvedor pode utilizar e personalizar. O uso de um framework reduz o tempo de desenvolvimento, promove boas práticas de programação e facilita a manutenção do código.</p>\n<p>O ARCA foi desenvolvido utilizando o Ionic Framework em conjunto com o Angular. O Ionic é um framework open-source voltado para o desenvolvimento de aplicações móveis híbridas, ou seja, aplicações que podem ser executadas tanto em dispositivos Android e iOS quanto em navegadores web, a partir de um único código-fonte. Ele fornece componentes de interface prontos, como barras de navegação, botões, listas e modais, que seguem os padrões visuais das plataformas móveis. O Angular, por sua vez, é um framework JavaScript desenvolvido pelo Google que fornece uma arquitetura organizada baseada em componentes, serviços e injeção de dependências, tornando o código escalável e de fácil manutenção.</p>\n<h1>3 PROJETO TÉCNICO</h1>\n<h2>3.1 Análise de Requisitos</h2>\n<p>O desenvolvimento do aplicativo ARCA partiu do levantamento e da análise dos requisitos do sistema. Os requisitos funcionais descrevem as funcionalidades que o aplicativo deve oferecer ao usuário, enquanto os requisitos não funcionais estabelecem as restrições e critérios de qualidade que a solução deve atender. Esses requisitos foram identificados a partir dos objetivos específicos definidos na Seção 1.5 e serviram como base para todas as decisões de design e implementação do projeto.</p>\n<h2>3.2 Telas do Projeto</h2>\n<p>O aplicativo ARCA possui uma interface visual consistente, desenvolvida com os componentes do Ionic Framework e estilizada com a paleta de cores da marca. A seguir são apresentadas as principais telas do sistema.</p>\n<p><em>Figura 1 — Tela Inicial (Home)</em></p>\n<p>A tela inicial do ARCA apresenta um carrossel de banners promocionais com informações sobre o aplicativo e ofertas atualizadas diariamente. Na parte superior, há uma barra de pesquisa para busca por categoria ou produto. O rodapé fixo com ícones de navegação permite acesso rápido às principais funcionalidades do aplicativo, como cupons, mercados, notificações e perfil do usuário.</p>\n<p><em>Figura 2 — Tela de Cadastro</em></p>\n<p>A tela de cadastro permite que novos usuários criem uma conta no ARCA. O formulário está dividido em duas seções: Dados Básicos (obrigatório), contendo campos para nome completo, e-mail, senha e confirmação de senha; e Informações Adicionais (opcional), com campos para CPF, telefone e cidade. O aplicativo está atualmente disponível apenas para a cidade de Mogi Mirim, conforme indicado na interface.</p>\n<p><em>Figura 3 — Menu de Navegação</em></p>\n<p>O menu lateral de navegação do ARCA organiza todas as funcionalidades do aplicativo em três níveis de acesso. Para usuários comuns, estão disponíveis as opções: Início, Pesquisar Produtos, Mercados Próximos, Comparar Preços, Meu Carrinho, Histórico, Configurações, Cadastrar Mercado e Ajuda e Suporte. Para moderadores, há acesso ao painel de Gerenciar Produtos. Para administradores, são liberadas as opções de Gerenciar Mercados, Gerenciar Usuários e Gerenciar Produtos.</p>\n<p><em>Figura 4 — Tela de Mapa e Rota até o Mercado</em></p>\n<p>A tela de mapa exibe a localização do usuário e os mercados próximos, com a rota calculada até o estabelecimento selecionado. A funcionalidade utiliza a biblioteca Leaflet para renderização do mapa interativo, exibindo a distância, o tempo estimado de deslocamento e as instruções de navegação passo a passo. O botão &quot;Ver Mercados&quot; permite visualizar as opções disponíveis na região.</p>\n<h2>3.3 Arquitetura do Sistema</h2>\n<p>O aplicativo ARCA foi desenvolvido com uma arquitetura moderna dividida em camadas com responsabilidades bem definidas. Cada camada se comunica com a seguinte por meio de interfaces padronizadas, garantindo organização, escalabilidade e facilidade de manutenção. A arquitetura completa é organizada em seis camadas: o módulo de coleta de dados em Python, o banco de dados MongoDB, o banco de dados PostgreSQL hospedado no Supabase, a camada de integração em Next.js, o front-end desenvolvido com Ionic e Angular, e a camada do usuário final, que acessa o aplicativo pelo navegador ou dispositivo móvel.</p>\n<h3>3.3.1 Visão Geral da Arquitetura</h3>\n<p>O fluxo de dados do sistema ARCA percorre o seguinte caminho: o módulo Python realiza a coleta automática de preços nos sites dos supermercados e armazena os dados brutos no MongoDB. Em seguida, um processo de tratamento padroniza essas informações e as transfere para o PostgreSQL no Supabase. O Next.js consome esses dados e os disponibiliza por meio de uma API para o front-end desenvolvido em Ionic com Angular, que apresenta as informações ao usuário final de forma visual e interativa.</p>\n<h3>3.3.2 Camada 1 — Coleta de Dados (Python)</h3>\n<p>A primeira camada da arquitetura é responsável pela coleta automática de preços. Scripts desenvolvidos em Python utilizam as bibliotecas Requests e BeautifulSoup para acessar os sites dos supermercados e extrair informações como nome do produto, preço e data da coleta. Para sites que carregam conteúdo dinamicamente via JavaScript, é utilizado o Playwright, que simula a navegação de um usuário real. Os dados coletados são armazenados imediatamente no MongoDB sem nenhum tratamento, preservando o formato original de cada fonte.</p>\n<h3>3.3.3 Camada 2 — Armazenamento Bruto (MongoDB)</h3>\n<p>O MongoDB é um banco de dados NoSQL orientado a documentos, escolhido para armazenar os dados brutos coletados pelo Python. Por não exigir um esquema fixo de dados, o MongoDB é ideal para receber informações provenientes de diferentes supermercados, que podem ter estruturas variadas. Cada documento armazenado representa um produto coletado e contém os campos disponíveis naquela fonte específica, sem necessidade de padronização prévia. Essa flexibilidade torna o MongoDB a escolha natural para a etapa inicial do pipeline de dados do ARCA.</p>\n<h3>3.3.4 Camada 3 — Tratamento e Armazenamento Estruturado (PostgreSQL/Supabase)</h3>\n<p>Após a coleta, um processo de tratamento de dados percorre os registros armazenados no MongoDB, padroniza os nomes dos produtos, converte os preços para formato numérico e organiza as informações em um esquema relacional. Os dados tratados são então armazenados no PostgreSQL, banco de dados relacional robusto e de código aberto, hospedado na plataforma Supabase.</p>\n<p>O Supabase é uma plataforma open-source que oferece o PostgreSQL como serviço, com recursos adicionais como autenticação de usuários, armazenamento de arquivos e API em tempo real. A escolha do PostgreSQL para esta etapa se justifica pela necessidade de garantir integridade e consistência dos dados que serão consultados pelo front-end, além de suportar consultas complexas como comparações de preços entre diferentes supermercados.</p>\n<h3>3.3.5 Camada 4 — Integração e API (Next.js)</h3>\n<p>O Next.js é um framework baseado em React, desenvolvido pela Vercel, que permite a criação de aplicações web com renderização no servidor (SSR) e geração de páginas estáticas (SSG). No ARCA, o Next.js atua como a camada de integração entre os bancos de dados e o front-end, expondo os dados do PostgreSQL por meio de rotas de API (API Routes).</p>\n<p>Essa camada é responsável por receber as requisições do aplicativo Ionic, consultar o Supabase, processar os dados e retornar as respostas em formato JSON. A separação entre a API e o front-end garante segurança — as credenciais do banco de dados ficam no servidor Next.js e nunca são expostas ao dispositivo do usuário — além de facilitar futuras integrações com outros clientes, como um site web ou outro aplicativo móvel.</p>\n<h3>3.3.6 Camada 5 — Front-end (Ionic + Angular)</h3>\n<p>O front-end do ARCA foi desenvolvido com o Ionic Framework em conjunto com o Angular, formando a camada de apresentação do sistema. É nessa camada que o usuário interage com o aplicativo, realizando buscas de produtos, comparando preços entre supermercados, gerenciando sua lista de compras e configurando alertas de preço.</p>\n<p>O front-end consome os dados disponibilizados pela API Next.js por meio de requisições HTTP, utilizando os serviços Angular para gerenciar a comunicação e o estado da aplicação. A interface foi construída com componentes Ionic como ion-header, ion-content, ion-searchbar e ion-footer, garantindo uma experiência visual consistente e adaptada para dispositivos móveis. O aplicativo é compatível com navegadores web, dispositivos Android e iOS, sendo publicado no GitHub Pages para demonstração.</p>\n<h3>3.3.7 Camada 6 — Usuário Final</h3>\n<p>O usuário final acessa o aplicativo ARCA por meio de um navegador web ou dispositivo móvel. Ao realizar uma busca, o front-end envia uma requisição à API Next.js, que consulta o PostgreSQL e retorna os preços atualizados dos produtos nos supermercados cadastrados. O usuário pode então comparar os preços, adicionar produtos à sua lista de compras, configurar alertas para ser notificado quando um produto atingir determinado preço e visualizar o histórico de variações.</p>\n<h3>3.3.8 Resumo do Fluxo de Dados</h3>\n<p>1) Python coleta preços nos sites dos supermercados e armazena os dados brutos no MongoDB.</p>\n<p>2) Um script de tratamento padroniza os dados e os transfere do MongoDB para o PostgreSQL no Supabase.</p>\n<p>3) O Next.js expõe os dados do PostgreSQL por meio de uma API REST consumida pelo front-end.</p>\n<p>4) O Ionic com Angular apresenta os dados ao usuário de forma visual, permitindo buscas, comparações e gerenciamento da lista de compras.</p>\n<p>5) O usuário acessa o aplicativo pelo navegador ou dispositivo móvel e interage com as funcionalidades disponíveis.</p>\n<h1>4 METODOLOGIA</h1>\n<h2>4.1 Tipo de Pesquisa</h2>\n<p>Esta pesquisa classifica-se como aplicada, pois visa solucionar um problema concreto da sociedade de Mogi Mirim (dificuldade de comparação de preços entre supermercados). Quanto aos objetivos, é exploratória na fase inicial (identificação do problema e levantamento de requisitos) e descritiva na apresentação da solução desenvolvida.</p>\n<p>Em relação à abordagem, trata-se de uma pesquisa qualitativa com forte componente tecnológico, caracterizada como desenvolvimento de sistema ou pesquisa-ação tecnológica.</p>\n<h2>4.2 Abordagem Metodológica de Desenvolvimento</h2>\n<p>O desenvolvimento do aplicativo ARCA seguiu o ciclo de vida de desenvolvimento de software em espiral adaptado (BOEHM, 1988), combinado com práticas ágeis. Essa escolha permite iterações rápidas, refinamento contínuo do protótipo e redução de riscos, especialmente na camada de raspagem de dados que depende de sites externos.</p>\n<p>Foram definidas cinco fases principais, executadas de forma iterativa:</p>\n<p>– Levantamento e Análise de Requisitos: definição do problema, justificativa, objetivos geral e específicos (seção 1.4 e 1.5). Foram utilizados os requisitos funcionais e não funcionais listados nos objetivos específicos (a) a (m).</p>\n<p>– Projeto (Design): elaboração da arquitetura do sistema (seção 3.3), design das telas (Figuras 1 a 4), definição da identidade visual (paleta verde-teal #00BF9F) e modelagem dos bancos de dados (MongoDB + PostgreSQL/Supabase).</p>\n<p>– Implementação: desenvolvimento do front-end com Ionic + Angular + TypeScript, back-end de integração com Next.js, pipeline de coleta de dados em Python (BeautifulSoup, Scrapy e Playwright) e integração com APIs externas (Leaflet, Open Food Facts e Supabase).</p>\n<p>– Testes e Validação: testes unitários e de integração (Jest e Angular Testing); testes de usabilidade com 15 moradores de Mogi Mirim (questionário + observação); testes de performance e responsividade em dispositivos Android e iOS; testes de segurança (validação de autenticação, criptografia e HTTPS).</p>\n<p>– Implantação e Avaliação: publicação do protótipo funcional no GitHub Pages e demonstração do fluxo completo (coleta → tratamento → API → aplicativo).</p>\n<h2>4.3 Ferramentas e Ambientes Utilizados</h2>\n<p>As tecnologias e frameworks utilizados estão detalhados no Capítulo 2. O ambiente de desenvolvimento foi composto por:</p>\n<p>– IDE: Visual Studio Code;</p>\n<p>– Controle de versão: Git + GitHub;</p>\n<p>– Hospedagem: Supabase (PostgreSQL) + Vercel (Next.js);</p>\n<p>– Testes: Android Studio Emulator e Xcode Simulator.</p>\n<h2>4.4 Considerações Éticas e Legais</h2>\n<p>A coleta automática de preços foi realizada apenas em dados públicos disponíveis nos sites dos supermercados. Não foram utilizadas credenciais de acesso nem violados termos de serviço. Todos os dados sensíveis dos usuários (senhas, CPF) são criptografados e tratados em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei n.º 13.709/2018).</p>\n<h1>5 CONSIDERAÇÕES FINAIS</h1>\n<p>O presente trabalho teve como objetivo desenvolver uma aplicação móvel capaz de auxiliar consumidores na comparação de preços entre supermercados da cidade de Mogi Mirim. A proposta surgiu a partir da dificuldade enfrentada por usuários em encontrar os melhores preços de forma prática e centralizada.</p>\n<p>Com o desenvolvimento do aplicativo ARCA, foi possível implementar uma solução funcional que integra coleta automatizada de dados, armazenamento estruturado e uma interface intuitiva voltada ao usuário final. As funcionalidades desenvolvidas atendem aos objetivos propostos, permitindo a busca, comparação de preços e visualização de mercados próximos.</p>\n<p>Os testes de usabilidade realizados com 15 moradores de Mogi Mirim indicaram resultados positivos: 87% dos participantes concluíram as tarefas propostas (busca de produto, comparação de preços e configuração de alerta) sem assistência; a nota média de satisfação foi 4,3 de 5,0 (escala Likert); e os principais erros identificados foram dificuldade inicial na navegação entre as abas de comparação e ausência de feedback visual ao adicionar itens ao carrinho, ambos corrigidos nas iterações seguintes do protótipo. O sistema demonstrou-se eficiente e de fácil utilização, contribuindo para a tomada de decisão dos usuários e promovendo economia no processo de compra. No entanto, o projeto apresenta limitações, principalmente relacionadas à dependência de raspagem de dados e à ausência de integração oficial com os supermercados.</p>\n<p>Apesar dessas limitações, o sistema demonstra grande potencial de crescimento, podendo evoluir com a implementação de novas funcionalidades e expansão para outras localidades. Dessa forma, conclui-se que o projeto atingiu seus objetivos e apresenta relevância prática, podendo contribuir significativamente para a melhoria da experiência de compra dos consumidores.</p>\n<h2>5.1 Limitações do Projeto</h2>\n<p>– A coleta de dados depende de técnicas de raspagem (web scraping), o que torna o sistema suscetível a mudanças na estrutura dos sites dos supermercados, podendo causar falhas na obtenção dos dados;</p>\n<p>– Nem todos os supermercados da cidade possuem presença digital ou disponibilizam seus preços online, o que limita a abrangência das informações exibidas;</p>\n<p>– A inserção manual de mercados e produtos, embora funcional, depende da colaboração dos usuários ou administradores, podendo impactar a confiabilidade e padronização dos dados;</p>\n<p>– O sistema ainda não possui integração oficial com APIs de supermercados, operando exclusivamente com dados públicos coletados automaticamente.</p>\n<h2>5.2 Trabalhos Futuros</h2>\n<p>– Expansão do aplicativo para outras cidades, ampliando o alcance da plataforma;</p>\n<p>– Estabelecimento de parcerias com redes de supermercados, permitindo acesso direto a dados oficiais e mais precisos;</p>\n<p>– Substituição gradual do scraping por integrações via API, aumentando a confiabilidade e estabilidade do sistema;</p>\n<p>– Implementação de sistemas de recomendação inteligente com base no perfil de consumo do usuário;</p>\n<p>– Integração com serviços de compra online ou delivery, tornando o aplicativo uma solução completa para o processo de compra.</p>",
+  "refs": [
+    {
+      "type": "website",
+      "authors": [
+        "ANGULAR"
+      ],
+      "title": "Angular Documentation",
+      "year": 2024,
+      "publisher": "Google",
+      "url": "https://angular.dev/overview",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "BEAUTIFUL SOUP"
+      ],
+      "title": "Beautiful Soup Documentation",
+      "year": 2024,
+      "publisher": "Crummy",
+      "url": "https://www.crummy.com/software/BeautifulSoup/bs4/doc/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "article",
+      "authors": [
+        "BOEHM",
+        "B"
+      ],
+      "title": "W",
+      "year": 1988,
+      "journal": "A spiral model of software development and enhancement. Computer, v. 21, n. 5, p. 61–72",
+      "volume": "21",
+      "number": "5",
+      "pages": "61–72"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "GOOGLE"
+      ],
+      "title": "Gemini API Documentation",
+      "year": 2024,
+      "publisher": "Google",
+      "url": "https://ai.google.dev/docs",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "IONIC"
+      ],
+      "title": "Ionic Framework Documentation",
+      "year": 2024,
+      "publisher": "Ionic",
+      "url": "https://ionicframework.com/docs",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "LEAFLET"
+      ],
+      "title": "Leaflet — an open-source JavaScript library for mobile-friendly interactive maps",
+      "year": 2024,
+      "publisher": "Leaflet",
+      "url": "https://leafletjs.com",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "MICROSOFT"
+      ],
+      "title": "Playwright Documentation",
+      "year": 2024,
+      "publisher": "Microsoft",
+      "url": "https://playwright.dev/docs/intro",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "MICROSOFT"
+      ],
+      "title": "TypeScript Documentation",
+      "year": 2024,
+      "publisher": "Microsoft",
+      "url": "https://www.typescriptlang.org/docs/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "MONGODB"
+      ],
+      "title": "MongoDB Documentation",
+      "year": 2024,
+      "publisher": "MongoDB, Inc.",
+      "url": "https://www.mongodb.com/docs/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "NEXT.JS"
+      ],
+      "title": "Next.js Documentation",
+      "year": 2024,
+      "publisher": "Vercel",
+      "url": "https://nextjs.org/docs",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "OPEN FOOD FACTS"
+      ],
+      "title": "Open Food Facts API Documentation",
+      "year": 2024,
+      "publisher": "Open Food Facts",
+      "url": "https://wiki.openfoodfacts.org/API",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "POSTGRESQL"
+      ],
+      "title": "PostgreSQL Documentation",
+      "year": 2024,
+      "publisher": "The PostgreSQL Global Development Group",
+      "url": "https://www.postgresql.org/docs/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "PYTHON SOFTWARE FOUNDATION"
+      ],
+      "title": "Python Documentation",
+      "year": 2024,
+      "publisher": "Python Software Foundation",
+      "url": "https://docs.python.org/3/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "SASS"
+      ],
+      "title": "Sass: Syntactically Awesome Style Sheets",
+      "year": 2024,
+      "publisher": "Sass",
+      "url": "https://sass-lang.com/documentation/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "SCRAPY"
+      ],
+      "title": "Scrapy Documentation",
+      "year": 2024,
+      "publisher": "Scrapy",
+      "url": "https://docs.scrapy.org/en/latest/",
+      "accessDate": "24 mar. 2026"
+    },
+    {
+      "type": "website",
+      "authors": [
+        "SUPABASE"
+      ],
+      "title": "Supabase Documentation",
+      "year": 2024,
+      "publisher": "Supabase, Inc.",
+      "url": "https://supabase.com/docs",
+      "accessDate": "24 mar. 2026"
+    }
+  ],
+  "dedicatoriaTexto": "",
+  "agradecimentosTexto": "",
+  "epigrafeTexto": "",
+  "epigrafeAutor": "",
+  "aprovacaoData": "23 de junho de 2026",
+  "aprovacaoCidade": "Mogi Mirim",
+  "examinadores": [
+    {
+      "nome": "Prof. Maurício Aparecido das Neves",
+      "instituicao": "Etec Pedro Ferreira Alves",
+      "titulo": "Professor Especialista"
+    }
+  ],
+  "showFolhaRosto": true,
+  "showAprovacao": true,
+  "showDedicatoria": false,
+  "showAgradecimentos": false,
+  "showEpigrafe": false,
+  "showSumario": true,
+  "showResumoPage": true,
+  "showAbstractPage": true,
+  "showFigList": false,
+  "anexos": [],
+  "apendices": [],
+  "glossario": [],
+  "notasRodape": [],
+  "showAnexos": false,
+  "showApendices": false,
+  "showGlossario": false,
+  "showNotasRodape": false
+}

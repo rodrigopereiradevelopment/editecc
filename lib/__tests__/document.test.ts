@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { emptyDoc, getAllDocuments, saveAllDocuments, getCurrentId, setCurrentId, exportDoc } from "@/lib/document";
+import { emptyDoc, getAllDocuments, saveAllDocuments, getCurrentId, setCurrentId } from "@/lib/document";
 
 const STORAGE_KEY = "editecc-docs";
-const CURRENT_KEY = "editecc-current";
 
 describe("document storage", () => {
   beforeEach(() => {

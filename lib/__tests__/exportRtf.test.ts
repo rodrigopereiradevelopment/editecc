@@ -6,7 +6,6 @@ import type { Examinador } from "@/lib/document";
 // Texto como aparece no RTF após escapeRtfAnsi
 const ANSI_SP = escapeRtfAnsi("São Paulo");       // S\'e3o Paulo
 const ANSI_JOÃO = escapeRtfAnsi("JOÃO SILVA");     // JO\'c3O SILVA
-const ANSI_OBRIGADO = escapeRtfAnsi("obrigado");
 
 const cover: CoverData = {
   autor: "João Silva",

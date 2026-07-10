@@ -24,7 +24,6 @@ interface EditorToolbarProps {
   applyFormat: (command: string, attrs?: Record<string, unknown>) => void;
   handleGerarSlides: () => void;
   handleExportPdf: () => void;
-  handleExportDocx: () => void;
   handleExportRtf: () => void;
   handleSave: () => void;
   slidesLoading: boolean;
@@ -57,7 +56,7 @@ function ToolbarBtn({ label, title, onMouseDown, children }: {
 }
 
 export function EditorToolbar({
-  applyFormat, handleGerarSlides, handleExportPdf, handleExportDocx, handleExportRtf, handleSave,
+  applyFormat, handleGerarSlides, handleExportPdf, handleExportRtf, handleSave,
   slidesLoading, slidesProgress, slidesStatus, savedMsg, storageError, onOpenShortcuts, onOpenSettings,
   onTogglePagePreview,
 }: EditorToolbarProps) {

@@ -38,7 +38,6 @@ export function FolhaAprovacao({
   const cidadeFinal = cidade || "________________";
   const dataFinal = data || "__ de _________ de ____";
   const dataFormatada = formatarData(dataFinal);
-  const numExaminadores = examinadores.length;
   const etecNome = etec || "Escola Técnica Estadual";
   const cidadeState = cidade || "Cidade";
 

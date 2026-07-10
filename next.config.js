@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const path = require("path");
 const webpack = require("webpack");
 const isTauriBuild = process.env.TAURI_ENV_PLATFORM !== undefined;
 

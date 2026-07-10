@@ -9,7 +9,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 
 // Importar componentes do DeepSeek
-import { FolhaRosto } from "@/components/FolhaRosto";
 import { ResumoSection } from "@/components/ResumoSection";
 import { AbstractSection } from "@/components/AbstractSection";
 import { GeradorReferencias } from "@/components/GeradorReferencias";
@@ -36,7 +35,7 @@ import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorStatusBar } from "@/components/EditorStatusBar";
 import { EditorSkeleton } from "@/components/EditorSkeleton";
 import { PagePreview } from "@/components/PagePreview";
-import { coverReducer, coverInitial, type CoverData, type CoverHistory } from "@/lib/coverReducer";
+import { coverReducer, coverInitial } from "@/lib/coverReducer";
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 
@@ -375,8 +374,8 @@ export default function EditorPage() {
     showFigList, refs, showAnexos, anexos, showApendices, apendices,
     showGlossario, glossario, showNotasRodape, notasRodape]);
 
-  // Gerar apresentação de slides (v0.8 — sumarização)
-  const handleGerarSlides = async () => {
+  // Gerar apresentação de slides (v0.9.14 — TF-IDF extrativo, sem IA)
+  const handleGerarSlides = useCallback(async () => {
     if (!editor) return;
     setSlidesLoading(true);
     setSlidesStatus("Extraindo seções…");
@@ -418,7 +417,7 @@ export default function EditorPage() {
       setSlidesStatus(`Erro ao gerar slides: ${msg}`);
       setTimeout(() => setSlidesLoading(false), 4000);
     }
-  };
+  }, [editor, coverData]);
 
   // Ctrl+Shift+S → gerar slides
   useEffect(() => {

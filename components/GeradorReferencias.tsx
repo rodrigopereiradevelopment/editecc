@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { formatReference, Reference } from "@/lib/abnt/styles";
 
 interface GeradorReferenciasProps {
@@ -93,7 +93,7 @@ export function GeradorReferencias({ refs, setRefs, onInsertRef }: GeradorRefere
       };
       setForm(ref);
       setDoiInput("");
-    } catch (err) {
+    } catch {
       setParseError("Não foi possível interpretar. Tente DOI, ISBN ou BibTeX.");
     } finally {
       setParsing(false);

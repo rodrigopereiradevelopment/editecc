@@ -169,7 +169,7 @@ export function useTranslation() {
       }
 
       // Tenta splitar por frases primeiro
-      let rawSentences = text.match(/[^.!?]+[.!?]+\s*/g);
+      const rawSentences = text.match(/[^.!?]+[.!?]+\s*/g);
       // Se regex não encontrou frases (sem pontuação), fallback por espaço
       let sentences: string[];
       if (!rawSentences || rawSentences.length === 1) {

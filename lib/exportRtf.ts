@@ -99,9 +99,6 @@ export function capaToRtf(cover: CoverData): string {
   const cidade = local || "Cidade";
   const anoFinal = ano || new Date().getFullYear().toString();
 
-  const p = (s: string, extra = "") =>
-    `{\\qc\\f0\\fs24 ${extra}${escapeRtfAnsi(s)}\\par}`;
-
   // Cria spacer com múltiplas linhas vazias (1cm cada)
   const spacer = (h: string) => {
     const cm = Math.round(parseFloat(h));

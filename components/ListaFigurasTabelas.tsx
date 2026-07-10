@@ -1,6 +1,6 @@
 "use client";
 
-import { extractFigures, extractTables, FigureEntry, TableEntry } from "@/lib/abnt/styles";
+import { extractFigures, extractTables } from "@/lib/abnt/styles";
 
 interface ListaFigurasTabelasProps {
   editorHtml: string;
