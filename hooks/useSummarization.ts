@@ -153,9 +153,10 @@ export function useSummarization() {
       }
 
       // Tenta splitar por frases primeiro
-      let sentences = text.match(/[^.!?]+[.!?]+\s*/g);
+      let rawSentences = text.match(/[^.!?]+[.!?]+\s*/g);
       // Se regex não encontrou frases (sem pontuação), fallback por espaço
-      if (!sentences || sentences.length === 1) {
+      let sentences: string[];
+      if (!rawSentences || rawSentences.length === 1) {
         sentences = [];
         const words = text.split(/\s+/);
         let buf = "";
@@ -167,6 +168,8 @@ export function useSummarization() {
           buf += w + " ";
         }
         if (buf.trim()) sentences.push(buf.trim());
+      } else {
+        sentences = rawSentences;
       }
       const chunks: string[] = [];
       let current = "";
