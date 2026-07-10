@@ -26,9 +26,7 @@ import type { NotaRodape } from "@/components/NotasRodapeManager";
 import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, Reference, type ValidationIssue } from "@/lib/abnt/styles";
-import { parseSectionsFull, gerarPPTX, formatBullets } from "@/lib/slideGenerator";
-import { useSummarization } from "@/hooks/useSummarization";
-import { useTranslation } from "@/hooks/useTranslation";
+import { parseSectionsFull, gerarPPTX, gerarBulletsTfidf } from "@/lib/slideGenerator";
 import { printFullDocument, downloadDoc } from "@/lib/exportDocument";
 import { generateFullRtf, downloadRtf } from "@/lib/exportRtf";
 import type { EditeccDocument, Examinador } from "@/lib/document";
@@ -97,25 +95,6 @@ export default function EditorPage() {
     if (typeof window === "undefined") return "12pt";
     try { return localStorage.getItem(FONT_KEY) || "12pt"; } catch { return "12pt"; }
   });
-
-  // ─── SUMARIZAÇÃO (v0.8) ──────────────────────────────────────────────────
-  const {
-    summarize, loadModel: loadSumModel,
-    loading: sumLoading, progress: sumProgress, modelStatus: sumModelStatus, error: sumError,
-  } = useSummarization();
-
-  const {
-    translate, loadModel: loadTransModel,
-    modelStatus: transModelStatus, error: transError,
-  } = useTranslation();
-
-  // Sincroniza sumProgress → slidesProgress durante download do modelo
-  useEffect(() => {
-    if (slidesLoading && sumModelStatus === "downloading" && sumProgress > 0) {
-      setSlidesProgress(sumProgress);
-      setSlidesStatus(`Baixando modelo de sumarização… (${sumProgress}%, ~300MB, único download)`);
-    }
-  }, [sumProgress, sumModelStatus, slidesLoading]);
 
   const importFileRef = useRef<HTMLInputElement>(null);
 
@@ -402,6 +381,7 @@ export default function EditorPage() {
     setSlidesLoading(true);
     setSlidesStatus("Extraindo seções…");
     setSlidesProgress(0);
+    const startTime = performance.now();
     try {
       const html = editor.getHTML();
       const sections = parseSectionsFull(html);
@@ -412,51 +392,12 @@ export default function EditorPage() {
         return;
       }
 
-      if (transModelStatus !== "ready") {
-        setSlidesStatus("Carregando modelo de tradução… (~600MB, único download)");
-        await loadTransModel();
-      }
-      if (transError) {
-        setSlidesStatus(`Erro no modelo de tradução: ${transError}`);
-        setTimeout(() => setSlidesLoading(false), 3000);
-        return;
-      }
+      console.log(`[slides] ${sections.length} seções encontradas`);
 
-      if (sumModelStatus !== "ready") {
-        setSlidesStatus("Carregando modelo de sumarização… (~300MB, único download)");
-        await loadSumModel();
-      }
-      if (sumError) {
-        setSlidesStatus(`Erro no modelo de sumarização: ${sumError}`);
-        setTimeout(() => setSlidesLoading(false), 3000);
-        return;
-      }
-
-      const summarized = [];
-      for (let i = 0; i < sections.length; i++) {
-        const sec = sections[i];
-        if (!sec.textoCompleto) {
-          summarized.push({ titulo: sec.titulo, conteudo: "" });
-          continue;
-        }
-
-        setSlidesStatus(`Traduzindo ${sec.titulo}… (${i + 1}/${sections.length})`);
-        setSlidesProgress(Math.round(((i + 1) / sections.length) * 100));
-
-        // PT → EN
-        const enText = await translate(sec.textoCompleto, "en");
-
-        setSlidesStatus(`Resumindo ${sec.titulo}… (${i + 1}/${sections.length})`);
-        const sumEn = await summarize(enText);
-
-        // EN → PT
-        const sumPt = await translate(sumEn, "pt");
-
-        summarized.push({
-          titulo: sec.titulo,
-          conteudo: formatBullets(sumPt),
-        });
-      }
+      // TF-IDF extrativo — sem modelo de IA, processamento instantâneo
+      setSlidesStatus("Gerando resumos (TF-IDF)…");
+      const summarized = gerarBulletsTfidf(sections);
+      setSlidesProgress(80);
 
       setSlidesStatus("Gerando arquivo PPTX…");
       setSlidesProgress(100);
@@ -467,9 +408,14 @@ export default function EditorPage() {
         curso: coverData.curso,
         orientador: coverData.orientador,
       });
+      const elapsed = Math.round((performance.now() - startTime) / 1000);
+      console.log(`[slides] Concluído em ${elapsed}s`);
       setSlidesLoading(false);
     } catch (err: any) {
-      setSlidesStatus(`Erro ao gerar slides: ${err?.message || "desconhecido"}`);
+      const msg = err?.message || "desconhecido";
+      const elapsed = Math.round((performance.now() - startTime) / 1000);
+      console.error(`[slides] Erro após ${elapsed}s:`, msg);
+      setSlidesStatus(`Erro ao gerar slides: ${msg}`);
       setTimeout(() => setSlidesLoading(false), 4000);
     }
   };

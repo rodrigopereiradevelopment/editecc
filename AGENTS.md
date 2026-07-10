@@ -8,7 +8,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Name**: EditeCC
 - **Purpose**: Editor de textos acadêmicos com formatação ABNT automática (TCCs, monografias).
 - **Stack**: Next.js 16.x (App Router), Tiptap v3, Tauri v2 (Rust), Transformers.js, PptxGenJS, Citation.js, Vitest.
-- **Current**: v0.9.13
+- **Current**: v0.9.14
 - **Main Workflows**: Escrever e formatar TCC → elementos pré/pós-textuais → traduzir resumo → exportar PDF → gerar slides → **exportar .doc (com limitação conhecida no LibreOffice — migrando para RTF)**.
 
 ## Dev Commands

@@ -1,6 +1,7 @@
 "use client";
 
 import PptxGenJS from "pptxgenjs";
+import { extractiveSummarize } from "./tfidf";
 
 export interface SlideSection {
   titulo: string;
@@ -105,6 +106,10 @@ export function parseSectionsFull(html: string): SlideSectionFull[] {
 }
 
 export function formatBullets(text: string): string {
+  // Se já tem bullets (do TF-IDF), retorna direto
+  if (text.includes("•")) return text;
+
+  // Fallback: divide por frases
   const sentences = text
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
@@ -116,6 +121,19 @@ export function formatBullets(text: string): string {
       return `• ${clean.replace(/[.!?]$/, "")}`;
     })
     .join("\n");
+}
+
+/**
+ * Gera bullets usando TF-IDF extrativo (sem IA).
+ * Para cada seção: textoCompleto → extractiveSummarize → bullets.
+ */
+export function gerarBulletsTfidf(sections: SlideSectionFull[]): SlideSection[] {
+  return sections.map((sec) => ({
+    titulo: sec.titulo,
+    conteudo: sec.textoCompleto
+      ? extractiveSummarize(sec.textoCompleto, 5)
+      : "",
+  }));
 }
 
 export function gerarPPTX(
