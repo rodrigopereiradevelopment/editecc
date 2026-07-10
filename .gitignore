@@ -40,5 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .gitnexus
+# test files
+*.editecc
+*.pdf
 *.pptx
 *.docx
