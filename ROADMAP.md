@@ -14,6 +14,7 @@
 
 - [ ] Corrigir referências ". undefined. undefined."
 - [ ] RTF: adicionar numeração de páginas (canto superior direito)
+- [ ] PDF: adicionar numeração de páginas (canto superior direito)
 - [ ] Testes E2E com Playwright
 - [ ] Feedback de usuários reais (ETEC/Fatec)
 
