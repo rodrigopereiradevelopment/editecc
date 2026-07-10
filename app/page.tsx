@@ -54,8 +54,8 @@ const FEATURES = [
 const STEPS = [
   { n: "01", title: "Baixe ou Acesse", desc: "Instale o app desktop (Windows, Linux, macOS) ou use a versão web direto no navegador." },
   { n: "02", title: "Escreva o Conteúdo", desc: "Use os estilos ABNT pré-definidos. O editor formata enquanto você escreve." },
-  { n: "03", title: "Gere Slides", desc: "Clique em Slides e o EditeCC resume cada seção e exporta para PowerPoint automaticamente." },
-  { n: "04", title: "Exporte o PDF", desc: "Clique em Exportar PDF. O documento sai pronto, formatado e dentro das normas ABNT." },
+  { n: "03", title: "Exporte o PDF", desc: "Clique em Exportar PDF. O documento sai pronto, formatado e dentro das normas ABNT." },
+  { n: "04", title: "Gere Slides", desc: "Clique em Slides e o EditeCC resume cada seção e exporta para PowerPoint automaticamente." },
 ];
 
 // ─── PAPER MOCKUP (folha A4 em miniatura) ────────────────────────────────────
@@ -450,8 +450,8 @@ export default function LandingPage() {
                 transition: "all 0.6s ease 0.2s",
               }}>
                 Escreva seu<br />
-                TCC <span className="accent">sem</span><br />
-                sofrimento.
+                TCC. A <span className="accent">formatação</span><br />
+                fica por nossa conta.
               </h1>
 
               <p style={{
@@ -461,7 +461,7 @@ export default function LandingPage() {
                 transform: mounted ? "none" : "translateY(20px)",
                 transition: "all 0.6s ease 0.35s",
               }}>
-                Editor de textos com formatação <strong style={{ color: "var(--lp-hero-strong)" }}>ABNT automática</strong>. Margens, fontes, espaçamentos e capa — tudo pré-configurado. Você só escreve.
+                Editor de textos com formatação <strong style={{ color: "var(--lp-hero-strong)" }}>ABNT automática</strong>. Margens, fontes, espaçamentos, capa e sumário — tudo pré-configurado. Você só escreve.
               </p>
 
               <div style={{
@@ -548,12 +548,12 @@ export default function LandingPage() {
                 </h3>
                 <ul style={{ listStyle: "none", padding: 0 }}>
                   {[
-                    "Configurar margens manualmente",
-                    "Configurar fonte e tamanho",
-                    "Configurar espaçamento",
-                    "Definir estilos de títulos",
-                    "Gerar sumário manualmente",
-                    "Conferir formatação ABNT",
+                    "Perder tempo configurando margens",
+                    "Procurar tutorial de ABNT no YouTube",
+                    "Ajustar fonte, espaçamento e recuo manualmente",
+                    "Corrigir erros antes da entrega",
+                    "Gerar sumário do zero",
+                    "Conferir formatação na raça",
                   ].map((item, i) => (
                     <li key={i} style={{ color: "var(--lp-body)", fontSize: "14px", lineHeight: "1.8", display: "flex", alignItems: "center", gap: "10px" }}>
                       <span style={{ color: "#ef4444", fontSize: "16px" }}>✕</span>
@@ -572,9 +572,10 @@ export default function LandingPage() {
                 </h3>
                 <ul style={{ listStyle: "none", padding: 0 }}>
                   {[
-                    "Abrir o editor",
-                    "Escrever seu texto",
-                    "Exportar PDF pronto",
+                    "Começar a escrever imediatamente",
+                    "Formatação ABNT automática",
+                    "Sumário gerado sozinho",
+                    "PDF pronto para entregar",
                   ].map((item, i) => (
                     <li key={i} style={{ color: "var(--lp-body)", fontSize: "14px", lineHeight: "1.8", display: "flex", alignItems: "center", gap: "10px" }}>
                       <span style={{ color: "#10b981", fontSize: "16px" }}>✓</span>
@@ -599,6 +600,9 @@ export default function LandingPage() {
             </p>
             <p style={{ color: "var(--lp-body)", fontSize: "16px", lineHeight: "1.8", maxWidth: "600px", margin: "0 auto 16px" }}>
               Margens, espaçamento, citações, referências, capa — tudo segue a norma <strong style={{ color: "var(--lp-hero-strong)" }}>NBR 14724:2011</strong>.
+            </p>
+            <p style={{ color: "var(--lp-body)", fontSize: "16px", lineHeight: "1.8", maxWidth: "600px", margin: "0 auto 16px" }}>
+              Por isso universidades, ETECs, FATECs e faculdades exigem que trabalhos sejam entregues seguindo esse padrão.
             </p>
             <p style={{ color: "var(--lp-body)", fontSize: "16px", lineHeight: "1.8", maxWidth: "600px", margin: "0 auto" }}>
               O EditeCC já aplica essas regras <strong style={{ color: "#3b82f6" }}>automaticamente</strong>. Você só precisa escrever.
