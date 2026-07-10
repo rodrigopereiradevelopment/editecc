@@ -22,6 +22,8 @@ const nextConfig = {
 
   serverExternalPackages: ["@xenova/transformers"],
 
+  turbopack: {},
+
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
