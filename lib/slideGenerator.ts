@@ -106,20 +106,20 @@ export function parseSectionsFull(html: string): SlideSectionFull[] {
 }
 
 export function formatBullets(text: string): string {
-  // Se já tem bullets (do TF-IDF), retorna direto
-  if (text.includes("•")) return text;
+  if (!text.trim()) return "";
 
-  // Fallback: divide por frases
-  const sentences = text
-    .split(/(?<=[.!?])\s+/)
+  // Se já tem bullets multi-linha (do TF-IDF), retorna direto
+  if (text.includes("•") && text.includes("\n")) return text;
+
+  // Divide por marcadores existentes (•, -, —, *) ou por frases
+  const parts = text
+    .split(/[•\-–—*]\s*|(?<=[.!?])\s+/)
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
-  return sentences
+
+  return parts
     .slice(0, 5)
-    .map((s) => {
-      const clean = s.replace(/^[•\-–—*]\s*/, "").trim();
-      return `• ${clean.replace(/[.!?]$/, "")}`;
-    })
+    .map((s) => `• ${s.replace(/[.!?]$/, "")}`)
     .join("\n");
 }
 
