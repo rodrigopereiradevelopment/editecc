@@ -26,7 +26,7 @@ import { useDocuments } from "@/hooks/useDocuments";
 import type { TargetLang } from "@/hooks/useTranslation";
 import { validateDocument, generateTOC, countWords, Reference, type ValidationIssue } from "@/lib/abnt/styles";
 import { parseSectionsFull, gerarPPTX, gerarBulletsTfidf } from "@/lib/slideGenerator";
-import { printFullDocument, downloadDoc } from "@/lib/exportDocument";
+import { printFullDocument } from "@/lib/exportDocument";
 import { generateFullRtf, downloadRtf } from "@/lib/exportRtf";
 import type { EditeccDocument, Examinador } from "@/lib/document";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -342,11 +342,6 @@ export default function EditorPage() {
   };
 
   // Exportar DOCX (HTML → .doc — Word abre nativamente)
-  const handleExportDocx = useCallback(() => {
-    const titulo = coverData.titulo || "documento";
-    downloadDoc(titulo);
-  }, [coverData.titulo]);
-
   // Exportar RTF (LibreOffice/Word — \page nativo)
   const handleExportRtf = useCallback(() => {
     const titulo = coverData.titulo || "documento";
@@ -1177,7 +1172,6 @@ export default function EditorPage() {
             applyFormat={applyFormat}
             handleGerarSlides={handleGerarSlides}
             handleExportPdf={handleExportPdf}
-            handleExportDocx={handleExportDocx}
             handleExportRtf={handleExportRtf}
             handleSave={syncToDoc}
             slidesLoading={slidesLoading}
