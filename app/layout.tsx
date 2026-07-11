@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "Editor de textos acadêmicos com formatação ABNT automática. Margens, fontes, espaçamentos e capa — tudo pré-configurado. 100% gratuito, local e sem cadastro.",
   icons: { icon: "/favicon.svg" },
   verification: {
-    google: "COLE_AQUI_O_CODIGO_DO_GOOGLE",
+    google: "53lIeo9YV1FF6kndubgIiNJB1LOa12bMGsZiDHaQngg",
   },
   openGraph: {
     title: "EditeCC — Editor de TCC com formatação ABNT",
