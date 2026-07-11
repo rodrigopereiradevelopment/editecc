@@ -1,6 +1,6 @@
 # Roadmap EditeCC
 
-## v1.0.0 — Lançamento
+## v1.0.0 — Lançamento ✅ CONCLUÍDO
 
 - [x] Editor ABNT completo
 - [x] PDF via print
@@ -8,7 +8,8 @@
 - [x] Landing page
 - [x] CI Tauri (Linux/Windows/macOS)
 - [x] Botões de download separados
-- [ ] Tag v1.0.0 + GitHub Release
+- [x] Tag v1.0.0 + GitHub Release
+- [x] Deploy landing no Vercel (editecc.vercel.app)
 
 ## v1.0.1 — Bugs e estabilidade
 
