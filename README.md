@@ -4,43 +4,37 @@
 
 Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos acadêmicos sem perder horas configurando margens e estilos no Word.
 
-> Projeto open source — clone, instale e use. Sem APIs externas, sem cadastro, sem cobrança.
+> **Versão atual: v1.0.0** — [Baixar](https://github.com/rodrigopereiradevelopment/editecc/releases/tag/v1.0.0) | [Versão Web](https://editecc.vercel.app)
 
 ---
 
-## ✨ Funcionalidades (v0.9.13)
+## ✨ Funcionalidades (v1.0.0)
 
-- 🔍 **Tamanho da interface ajustável** — sidebar, labels, inputs e textareas com 4 níveis (P/M/G/XG), ideal para quem tem dificuldade de leitura. O canvas ABNT permanece em 12pt fixo.
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
 - 📋 **Capa automática** — gerada em tempo real conforme você preenche o formulário
 - 📃 **Folha de Rosto, Folha de Aprovação** — elementos pré-textuais obrigatórios
 - 📖 **Dedicatória, Agradecimentos, Epígrafe** — elementos pré-textuais opcionais
 - 📝 **Resumo + Abstract** — campos dedicados com contador de palavras, renderizados como páginas A4
-- 🌐 **Tradução automática Transformers.js** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200, ~600MB)
+- 🌐 **Tradução automática Transformers.js** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200)
 - 📑 **Sumário automático** a partir dos headings do documento
 - 📚 **Gerador de referências com Citation.js** — DOI, ISBN, BibTeX → ABNT NBR 6023
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
-- 📽️ **Gerador de Slides v2** — sumarização automática das seções via Transformers.js (`distilbart-cnn`), formatação em bullets, geração `.pptx` (parser H1/H2 + PptxGenJS)
-- ♿ **Acessibilidade WCAG 2.2** — landmarks (`<main>`, `<nav>`, `<aside>`), `aria-label` em botões com ícone, `:focus-visible`, skip link, `aria-live` em notificações, `prefers-reduced-motion`
-- 👋 **Onboarding** — tela de boas-vindas no primeiro acesso com "Novo TCC" e "Importar .editecc"
-- 🎯 **Atalhos de teclado visíveis** — modal com todas as combinações (Ctrl+B/I/U/Z/Y, Esc, Ctrl+P)
-- 💡 **Tema claro/escuro** — toggle com ícone sol/lua no painel lateral, CSS variables internas
-- ⌨️ **Skeleton loading** — shimmer animado simulando sidebar + toolbar + canvas A4 durante carregamento
-- 🔤 **Botões de heading** — H1/H2/H3 na toolbar para aplicar títulos ABNT com um clique
-- ✅ **Corretor ortográfico nativo** — `spellcheck="true"` + `lang="pt-BR"` no editor, zero dependência externa
-- ✅ **Validador ABNT expandido** — hierarquia de seções, numeração, itálico em obras, citações longas, seções obrigatórias e tamanho do resumo
-- 📄 **Numeração de página** automática no canto inferior direito
+- 📽️ **Gerador de Slides** — sumarização extrativa TF-IDF offline, formatação em bullets, geração `.pptx`
+- 🔍 **Tamanho da interface ajustável** — sidebar, labels, inputs e textareas com 4 níveis (P/M/G/XG)
+- ♿ **Acessibilidade WCAG 2.2** — landmarks, aria-labels, foco visível, skip link, reduced motion
+- 👋 **Onboarding** — tela de boas-vindas no primeiro acesso
+- 🎯 **Atalhos de teclado** — Ctrl+B/I/U/Z/Y, Esc, Ctrl+P
+- 💡 **Tema claro/escuro** — toggle com CSS variables
+- ✅ **Validador ABNT** — hierarquia de seções, numeração, itálico em obras, citações longas
 - 📁 **Múltiplos documentos** — crie, renomeie, exporte e importe documentos `.editecc`
-- 💾 **Autosave** a cada 20 segundos com tratamento de erros de armazenamento
-- 📤 **Exportar PDF** via impressão nativa com `@page { margin: 0 }` — **margens corretas em todas as páginas** (divs `.a4-page` com padding ABNT)
-- 📝 **Exportar .doc** — HTML → Blob `application/msword`, compatível com Word. **Limitação:** `page-break-before` ignorado no LibreOffice (abre em modo Web). Migração para RTF em andamento (v0.9.11).
-- 👁️ **Preview de páginas** — botão na toolbar mostra como o conteúdo será dividido em páginas A4 antes de exportar
-- ⚙️ **Modal de Configurações** — tema claro/escuro, tamanho da interface, status dos modelos de IA, versão
-- 🖥️ **Build Tauri funcional** — app desktop nativo Linux/Windows
-- 🤖 **CI/CD** — GitHub Actions com lint, test, build e tauri-action para release automático
+- 💾 **Autosave** a cada 20 segundos
+- 📤 **Exportar PDF** — impressão nativa com margens ABNT corretas
+- 📝 **Exportar RTF** — compatível com Word, LibreOffice e Google Docs
+- 🖥️ **App desktop** — Windows (.exe), Linux (.deb, .AppImage, .rpm), macOS (.dmg)
+- 🤖 **CI/CD** — GitHub Actions com lint, test, build e tauri-action
 
 ---
 
@@ -49,40 +43,45 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | Versão | Status | Funcionalidades |
 |--------|--------|----------------|
 | **v0.1** | ✅ Concluído | MVP: editor + capa + sumário + autosave + PDF |
-| **v0.1.1** | ✅ Concluído | Folha de Rosto, Resumo, Abstract — conformidade com Manual ETEC 2022 |
-| **v0.2** | ✅ Concluído | Gerador de referências (Citation.js), Lista de Figuras/Tabelas automática |
-| **v0.3** | ✅ Concluído | Folha de Aprovação, Dedicatória, Agradecimentos, Epígrafe, Tradução Transformers.js (5 idiomas), numeração de página, recuo 2,5cm |
-| **v0.4** | ✅ Concluído | Export `.editecc`, suporte a múltiplos documentos |
-| **v0.5** | ✅ Concluído | Build Tauri — app desktop nativo Linux/Windows |
+| **v0.1.1** | ✅ Concluído | Folha de Rosto, Resumo, Abstract |
+| **v0.2** | ✅ Concluído | Gerador de referências (Citation.js), Lista de Figuras/Tabelas |
+| **v0.3** | ✅ Concluído | Folha de Aprovação, Dedicatória, Agradecimentos, Epígrafe, Tradução |
+| **v0.4** | ✅ Concluído | Export `.editecc`, múltiplos documentos |
+| **v0.5** | ✅ Concluído | Build Tauri — app desktop Linux/Windows |
 | **v0.6** | ✅ Concluído | Anexos, Apêndices, Glossário, Notas de rodapé |
-| **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS + placeholder 1º parágrafo) |
-| **v0.8** | ✅ Concluído | Gerador de slides v2: sumarização de seções via Transformers.js (`distilbart-cnn`) em vez do primeiro parágrafo — bullets formatados, loading com progresso na toolbar |
-| **v0.9** | ✅ Concluído | Acessibilidade (WCAG 2.2): aria-labels, foco visível, landmarks (main/nav/aside), skip link, live regions, reduced motion |
-| **v0.9.1** | ✅ Concluído | Onboarding (boas-vindas + Novo/Importar), estados vazios, responsivo mínimo (min-width 1024px) |
-| **v0.9.2** | ✅ Concluído | Atalhos de teclado visíveis (modal), landing page (hero + features grid + steps + CTA), tema claro (CSS variables + toggle) |
-| **v0.9.3** | ✅ Concluído | Skeleton loading (canvas + sidebar + toolbar), atalhos H1/H2/H3 na toolbar, documentação de uso (USAGE.md) |
-| **v0.9.4** | ✅ Concluído | Performance (debounce coverData), tema claro na landing page, atalho Ctrl+Shift+S para slides, heurística isNewDoc robusta, persistência de tema em localStorage, undo/redo para dados da capa (reducer + Ctrl+Z) |
-| **v0.9.5** | ✅ Concluído | Testes de integração (coverReducer: 10 testes), cache de status de modelo em localStorage, refatoração coverReducer para módulo separado |
-| **v0.9.6** | ✅ Concluído | Folha de Aprovação completa: examinadores editáveis (nome, título, instituição), cidade, UI no sidebar, persistência em EditeccDocument |
-| **v0.9.7** | ✅ Concluído | Múltiplos autores: `autores[]` no schema, UI com +/✕ na sidebar, Capa/FolhaRosto/FolhaAprovacao renderizam lista |
-| **v0.9.8** | ✅ Concluído | CI/CD (GitHub Actions + tauri-action), validador ABNT expandido (hierarquia, numeração, itálico), favicon + metadata, localStorage com try/catch e feedback, ErrorBoundary na sidebar, useAutosave hook, testes (45→82), export .docx, settings modal, spellcheck nativo |
-| **v0.9.9** | ✅ Concluído | Tamanho da interface ajustável (P/M/G/XG) na sidebar via classes `ui-size-*` no body + `!important`, preserva canvas ABNT em 12pt fixo, persistência em localStorage |
-| **v0.9.10** | ✅ Concluído | `stripFlex` reescrito (3 tipos), bug `removeAttribute` nuking altura corrigido, MSO namespaces no .doc, slide generator PT-BR (NLLB→distilbart→NLLB), AbstractSection com pt, orientador sem "Prof." duplicado, instituição dinâmica, data ISO corrigida, epígrafe sem travessão duplicado, Centro Paula Souza não duplicado, build com `--webpack` |
-| **v0.9.11** | ✅ Concluído | Migrar export .doc de HTML para RTF (`lib/exportRtf.ts`) — `\page` nativo no LibreOffice. Começar por Capa + FolhaRosto + FolhaAprovacao |
-| **v0.9.12** | ✅ Concluído | RTF completo com todas seções ABNT, acentos `\uXXXX?` universal, Sumário automático, numeração de páginas canto superior direito, nota FR 11pt |
-| **v0.9.13** | ✅ Concluído | PDF com margens corretas em todas as páginas (divs `.a4-page` com padding), preview de páginas na toolbar, page break detection utility |
-| **v1.0.0** | 🎯 Meta | Build Tauri para Linux/Windows/Mac — download direto sem clonar |
+| **v0.7** | ✅ Concluído | Gerador de slides (parser H1/H2 + PptxGenJS) |
+| **v0.8** | ✅ Concluído | Slides v2: sumarização via Transformers.js |
+| **v0.9** | ✅ Concluído | Acessibilidade WCAG 2.2 |
+| **v0.9.1-v0.9.9** | ✅ Concluído | Onboarding, atalhos, tema, skeleton, UI ajustável |
+| **v0.9.10** | ✅ Concluído | stripFlex reescrito, slide generator PT-BR |
+| **v0.9.11** | ✅ Concluído | Migrar export .doc para RTF |
+| **v0.9.12** | ✅ Concluído | RTF completo, acentos universais, Sumário automático |
+| **v0.9.13** | ✅ Concluído | PDF com margens corretas, preview de páginas |
+| **v0.9.14** | ✅ Concluído | Slides TF-IDF (sem IA), landing page, CI Tauri |
+| **v1.0.0** | ✅ Concluído | **Lançamento oficial** — apps desktop (Win/Linux/Mac), landing, release pública |
+| **v1.0.1** | 🔜 Próximo | Corrigir referências, numeração de páginas, testes E2E |
 
 ---
 
 ## 🚀 Como usar
 
-### Pré-requisitos
+### Versão Web
 
-- Node.js 18+
-- npm
+Acesse direto no navegador: **[editecc.vercel.app](https://editecc.vercel.app)**
 
-### Instalação
+### Download Desktop
+
+Baixe a versão para o seu sistema operacional na página de [releases](https://github.com/rodrigopereiradevelopment/editecc/releases/tag/v1.0.0):
+
+| Sistema | Arquivo |
+|---------|---------|
+| Windows | `EditeCC_0.9.14_x64-setup.exe` |
+| Linux (Ubuntu/Debian) | `EditeCC_0.9.14_amd64.deb` |
+| Linux (Fedora/RHEL) | `EditeCC-0.9.14-1.x86_64.rpm` |
+| Linux (qualquer) | `EditeCC_0.9.14_amd64.AppImage` |
+| macOS (Apple Silicon) | `EditeCC_0.9.14_aarch64.dmg` |
+
+### Desenvolvimento
 
 ```bash
 git clone https://github.com/rodrigopereiradevelopment/editecc.git
@@ -93,16 +92,6 @@ npm run dev
 
 Acesse `http://localhost:3000` no navegador.
 
-> **Linux/Mac:** `npm run dev` normal.  
-> **Android (Termux):** `npm run dev -- --webpack` (Turbopack não suporta arm64).
-
-### Build para produção
-
-```bash
-npm run build
-npm start
-```
-
 ---
 
 ## 🏗️ Arquitetura
@@ -110,43 +99,18 @@ npm start
 ```
 editecc/
 ├── app/
-│   ├── layout.tsx              # Layout raiz + metadados
-│   ├── globals.css             # Estilos ABNT globais (Arial 12pt, margens, citações)
 │   ├── page.tsx                # Landing page
-│   └── editor/
-│       └── page.tsx            # Página do editor (Tiptap + sidebar + canvas)
-├── components/
-│   ├── Capa.tsx                # Folha da Capa ABNT
-│   ├── FolhaRosto.tsx          # Folha de Rosto ABNT
-│   ├── FolhaAprovacao.tsx      # Folha de Aprovação (banca examinadora)
-│   ├── Dedicatoria.tsx         # Dedicatória (opcional)
-│   ├── Agradecimentos.tsx      # Agradecimentos (opcional)
-│   ├── Epigrafe.tsx            # Epígrafe (opcional)
-│   ├── ResumoPage.tsx          # Resumo renderizado como página A4
-│   ├── AbstractPage.tsx        # Abstract renderizado como página A4
-│   ├── SumarioPage.tsx         # Sumário automático a partir dos headings
-│   ├── PagePreview.tsx         # Preview de páginas A4 antes de exportar
-│   ├── PageBreakIndicator.tsx  # Indicador visual de quebra de página
-│   ├── ResumoSection.tsx       # Campo de Resumo com contador de palavras
-│   ├── AbstractSection.tsx     # Campo de Abstract com tradução automática
-│   ├── GeradorReferencias.tsx  # Gerador de referências com Citation.js
-│   └── ListaFigurasTabelas.tsx # Lista automática de figuras e tabelas
+│   └── editor/page.tsx         # Página do editor
+├── components/                 # 24 componentes React
 ├── lib/
-│   ├── abnt/
-│   │   ├── styles.ts           # Estilos, validação expandida e gerador de sumário ABNT
-│   │   └── pageBreak.ts        # Detecção de quebras de página A4
-│   ├── coverReducer.ts         # Reducer undo/redo para dados da capa
-│   ├── document.ts             # Tipos, storage com try/catch, export/import .editecc
-│   ├── exportDocument.ts       # Exportação PDF/DOC com stripFlex
+│   ├── abnt/styles.ts          # Formatação ABNT + validação
 │   ├── exportRtf.ts            # Exportação RTF completa
-│   └── slideGenerator.ts       # Parser Tiptap → PptxGenJS + sumarização
+│   ├── slideGenerator.ts       # Parser Tiptap → PptxGenJS
+│   └── tfidf.ts               # Sumarização extrativa TF-IDF
 ├── hooks/
-│   ├── useAutosave.ts          # Autosave com intervalo 20s + tratamento de erro
-│   ├── useDocuments.ts         # Gerenciamento multi-documento (CRUD + persistência)
-│   ├── useTranslation.ts       # Tradução Transformers.js (NLLB-200, 5 idiomas)
-│   ├── useSummarization.ts     # Sumarização Transformers.js (distilbart-cnn)
-│   └── useTauri.ts             # Abstração para backend Rust do Tauri
-└── src-tauri/                  # Backend Rust para build desktop (Tauri)
+│   ├── useTranslation.ts       # Tradução Transformers.js
+│   └── useSummarization.ts     # Sumarização Transformers.js (deprecated)
+└── src-tauri/                  # Backend Rust (Tauri v2)
 ```
 
 ### Stack
@@ -156,41 +120,32 @@ editecc/
 | Framework | Next.js 16 (App Router) |
 | Editor | Tiptap v3 + ProseMirror |
 | Persistência | localStorage / IndexedDB |
-| Desktop | Tauri v2 (Rust) — build Linux/Windows funcional |
-| Referências | Citation.js (DOI, ISBN, BibTeX → ABNT NBR 6023) |
-| Tradução | Transformers.js (NLLB-200, 100% local, 5 idiomas) |
+| Desktop | Tauri v2 (Rust) |
+| Referências | Citation.js |
+| Tradução | Transformers.js (NLLB-200, 100% local) |
 
 ---
 
-## 📐 Padrão ABNT Implementado
-
-Baseado no **Manual de TCC das ETECs (2022)** e na **ABNT NBR 14724:2011**.
+## 📐 Padrão ABNT
 
 | Elemento | Configuração |
 |----------|-------------|
 | Margens | 3cm (sup/esq), 2cm (inf/dir) |
-| Fonte | Arial 12pt (conforme Manual ETEC 2022) |
+| Fonte | Arial 12pt |
 | Espaçamento | 1,5 entre linhas |
-| Recuo de parágrafo | 2,5cm na primeira linha |
-| Título 1 (seção primária) | 12pt, negrito, maiúsculas, centralizado |
-| Título 2 (seção secundária) | 12pt, negrito, à esquerda |
-| Título 3 (seção terciária) | 12pt, negrito, itálico, à esquerda |
-| Citação longa (>3 linhas) | 10pt, espaço simples, recuo 4cm |
-| Referências | 12pt, espaço simples, linha em branco entre entradas |
-| Resumo / Abstract | 10pt, espaço simples, parágrafo único sem recuo, 150–500 palavras |
-| Título/Subtítulo na Capa | Arial 14pt, maiúsculas, centralizado |
-| Numeração de página | Canto superior direito (a partir da Introdução) |
-| Norma base | ABNT NBR 14724:2011 |
+| Recuo | 2,5cm na primeira linha |
+| Citação longa | 10pt, espaço simples, recuo 4cm |
+| Referências | 12pt, espaço simples |
+| Resumo | 10pt, espaço simples, 150–500 palavras |
+| Numeração | Canto superior direito (a partir da Introdução) |
 
 ---
 
 ## 🤝 Contribuindo
 
-Pull requests são bem-vindos! Para mudanças grandes, abra uma issue primeiro.
-
 1. Fork o projeto
 2. Crie sua branch (`git checkout -b feature/nova-funcionalidade`)
-3. Commit (`git commit -m 'feat: adiciona gerador de referências'`)
+3. Commit (`git commit -m 'feat: adiciona funcionalidade'`)
 4. Push (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
 
