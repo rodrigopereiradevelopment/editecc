@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "EditeCC",
-  "version": "0.9.14",
+  "version": "1.0.0",
   "identifier": "dev.rodrigopereira.editecc",
   "build": {
     "beforeDevCommand": "npm run next-dev",

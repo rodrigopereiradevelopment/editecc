@@ -759,7 +759,7 @@ export default function LandingPage() {
             </span>
           </div>
           <span style={{ color: "var(--lp-stat-label)", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
-            v0.9.14 · ABNT NBR 14724:2011
+            v1.0.0 · ABNT NBR 14724:2011
           </span>
         </footer>
       </main>
