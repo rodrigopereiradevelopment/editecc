@@ -24,8 +24,22 @@ const ABNT_CSS = `
     align-items: stretch;
     page-break-after: always;
     page-break-inside: avoid;
+    position: relative;
   }
   .a4-page:first-of-type { page-break-before: auto; }
+  .a4-page.has-number::after {
+    counter-increment: page-counter;
+    content: counter(page-counter);
+    position: absolute;
+    bottom: 2cm;
+    right: 2cm;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    color: #111;
+  }
+  .a4-page.has-number-first {
+    counter-reset: page-counter var(--start-page, 0);
+  }
   .abnt-referencia { font-size: 10pt; line-height: 1; text-indent: 0; margin-bottom: 6pt; }
   img { max-width: 100%; height: auto; }
   table { width: 100%; border-collapse: collapse; margin: 1em 0; }
@@ -97,29 +111,62 @@ export function getFullDocumentHTML(): string {
   const pages = document.querySelectorAll<HTMLElement>(".a4-page");
   let bodyHTML = "";
   let pageIndex = 0;
+  let sumarioIndex = -1;
+
+  // Primeiro: encontrar qual página é o Sumário
+  pages.forEach((el) => {
+    const text = el.textContent || "";
+    if (text.includes("SUMÁRIO") && el.querySelector("h1")) {
+      sumarioIndex = pageIndex;
+    }
+    pageIndex++;
+  });
+
+  // Resetar pageIndex para o loop principal
+  pageIndex = 0;
 
   pages.forEach((el) => {
     const clone = el.cloneNode(true) as HTMLElement;
     stripFlex(clone);
-    
-    // Check if this is the editor content (Tiptap)
+
+    // Verificar se é conteúdo do editor (Tiptap)
     if (clone.classList.contains("editor-area")) {
-      // Split editor content into multiple pages
+      // Dividir conteúdo do editor em múltiplas páginas
       const editorHtml = clone.innerHTML;
       const splitPages = splitContentIntoPages(editorHtml);
-      
+
       splitPages.forEach((pageHtml) => {
         let style = "";
+        let classes = "a4-page";
         if (pageIndex > 0) style += "page-break-before: always; mso-page-break-before: always;";
-        bodyHTML += `<div class="a4-page" style="${esc(style)}">${pageHtml}</div>`;
+        // Adicionar has-number depois do Sumário
+        if (sumarioIndex >= 0 && pageIndex > sumarioIndex) {
+          classes += " has-number";
+          // Primeira página com número: definir contador
+          if (pageIndex === sumarioIndex + 1) {
+            classes += " has-number-first";
+            style += ` --start-page: ${pageIndex};`;
+          }
+        }
+        bodyHTML += `<div class="${classes}" style="${esc(style)}">${pageHtml}</div>`;
         pageIndex++;
       });
     } else {
-      // Other pages (Capa, FolhaRosto, etc.)
+      // Outras páginas (Capa, FolhaRosto, etc.)
       const inner = clone.innerHTML;
       let style = clone.getAttribute("style") || "";
+      let classes = "a4-page";
       if (pageIndex > 0) style += "; page-break-before: always; mso-page-break-before: always";
-      bodyHTML += `<div class="a4-page" style="${esc(style)}">${inner}</div>`;
+      // Adicionar has-number depois do Sumário
+      if (sumarioIndex >= 0 && pageIndex > sumarioIndex) {
+        classes += " has-number";
+        // Primeira página com número: definir contador
+        if (pageIndex === sumarioIndex + 1) {
+          classes += " has-number-first";
+          style += `; --start-page: ${pageIndex}`;
+        }
+      }
+      bodyHTML += `<div class="${classes}" style="${esc(style)}">${inner}</div>`;
       pageIndex++;
     }
   });

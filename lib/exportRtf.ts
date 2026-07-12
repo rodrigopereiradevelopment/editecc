@@ -83,8 +83,8 @@ function rtfHeader(): string {
 }
 
 function rtfHeaderWithNumber(): string {
-  // Header com número de página, canto superior direito, Times 10pt
-  return "{\\header \\pard \\plain \\qr \\f1 \\fs20 \\chpgn \\par}";
+  // Footer com número de página, canto inferior direito, Times 10pt
+  return "{\\footer \\pard \\plain \\qr \\f1 \\fs20 \\chpgn \\par}";
 }
 
 // ─── Geradores de páginas ─────────────────────────────────────────────────────
@@ -594,7 +594,8 @@ export function generateFullRtf(
     if (sumario) { rtf += sumario; }
   }
 
-  // A partir daqui ativa numeração de páginas (canto superior direito)
+  // Quebra de seção + ativa numeração de páginas (canto inferior direito)
+  rtf += "\\sect\n";
   rtf += rtfHeaderWithNumber();
   rtf += "\n";
 

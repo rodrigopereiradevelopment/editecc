@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import FeedbackButton from "../components/FeedbackButton";
 
 // ─── DADOS ────────────────────────────────────────────────────────────────────
 const FEATURES = [
@@ -758,9 +759,12 @@ export default function LandingPage() {
               EditeCC · MIT License · rodrigopereiradevelopment
             </span>
           </div>
-          <span style={{ color: "var(--lp-stat-label)", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
-            v1.0.0 · ABNT NBR 14724:2011
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <FeedbackButton />
+            <span style={{ color: "var(--lp-stat-label)", fontSize: "12px", fontFamily: "DM Mono, monospace" }}>
+              v1.0.0 · ABNT NBR 14724:2011
+            </span>
+          </div>
         </footer>
       </main>
     </>
