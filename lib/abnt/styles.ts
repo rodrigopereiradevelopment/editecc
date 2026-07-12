@@ -352,46 +352,53 @@ export interface Reference {
 }
 
 export function formatReference(ref: Reference): string {
-  const authorsList = Array.isArray(ref.authors) ? ref.authors.join("; ") : "";
+  const a = Array.isArray(ref.authors) ? ref.authors.filter(x => x?.trim()).join("; ") : "";
+  const t = ref.title || "Sem título";
+  const y = ref.year || new Date().getFullYear();
+  const c = ref.city || "s.c.";
+  const p = ref.publisher || "s.n.";
 
   switch (ref.type) {
     case "book":
-      return `${authorsList}. ${ref.title.toUpperCase()}${
+      return `${a}. ${t.toUpperCase()}${
         ref.edition ? ". " + ref.edition + " ed." : ""
-      }. ${ref.city}: ${ref.publisher}, ${ref.year}.`;
+      }. ${c}: ${p}, ${y}.`;
 
     case "article":
-      return `${authorsList}. ${ref.title}. ${ref.journal}${
+      return `${a}. ${t}. ${ref.journal || "s.i."}${
         ref.volume ? ", v." + ref.volume : ""
       }${ref.number ? ", n." + ref.number : ""}${
         ref.pages ? ", p." + ref.pages : ""
-      }, ${ref.year}.`;
+      }, ${y}.`;
 
     case "chapter":
-      return `${authorsList}. ${ref.title}. In: ${ref.publisher} (org.). ${
-        ref.subtitle
-      }. ${ref.city}: ${ref.publisher}, ${ref.year}${
+      return `${a}. ${t}. In: ${p} (org.). ${
+        ref.subtitle || t
+      }. ${c}: ${p}, ${y}${
         ref.number ? ". cap. " + ref.number : ""
       }${ref.pages ? ", p." + ref.pages : ""}.`;
 
+    case "thesis":
+      return `${a}. ${t}. ${y}. ${
+        ref.subtitle || "Dissertação"
+      } - ${p}, ${c}, ${y}.`;
+
     case "law":
-      return `${ref.title}. ${ref.publisher}, ${ref.city}, ${ref.year}.`;
+      return `${t}. ${p}, ${c}, ${y}.`;
 
     case "ebook":
-      return `${authorsList}. ${ref.title.toUpperCase()}. ${ref.city}: ${
-        ref.publisher
-      }, ${ref.year}. E-book.`;
+      return `${a}. ${t.toUpperCase()}. ${c}: ${p}, ${y}. E-book.`;
 
     case "event":
-      return `${authorsList}. ${ref.title}. In: ${ref.publisher}, ${ref.year}. Anais...${
+      return `${a}. ${t}. In: ${p}, ${y}. Anais...${
         ref.pages ? " p." + ref.pages : ""
       }.`;
 
     case "website":
-      return `${authorsList}. ${ref.title}. Disponível em: ${ref.url}. Acesso em: ${ref.accessDate}.`;
+      return `${a}. ${t}. Disponível em: ${ref.url || "s.i."}. Acesso em: ${ref.accessDate || "s.d."}.`;
 
     default:
-      return `${authorsList}. ${ref.title}. ${ref.year}.`;
+      return `${a}. ${t}. ${y}.`;
   }
 }
 

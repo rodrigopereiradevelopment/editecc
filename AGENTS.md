@@ -8,7 +8,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Name**: EditeCC
 - **Purpose**: Editor de textos acadêmicos com formatação ABNT automática (TCCs, monografias).
 - **Stack**: Next.js 16.x (App Router), Tiptap v3, Tauri v2 (Rust), Transformers.js, PptxGenJS, Citation.js, Vitest.
-- **Current**: v1.0.0
+- **Current**: v1.0.1
 - **Main Workflows**: Escrever e formatar TCC → elementos pré/pós-textuais → traduzir resumo → exportar PDF → gerar slides → **exportar .doc (com limitação conhecida no LibreOffice — migrando para RTF)**.
 
 ## Dev Commands
@@ -32,7 +32,7 @@ npm run tauri:build:windows      # build Windows
 
 - **`app/`**: Next.js App Router — landing page (`app/page.tsx`) e editor (`app/editor/page.tsx`)
 - **`components/`**: 24 componentes React — Capa, FolhaRosto, FolhaAprovacao, ResumoPage, AbstractPage, AnexoPage, ApendicePage, GlossarioPage, NotasRodapePage, SumarioPage, PagePreview, PageBreakIndicator, Editor, DocumentManager, PosTextuaisManager, etc.
-- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação expandida: hierarquia, numeração, itálico), `lib/abnt/pageBreak.ts` (detecção de quebras de página), `lib/document.ts` (tipos, storage com try/catch, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX)
+- **`lib/`**: Lógica central — `lib/abnt/styles.ts` (formatação ABNT, validação expandida: hierarquia, numeração, itálico), `lib/abnt/pageBreak.ts` (detecção de quebras de página), `lib/document.ts` (tipos, storage com try/catch, export/import `.editecc`), `lib/slideGenerator.ts` (parser Tiptap → PPTX), `lib/tfidf.ts` (sumarização extrativa + extração de termos para glossário)
 - **`hooks/`**: React hooks — `useAutosave.ts` (intervalo 20s + tratamento de erro), `useDocuments`, `useTranslation` (Transformers.js NLLB-200), `useSummarization` (Transformers.js distilbart-cnn), `useTauri`
 - **`app/editor/page.tsx`**: Entry point do editor (~1380 linhas) — gerencia todo o estado + canvas A4 + sidebar + toolbar + modais + settings + tamanho da interface
 - **Persistência**: 100% localStorage (`editecc-docs`), autosave a cada 20s
@@ -84,7 +84,7 @@ Custom slash commands configured in `.opencode/commands/`:
 ## Test Status
 
 ```bash
-# 10 suites, 128 tests passing
+# 11 suites, 146 tests passing
 npm test
 ```
 

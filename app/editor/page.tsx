@@ -599,7 +599,7 @@ export default function EditorPage() {
             </button>
           </div>
           <p style={{ fontSize: "12px", color: "var(--text-very-dim)", marginTop: "8px" }}>
-            v0.9.3 · 100% local · sem cadastro · sem API externa
+            v1.0.1 · 100% local · sem cadastro · sem API externa
           </p>
         </div>
       ) : (
@@ -1084,6 +1084,7 @@ export default function EditorPage() {
                   <GlossarioManager
                     entries={glossario}
                     onChange={setGlossario}
+                    editorHtml={editor?.getHTML() || ""}
                   />
                   <NotasRodapeManager
                     notas={notasRodape}
@@ -1421,7 +1422,7 @@ export default function EditorPage() {
               <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)" }}>
                   <span>Versão</span>
-                  <span style={{ fontFamily: "DM Mono, monospace" }}>v1.0.0</span>
+                  <span style={{ fontFamily: "DM Mono, monospace" }}>v1.0.1</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
                   <span>Licença</span>

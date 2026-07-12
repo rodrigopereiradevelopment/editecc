@@ -4,11 +4,11 @@
 
 Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos acadêmicos sem perder horas configurando margens e estilos no Word.
 
-> **Versão atual: v1.0.0** — [Baixar](https://github.com/rodrigopereiradevelopment/editecc/releases/tag/v1.0.0) | [Versão Web](https://editecc.vercel.app)
+> **Versão atual: v1.0.1** — [Baixar](https://github.com/rodrigopereiradevelopment/editecc/releases/tag/v1.0.1) | [Versão Web](https://editecc.vercel.app)
 
 ---
 
-## ✨ Funcionalidades (v1.0.0)
+## ✨ Funcionalidades (v1.0.1)
 
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
@@ -17,10 +17,11 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 - 📖 **Dedicatória, Agradecimentos, Epígrafe** — elementos pré-textuais opcionais
 - 📝 **Resumo + Abstract** — campos dedicados com contador de palavras, renderizados como páginas A4
 - 🌐 **Tradução automática Transformers.js** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200)
-- 📑 **Sumário automático** a partir dos headings do documento
-- 📚 **Gerador de referências com Citation.js** — DOI, ISBN, BibTeX → ABNT NBR 6023
+- 📑 **Sumário automático** a partir dos headings do documento (com split de páginas longas)
+- 📚 **Gerador de referências com Citation.js** — DOI, ISBN, BibTeX → ABNT NBR 6023 (com guards para campos indefinidos)
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais com identificação por letras
+- 📖 **Glossário semi-automático** — TF-IDF detecta termos importantes do texto, você define as definições
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores no texto
 - 📽️ **Gerador de Slides** — sumarização extrativa TF-IDF offline, formatação em bullets, geração `.pptx`
 - 🔍 **Tamanho da interface ajustável** — sidebar, labels, inputs e textareas com 4 níveis (P/M/G/XG)
@@ -59,7 +60,7 @@ Desenvolvido para estudantes que precisam formatar TCCs, monografias e trabalhos
 | **v0.9.13** | ✅ Concluído | PDF com margens corretas, preview de páginas |
 | **v0.9.14** | ✅ Concluído | Slides TF-IDF (sem IA), landing page, CI Tauri |
 | **v1.0.0** | ✅ Concluído | **Lançamento oficial** — apps desktop (Win/Linux/Mac), landing, release pública |
-| **v1.0.1** | 🔜 Próximo | Corrigir referências, numeração de páginas, testes E2E |
+| **v1.0.1** | 🔜 Próximo | Corrigir referências, glossário semi-automático, numeração de páginas, testes E2E |
 
 ---
 
@@ -71,15 +72,15 @@ Acesse direto no navegador: **[editecc.vercel.app](https://editecc.vercel.app)**
 
 ### Download Desktop
 
-Baixe a versão para o seu sistema operacional na página de [releases](https://github.com/rodrigopereiradevelopment/editecc/releases/tag/v1.0.0):
+Baixe a versão para o seu sistema operacional na página de [releases](https://github.com/rodrigopereiradevelopment/editecc/releases/tag/v1.0.1):
 
 | Sistema | Arquivo |
 |---------|---------|
-| Windows | `EditeCC_0.9.14_x64-setup.exe` |
-| Linux (Ubuntu/Debian) | `EditeCC_0.9.14_amd64.deb` |
-| Linux (Fedora/RHEL) | `EditeCC-0.9.14-1.x86_64.rpm` |
-| Linux (qualquer) | `EditeCC_0.9.14_amd64.AppImage` |
-| macOS (Apple Silicon) | `EditeCC_0.9.14_aarch64.dmg` |
+| Windows | `EditeCC_1.0.1_x64-setup.exe` |
+| Linux (Ubuntu/Debian) | `EditeCC_1.0.1_amd64.deb` |
+| Linux (Fedora/RHEL) | `EditeCC-1.0.1-1.x86_64.rpm` |
+| Linux (qualquer) | `EditeCC_1.0.1_amd64.AppImage` |
+| macOS (Apple Silicon) | `EditeCC_1.0.1_aarch64.dmg` |
 
 ### Desenvolvimento
 
@@ -106,7 +107,7 @@ editecc/
 │   ├── abnt/styles.ts          # Formatação ABNT + validação
 │   ├── exportRtf.ts            # Exportação RTF completa
 │   ├── slideGenerator.ts       # Parser Tiptap → PptxGenJS
-│   └── tfidf.ts               # Sumarização extrativa TF-IDF
+│   └── tfidf.ts               # Sumarização extrativa TF-IDF + extração de termos
 ├── hooks/
 │   ├── useTranslation.ts       # Tradução Transformers.js
 │   └── useSummarization.ts     # Sumarização Transformers.js (deprecated)

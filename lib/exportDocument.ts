@@ -107,17 +107,54 @@ function esc(s: string): string {
   return s.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+function splitSumarioPages(
+  clone: HTMLElement,
+  baseStyle: string,
+): { html: string; extraPages: number } {
+  const h1 = clone.querySelector("h1");
+  const entries = Array.from(clone.querySelectorAll("p"));
+  const MAX_PER_PAGE = 25;
+
+  if (entries.length <= MAX_PER_PAGE) {
+    let s = baseStyle;
+    s += "; page-break-inside: auto";
+    return { html: `<div class="a4-page" style="${esc(s)}">${clone.innerHTML}</div>`, extraPages: 0 };
+  }
+
+  const pages: string[] = [];
+  for (let i = 0; i < entries.length; i += MAX_PER_PAGE) {
+    let s = baseStyle;
+    s += "; page-break-inside: auto";
+    if (i > 0) s += "; page-break-before: always; mso-page-break-before: always";
+
+    let content = "";
+    if (i === 0 && h1) {
+      content += `<h1 style="font-size:12pt;font-weight:700;text-transform:uppercase;text-align:center;margin-bottom:1.5em;">SUMÁRIO</h1>`;
+    }
+    const chunk = entries.slice(i, i + MAX_PER_PAGE);
+    chunk.forEach((p) => { content += p.outerHTML; });
+    pages.push(`<div class="a4-page" style="${esc(s)}">${content}</div>`);
+  }
+
+  return { html: pages.join(""), extraPages: pages.length - 1 };
+}
+
 export function getFullDocumentHTML(): string {
   const pages = document.querySelectorAll<HTMLElement>(".a4-page");
   let bodyHTML = "";
   let pageIndex = 0;
   let sumarioIndex = -1;
+  let sumarioExtraPages = 0;
 
-  // Primeiro: encontrar qual página é o Sumário
+  // Primeiro: encontrar qual página é o Sumário e checar overflow
   pages.forEach((el) => {
     const text = el.textContent || "";
     if (text.includes("SUMÁRIO") && el.querySelector("h1")) {
       sumarioIndex = pageIndex;
+      const entries = el.querySelectorAll("p");
+      if (entries.length > 25) {
+        sumarioExtraPages = Math.ceil(entries.length / 25) - 1;
+      }
     }
     pageIndex++;
   });
@@ -129,6 +166,19 @@ export function getFullDocumentHTML(): string {
     const clone = el.cloneNode(true) as HTMLElement;
     stripFlex(clone);
 
+    const isSumario = sumarioIndex >= 0 &&
+      pageIndex === sumarioIndex &&
+      clone.querySelector("h1") &&
+      (clone.textContent || "").includes("SUMÁRIO");
+
+    if (isSumario) {
+      const baseStyle = clone.getAttribute("style") || "";
+      const result = splitSumarioPages(clone, baseStyle);
+      bodyHTML += result.html;
+      pageIndex += 1 + result.extraPages;
+      return;
+    }
+
     // Verificar se é conteúdo do editor (Tiptap)
     if (clone.classList.contains("editor-area")) {
       // Dividir conteúdo do editor em múltiplas páginas
@@ -139,11 +189,11 @@ export function getFullDocumentHTML(): string {
         let style = "";
         let classes = "a4-page";
         if (pageIndex > 0) style += "page-break-before: always; mso-page-break-before: always;";
-        // Adicionar has-number depois do Sumário
-        if (sumarioIndex >= 0 && pageIndex > sumarioIndex) {
+        // Adicionar has-number depois do Sumário (ajustado por extra pages)
+        const effectiveSumarioIndex = sumarioIndex + sumarioExtraPages;
+        if (effectiveSumarioIndex >= 0 && pageIndex > effectiveSumarioIndex) {
           classes += " has-number";
-          // Primeira página com número: definir contador
-          if (pageIndex === sumarioIndex + 1) {
+          if (pageIndex === effectiveSumarioIndex + 1) {
             classes += " has-number-first";
             style += ` --start-page: ${pageIndex};`;
           }
@@ -157,11 +207,11 @@ export function getFullDocumentHTML(): string {
       let style = clone.getAttribute("style") || "";
       let classes = "a4-page";
       if (pageIndex > 0) style += "; page-break-before: always; mso-page-break-before: always";
-      // Adicionar has-number depois do Sumário
-      if (sumarioIndex >= 0 && pageIndex > sumarioIndex) {
+      // Adicionar has-number depois do Sumário (ajustado por extra pages)
+      const effectiveSumarioIndex = sumarioIndex + sumarioExtraPages;
+      if (effectiveSumarioIndex >= 0 && pageIndex > effectiveSumarioIndex) {
         classes += " has-number";
-        // Primeira página com número: definir contador
-        if (pageIndex === sumarioIndex + 1) {
+        if (pageIndex === effectiveSumarioIndex + 1) {
           classes += " has-number-first";
           style += `; --start-page: ${pageIndex}`;
         }

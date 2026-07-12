@@ -13,9 +13,11 @@
 
 ## v1.0.1 — Bugs e estabilidade
 
-- [ ] Corrigir referências ". undefined. undefined."
-- [ ] RTF: adicionar numeração de páginas (canto superior direito)
-- [ ] PDF: adicionar numeração de páginas (canto superior direito)
+- [x] Corrigir referências ". undefined. undefined."
+- [x] Glossário semi-automático (extração de termos via TF-IDF)
+- [x] Sumário: split de páginas longas (overflow sem margens)
+- [ ] RTF: numeração de páginas (canto inferior direito)
+- [ ] PDF: numeração de páginas (canto inferior direito)
 - [ ] Testes E2E com Playwright
 - [ ] Feedback de usuários reais (ETEC/Fatec)
 

@@ -104,6 +104,74 @@ describe("formatReference", () => {
     expect(result).toContain("https://exemplo.com");
     expect(result).toContain("10 mar. 2024");
   });
+
+  it("formata tese/dissertação", () => {
+    const ref: Reference = { ...base, type: "thesis", subtitle: "Mestrado", publisher: "USP" };
+    const result = formatReference(ref);
+    expect(result).toContain("SILVA, João");
+    expect(result).toContain("Livro de Exemplo");
+    expect(result).toContain("Mestrado");
+    expect(result).toContain("USP");
+  });
+
+  it("não imprime 'undefined' com campos faltando", () => {
+    const ref: Reference = {
+      type: "book",
+      authors: [],
+      title: "",
+      year: 0,
+    };
+    const result = formatReference(ref);
+    expect(result).not.toContain("undefined");
+  });
+
+  it("lida com authors undefined (docs antigos)", () => {
+    const ref = { type: "book", title: "Teste", year: 2024 } as Reference;
+    const result = formatReference(ref);
+    expect(result).not.toContain("undefined");
+    expect(result).toContain("TESTE");
+  });
+
+  it("lida com title undefined", () => {
+    const ref = { type: "article", authors: ["autor"], year: 2024 } as Reference;
+    const result = formatReference(ref);
+    expect(result).not.toContain("undefined");
+    expect(result).toContain("Sem título");
+  });
+
+  it("lida com year undefined", () => {
+    const ref = { type: "book", authors: ["autor"], title: "Livro" } as Reference;
+    const result = formatReference(ref);
+    expect(result).not.toContain("undefined");
+  });
+
+  it("formata ebook", () => {
+    const ref: Reference = { ...base, type: "ebook" };
+    const result = formatReference(ref);
+    expect(result).toContain("E-book");
+    expect(result).toContain("LIVRO DE EXEMPLO");
+  });
+
+  it("formata evento", () => {
+    const ref: Reference = { ...base, type: "event", pages: "10-20" };
+    const result = formatReference(ref);
+    expect(result).toContain("Anais");
+    expect(result).toContain("p.10-20");
+  });
+
+  it("formata legislação", () => {
+    const ref: Reference = { ...base, type: "law" };
+    const result = formatReference(ref);
+    expect(result).toContain("Livro de Exemplo");
+    expect(result).toContain("2024");
+  });
+
+  it("formata capítulo", () => {
+    const ref: Reference = { ...base, type: "chapter", subtitle: "Capítulo 1", pages: "15-30" };
+    const result = formatReference(ref);
+    expect(result).toContain("In:");
+    expect(result).toContain("p.15-30");
+  });
 });
 
 describe("getStyleById / getAllStyles", () => {

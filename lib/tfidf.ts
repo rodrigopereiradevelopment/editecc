@@ -118,6 +118,63 @@ function sentenceScore(words: string[], allSentenceWords: string[][]): number {
 }
 
 /**
+ * Extrai os termos mais importantes do texto (para sugestão de glossário).
+ *
+ * Usa TF-IDF para encontrar palavras com alta frequência e alto IDF
+ * (ou seja, termos importantes e específicos do texto).
+ *
+ * @param html - Conteúdo HTML do editor
+ * @param maxTerms - Máximo de termos retornados (default 15)
+ * @returns Array de termos em ordem de importância
+ */
+export function extractTopTerms(html: string, maxTerms: number = 15): string[] {
+  const text = html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&[^;]+;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length < 50) return [];
+
+  const words = stripAccents(text.toLowerCase())
+    .replace(/[^\w\s-]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 3 && !STOPWORDS.has(w));
+
+  if (words.length < 10) return [];
+
+  const freq = new Map<string, number>();
+  for (const w of words) {
+    freq.set(w, (freq.get(w) || 0) + 1);
+  }
+
+  const uniqueWords = [...freq.keys()];
+  const docCount = words.length;
+
+  const scored = uniqueWords.map((word) => {
+    const count = freq.get(word)!;
+    const tfVal = count / docCount;
+    const containing = words.filter((w) => w === word).length;
+    const idfVal = Math.log(docCount / (containing + 1)) + 1;
+    return { word, score: tfVal * idfVal * count, count };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const s of scored) {
+    if (s.count < 2) continue;
+    const canonical = s.word.replace(/s$/, "");
+    if (seen.has(canonical)) continue;
+    seen.add(canonical);
+    result.push(s.word);
+    if (result.length >= maxTerms) break;
+  }
+
+  return result;
+}
+
+/**
  * Sumarização extrativa: seleciona as N frases mais importantes.
  *
  * - Se ≤3 frases: usa texto completo truncado (seção curta)
