@@ -540,7 +540,16 @@ export default function EditorPage() {
             page-break-after: always;
             page-break-inside: avoid;
           }
-          .a4-page::after { content: "" !important; }
+          .a4-page::after {
+            content: counter(page) !important;
+            counter-increment: page;
+            position: absolute;
+            bottom: 2cm;
+            right: 2cm;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            color: #111;
+          }
           .tiptap, .ProseMirror {
             padding: 3cm 2cm 2cm 3cm !important;
           }
@@ -1412,11 +1421,26 @@ export default function EditorPage() {
               <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)" }}>
                   <span>Versão</span>
-                  <span style={{ fontFamily: "DM Mono, monospace" }}>v0.9.9</span>
+                  <span style={{ fontFamily: "DM Mono, monospace" }}>v1.0.0</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
                   <span>Licença</span>
                   <span>MIT</span>
+                </div>
+                <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid var(--border-color)" }}>
+                  <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSetanArm89lu15fZ70vJ-wSw9-yPbphdjMf6YnIdP251cKqvw/viewform?usp=publish-editor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+                      padding: "8px 12px", background: "var(--bg-elevated)", border: "1px solid var(--border-color)",
+                      borderRadius: "6px", fontSize: "12px", color: "var(--text-secondary)",
+                      textDecoration: "none", cursor: "pointer",
+                    }}
+                  >
+                    💬 Enviar Feedback
+                  </a>
                 </div>
               </div>
             </div>
