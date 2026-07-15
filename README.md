@@ -144,11 +144,7 @@ editecc/
 
 ## 🤝 Contribuindo
 
-1. Fork o projeto
-2. Crie sua branch (`git checkout -b feature/nova-funcionalidade`)
-3. Commit (`git commit -m 'feat: adiciona funcionalidade'`)
-4. Push (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+Veja o [CONTRIBUTING.md](CONTRIBUTING.md) com instruções completas de setup, padrões, testes e PR checklist.
 
 ---
 
