@@ -3,7 +3,7 @@
 ![EditeCC](public/og-image.png)
 
 ![Latest Release](https://img.shields.io/github/v/release/rodrigopereiradevelopment/editecc?label=version)
-![License](https://img.shields.io/github/license/rodrigopereiradevelopment/editecc?label=license&color=blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
 ![Build](https://img.shields.io/github/actions/workflow/status/rodrigopereiradevelopment/editecc/ci.yml?label=CI&branch=main)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![Tauri](https://img.shields.io/badge/Tauri-v2-blue?logo=tauri)
