@@ -13,27 +13,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EditeCC — Editor de TCC com formatação ABNT",
+  title: "EditeCC | Editor de TCC Grátis com Formatação ABNT Automática",
   description:
-    "Editor de textos acadêmicos com formatação ABNT automática. Margens, fontes, espaçamentos e capa — tudo pré-configurado. 100% gratuito, local e sem cadastro.",
+    "Editor de TCC, monografia e artigo acadêmico com formatação ABNT automática. Margens, fontes, capa, sumário e referências — tudo pronto. 100% gratuito, local, sem cadastro. Baixe em PDF, RTF ou DOC.",
+  keywords: [
+    "editor TCC", "formatação ABNT", "TCC", "monografia",
+    "normas ABNT", "editor acadêmico", "formatar TCC grátis",
+    "ABNT automática", "trabalho acadêmico", "Next.js", "Tauri",
+  ],
   icons: { icon: "/favicon.svg" },
   verification: {
     google: "53lIeo9YV1FF6kndubgIiNJB1LOa12bMGsZiDHaQngg",
   },
+  alternates: {
+    canonical: "https://editecc.vercel.app",
+  },
   openGraph: {
-    title: "EditeCC — Editor de TCC com formatação ABNT",
+    title: "EditeCC | Editor de TCC Grátis com Formatação ABNT Automática",
     description:
-      "Formate seu TCC automaticamente nas normas ABNT. 100% gratuito, local e sem cadastro.",
+      "Formate seu TCC, monografia ou artigo acadêmico nas normas ABNT de forma 100% automática e gratuita. Baixe em PDF, RTF ou Word.",
     url: "https://editecc.vercel.app",
     siteName: "EditeCC",
     locale: "pt_BR",
     type: "website",
+    images: [
+      {
+        url: "https://editecc.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "EditeCC — Editor de TCC com formatação ABNT automática",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "EditeCC — Editor de TCC com formatação ABNT",
+    title: "EditeCC | Editor de TCC Grátis com Formatação ABNT",
     description:
       "Formate seu TCC automaticamente nas normas ABNT. 100% gratuito, local e sem cadastro.",
+    images: ["https://editecc.vercel.app/og-image.png"],
   },
 };
 
