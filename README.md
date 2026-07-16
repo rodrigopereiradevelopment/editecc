@@ -1,5 +1,7 @@
 # EditeCC ✏️
 
+![EditeCC](public/og-image.png)
+
 ![Latest Release](https://img.shields.io/github/v/release/rodrigopereiradevelopment/editecc?label=Versão)
 ![License](https://img.shields.io/github/license/rodrigopereiradevelopment/editecc?label=Licença&color=blue)
 ![Build](https://img.shields.io/github/actions/workflow/status/rodrigopereiradevelopment/editecc/ci.yml?label=CI&branch=main)
