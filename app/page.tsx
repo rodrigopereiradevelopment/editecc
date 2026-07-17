@@ -208,6 +208,7 @@ export default function LandingPage() {
       return (localStorage.getItem("editecc-theme") as "dark" | "light") || "dark";
     } catch { return "dark"; }
   });
+  const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
     document.body.classList.toggle("theme-light", theme === "light");
@@ -216,6 +217,18 @@ export default function LandingPage() {
   }, [theme]);
 
   useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
+
+  // Fetch GitHub stars
+  useEffect(() => {
+    fetch("https://api.github.com/repos/rodrigopereiradevelopment/editecc")
+      .then(res => res.json())
+      .then(data => {
+        if (data.stargazers_count !== undefined) {
+          setStars(data.stargazers_count);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -355,6 +368,19 @@ export default function LandingPage() {
           opacity: 0.03;
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
+
+        .typing-text {
+          display: inline;
+          animation: typeIn 0.8s ease-out forwards;
+          opacity: 0;
+        }
+        .typing-text.delay-1 { animation-delay: 0.5s; }
+        .typing-text.delay-2 { animation-delay: 1s; }
+
+        @keyframes typeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
       <div className="noise-overlay" />
@@ -485,7 +511,7 @@ export default function LandingPage() {
                 display: "flex", gap: "32px", marginTop: "48px",
                 opacity: mounted ? 1 : 0, transition: "all 0.6s ease 0.65s",
               }}>
-                {[["ABNT", "NBR 14724:2011"], ["100%", "Local & Gratuito"], ["0", "APIs Externas"]].map(([n, l]) => (
+                {[["ABNT", "NBR 14724:2011"], ["100%", "Local & Gratuito"], [stars !== null ? `⭐ ${stars}` : "⭐ 0", "GitHub Stars"]].map(([n, l]) => (
                   <div key={n}>
                     <div style={{ color: "var(--lp-heading)", fontWeight: "700", fontSize: "20px", fontFamily: "Playfair Display, serif" }}>{n}</div>
                     <div style={{ color: "var(--lp-stat-label)", fontSize: "11px", marginTop: "2px" }}>{l}</div>
@@ -494,14 +520,31 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Paper mockup */}
+            {/* Screenshot do editor */}
             <div style={{
-              flex: "0 0 auto",
+              flex: "1 1 400px",
+              maxWidth: "520px",
               opacity: mounted ? 1 : 0,
               transform: mounted ? "none" : "translateX(40px)",
-              transition: "all 0.8s ease 0.4s",
+              transition: "all 0.8s ease 0.5s",
             }}>
-              <PaperMockup />
+              <div style={{
+                position: "relative",
+                borderRadius: "12px",
+                overflow: "hidden",
+                border: "1px solid var(--lp-border)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+              }}>
+                <img
+                  src="/screenshot-editor.png"
+                  alt="Editor EditeCC com formatação ABNT"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                  }}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -584,6 +627,94 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── DEMO ANIMADA ── */}
+        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
+          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+            <p className="section-label">DEMO</p>
+            <h2 style={{ fontFamily: "Playfair Display, serif", fontSize: "clamp(32px, 4vw, 44px)", fontWeight: "700", color: "var(--lp-heading)", marginBottom: "16px", lineHeight: "1.2" }}>
+              Veja o EditeCC em ação.
+            </h2>
+            <p style={{ color: "var(--lp-body)", fontSize: "15px", marginBottom: "40px", maxWidth: "500px" }}>
+              Do primeiro parágrafo ao PDF formatado em menos de 1 minuto.
+            </p>
+            {/* Mockup animado do editor */}
+            <div style={{
+              background: "var(--lp-surface)",
+              border: "1px solid var(--lp-border)",
+              borderRadius: "12px",
+              overflow: "hidden",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+            }}>
+              {/* Barra de ferramentas simulada */}
+              <div style={{
+                background: "var(--lp-surface-hover)",
+                borderBottom: "1px solid var(--lp-border)",
+                padding: "10px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ color: "white", fontWeight: "800", fontSize: "11px" }}>E</span>
+                </div>
+                <span style={{ color: "var(--lp-card-title)", fontWeight: "700", fontSize: "13px", fontFamily: "DM Sans, sans-serif" }}>
+                  Edite<span style={{ color: "#3b82f6" }}>CC</span>
+                </span>
+                <div style={{ marginLeft: "auto", display: "flex", gap: "6px" }}>
+                  {["Texto Corrente", "Título 1", "Citação"].map((label, i) => (
+                    <span key={i} style={{
+                      padding: "4px 10px",
+                      background: i === 0 ? "#2563eb20" : "transparent",
+                      border: `1px solid ${i === 0 ? "#2563eb40" : "var(--lp-border)"}`,
+                      borderRadius: "4px",
+                      fontSize: "11px",
+                      color: i === 0 ? "#3b82f6" : "var(--lp-muted)",
+                    }}>
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              {/* Área do editor com texto digitando */}
+              <div style={{ padding: "32px", fontFamily: "DM Sans, sans-serif", color: "var(--lp-body)", lineHeight: "1.8", fontSize: "14px" }}>
+                <p style={{ textIndent: "2.5cm", marginBottom: "12px", color: "var(--lp-card-title)" }}>
+                  <span className="typing-text">1. INTRODUÇÃO</span>
+                </p>
+                <p style={{ textIndent: "2.5cm", marginBottom: "12px" }}>
+                  <span className="typing-text delay-1">O presente trabalho tem como objetivo o desenvolvimento de uma aplicação web para comparação de preços em supermercados da região de Mogi Mirim.</span>
+                </p>
+                <p style={{ textIndent: "2.5cm", marginBottom: "12px" }}>
+                  <span className="typing-text delay-2">Nesse contexto, o sistema surge como resposta às necessidades dos consumidores que buscam economia e praticidade no dia a dia.</span>
+                </p>
+                {/* Indicador de formatação automática */}
+                <div style={{
+                  position: "relative",
+                  marginTop: "20px",
+                  padding: "12px 16px",
+                  background: "#10b98110",
+                  border: "1px solid #10b98130",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  opacity: 0.8,
+                }}>
+                  <span style={{ color: "#10b981", fontSize: "16px" }}>✓</span>
+                  <span style={{ fontSize: "13px", color: "#10b981" }}>
+                    Formatação ABNT aplicada automaticamente
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: "center", marginTop: "24px" }}>
+              <Link href="/editor" className="cta-secondary" style={{ display: "inline-flex" }}>
+                Experimente agora
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </Link>
             </div>
           </div>
         </section>
@@ -741,6 +872,96 @@ export default function LandingPage() {
                 </a>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ── QUEM FEZ ── */}
+        <section style={{ padding: "80px clamp(20px, 5vw, 80px)", borderTop: "1px solid var(--lp-border)" }}>
+          <div style={{ maxWidth: "600px", margin: "0 auto", textAlign: "center" }}>
+            <div style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 20px",
+              fontSize: "32px",
+              fontWeight: "700",
+              color: "white",
+              fontFamily: "Playfair Display, serif",
+            }}>
+              R
+            </div>
+            <h2 style={{
+              fontFamily: "Playfair Display, serif",
+              fontSize: "24px",
+              fontWeight: "700",
+              color: "var(--lp-heading)",
+              marginBottom: "8px",
+            }}>
+              Criado por Rodrigo Pereira
+            </h2>
+            <p style={{
+              color: "var(--lp-muted)",
+              fontSize: "15px",
+              marginBottom: "20px",
+            }}>
+              Estudante de Desenvolvimento de Sistemas
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+              <a
+                href="https://github.com/rodrigopereiradevelopment"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  background: "var(--lp-surface)",
+                  border: "1px solid var(--lp-border)",
+                  borderRadius: "8px",
+                  color: "var(--lp-body)",
+                  fontSize: "13px",
+                  textDecoration: "none",
+                  transition: "all 0.2s",
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                GitHub
+              </a>
+              <a
+                href="https://www.linkedin.com/in/rodrigopereiradevelopment"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  background: "var(--lp-surface)",
+                  border: "1px solid var(--lp-border)",
+                  borderRadius: "8px",
+                  color: "var(--lp-body)",
+                  fontSize: "13px",
+                  textDecoration: "none",
+                  transition: "all 0.2s",
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                LinkedIn
+              </a>
+            </div>
+            <p style={{
+              color: "var(--lp-stat-label)",
+              fontSize: "12px",
+              marginTop: "24px",
+              fontFamily: "DM Mono, monospace",
+            }}>
+              Open Source · MIT License
+            </p>
           </div>
         </section>
 

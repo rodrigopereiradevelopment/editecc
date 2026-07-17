@@ -40,15 +40,22 @@ Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos a
 
 ## ✨ Funcionalidades
 
+### Principais
+
 - 📄 **Folha A4** simulada com margens ABNT (3cm esq/sup, 2cm dir/inf)
 - 🎨 **Editor rico com Tiptap** — Negrito, Itálico, Sublinhado, Justificar, Títulos H1/H2/H3
 - 📋 **Capa automática** — gerada em tempo real conforme você preenche o formulário
 - 📃 **Folha de Rosto, Folha de Aprovação** — elementos pré-textuais obrigatórios
+- 📑 **Sumário automático** a partir dos headings do documento
+- 📚 **Gerador de referências** — DOI, ISBN, BibTeX → ABNT NBR 6023
+- 📤 **Exportar PDF** — impressão nativa com margens ABNT
+- 📝 **Exportar RTF** — compatível com Word, LibreOffice e Google Docs
+
+### Recursos avançados
+
 - 📖 **Dedicatória, Agradecimentos, Epígrafe** — elementos pré-textuais opcionais
 - 📝 **Resumo + Abstract** — campos dedicados com contador de palavras
 - 🌐 **Tradução automática** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200)
-- 📑 **Sumário automático** a partir dos headings do documento
-- 📚 **Gerador de referências** — DOI, ISBN, BibTeX → ABNT NBR 6023
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais
 - 📖 **Glossário semi-automático** — TF-IDF detecta termos do texto
@@ -61,8 +68,6 @@ Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos a
 - 📁 **Múltiplos documentos** — importe/exporte `.editecc`
 - 💾 **Autosave** a cada 20 segundos
 - 🎓 **Página dedicada ETEC** — [/etec](https://editecc.vercel.app/etec) com modelo de TCC e formatação ABNT
-- 📤 **Exportar PDF** — impressão nativa com margens ABNT
-- 📝 **Exportar RTF** — compatível com Word, LibreOffice e Google Docs
 - 🖥️ **App desktop** — Windows (.exe), Linux (.deb, .AppImage, .rpm), macOS (.dmg)
 
 ---
