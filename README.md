@@ -60,6 +60,7 @@ Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos a
 - ✅ **Validador ABNT** — hierarquia, numeração, itálico em obras
 - 📁 **Múltiplos documentos** — importe/exporte `.editecc`
 - 💾 **Autosave** a cada 20 segundos
+- 🎓 **Página dedicada ETEC** — [/etec](https://editecc.vercel.app/etec) com modelo de TCC e formatação ABNT
 - 📤 **Exportar PDF** — impressão nativa com margens ABNT
 - 📝 **Exportar RTF** — compatível com Word, LibreOffice e Google Docs
 - 🖥️ **App desktop** — Windows (.exe), Linux (.deb, .AppImage, .rpm), macOS (.dmg)
