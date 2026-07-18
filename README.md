@@ -55,7 +55,7 @@ Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos a
 
 - 📖 **Dedicatória, Agradecimentos, Epígrafe** — elementos pré-textuais opcionais
 - 📝 **Resumo + Abstract** — campos dedicados com contador de palavras
-- 🌐 **Tradução automática** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200)
+- 🌐 **Tradução automática** — resumo pt→en/es/fr/de/it via NLLB-200
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais
 - 📖 **Glossário semi-automático** — sugere termos por frequência via TF-IDF
@@ -122,7 +122,7 @@ npm run dev
 | Persistência | localStorage / IndexedDB |
 | Desktop | Tauri v2 (Rust) |
 | Referências | Citation.js |
-| Tradução | Transformers.js (NLLB-200, 100% local) |
+| Tradução | Transformers.js — tradução local (NLLB-200) |
 
 ---
 
