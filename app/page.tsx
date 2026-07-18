@@ -38,7 +38,7 @@ const FEATURES = [
   {
     icon: "▤",
     title: "Slides Automáticos",
-    desc: "Gera uma apresentação em PowerPoint a partir da estrutura do seu trabalho, resumindo cada seção para facilitar a apresentação.",
+    desc: "Gera uma apresentação em PowerPoint a partir da estrutura do seu trabalho, extraindo títulos e pontos principais de cada seção.",
   },
   {
     icon: "♿",
@@ -511,7 +511,11 @@ export default function LandingPage() {
                 display: "flex", gap: "32px", marginTop: "48px",
                 opacity: mounted ? 1 : 0, transition: "all 0.6s ease 0.65s",
               }}>
-                {[["ABNT", "NBR 14724:2011"], ["100%", "Local & Gratuito"], [stars !== null ? `⭐ ${stars}` : "⭐ 0", "GitHub Stars"]].map(([n, l]) => (
+                {[
+                  ["ABNT", "NBR 14724:2011"],
+                  ["100%", "Local & Gratuito"],
+                  ...(stars !== null ? [[`⭐ ${stars}`, "GitHub Stars"]] : []),
+                ].map(([n, l]) => (
                   <div key={n}>
                     <div style={{ color: "var(--lp-heading)", fontWeight: "700", fontSize: "20px", fontFamily: "Playfair Display, serif" }}>{n}</div>
                     <div style={{ color: "var(--lp-stat-label)", fontSize: "11px", marginTop: "2px" }}>{l}</div>
