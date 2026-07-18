@@ -1,6 +1,6 @@
 # EditeCC ✏️
 
-![EditeCC](public/og-image.png)
+![EditeCC](og-image.png)
 
 ![Latest Release](https://img.shields.io/github/v/release/rodrigopereiradevelopment/editecc?label=version)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -21,7 +21,7 @@
 
 Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos acadêmicos conforme as normas ABNT. O EditeCC resolve isso: você **escreve**, e a formatação fica por nossa conta.
 
-- ✅ **IA totalmente offline** — tradução e sumarização sem internet
+- ✅ **Tradução 100% offline** — resumo pt→en/es/fr/de/it via NLLB-200, sem internet
 - ✅ **Não envia seus documentos para servidores** — tudo fica no seu computador
 - ✅ **Desktop multiplataforma** — Windows, Linux e macOS
 - ✅ **Open Source** — MIT, use e modifique livremente
@@ -58,9 +58,9 @@ Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos a
 - 🌐 **Tradução automática** — resumo pt→en/es/fr/de/it, 100% local (NLLB-200)
 - 🖼️ **Lista de Figuras e Tabelas automática**
 - 📄 **Anexos, Apêndices, Glossário** — elementos pós-textuais
-- 📖 **Glossário semi-automático** — TF-IDF detecta termos do texto
+- 📖 **Glossário semi-automático** — sugere termos por frequência via TF-IDF
 - 📝 **Notas de Rodapé** — gerenciador com inserção de marcadores
-- 📽️ **Gerador de Slides** — sumarização TF-IDF offline, geração `.pptx`
+- 📽️ **Gerador de Slides** — extrai títulos e pontos principais, gera `.pptx`
 - 🔍 **Tamanho da interface ajustável** — 4 níveis (P/M/G/XG)
 - ♿ **Acessibilidade WCAG 2.2**
 - 💡 **Tema claro/escuro**
@@ -80,7 +80,7 @@ Estudantes brasileiros gastam **horas** formatando TCCs, monografias e artigos a
 | **v1.0.1** | ✅ Concluído | Corrigir referências, glossário semi-automático, fix sumário overflow |
 | **v1.1** | 🔜 Próximo | Galeria de screenshots, seção "Quem fez", GIF do editor |
 | **v1.2** | 📋 Planejado | Personalização de slides (temas, cores, logo) |
-| **v2.0** | 📋 Planejado | Exportação DOCX, IA local, colaboração em tempo real |
+| **v2.0** | 📋 Planejado | Exportação DOCX, melhorias na UX |
 
 ---
 
