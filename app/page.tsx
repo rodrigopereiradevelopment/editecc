@@ -908,7 +908,7 @@ export default function LandingPage() {
               fontSize: "15px",
               marginBottom: "20px",
             }}>
-              Estudante de Desenvolvimento de Sistemas
+              Técnico em Desenvolvimento de Sistemas
             </p>
             <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
               <a
